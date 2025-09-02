@@ -1,0 +1,53 @@
+:root {
+  --accent-glow-default: #646cffaa;
+  --accent-glow-react: #61dafbaa;
+  --text-secondary: #555;
+}
+
+#root {
+  max-width: 90vw;
+  max-width: min(1280px, 90vw);
+  margin: 0 auto;
+  padding: 2rem;
+  /* Removed text-align: center to avoid readability issues in body text */
+}
+
+.logo {
+  height: 96px; /* more consistent than 6em */
+  padding: 1.5em;
+  transition: filter 300ms ease;
+}
+
+.logo:hover,
+.logo.react:hover {
+  filter: drop-shadow(0 0 1.25em var(--accent-glow-default));
+}
+
+.logo.react:hover {
+  filter: drop-shadow(0 0 1.25em var(--accent-glow-react));
+}
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Use a proper class or id instead of a fragile nth-of-type */
+@media (prefers-reduced-motion: no-preference) {
+  .logo.spin {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+.card-component {
+  padding: 2em;
+  text-align: center; /* Apply locally instead of globally */
+}
+
+.read-the-docs {
+  color: var(--text-secondary);
+}

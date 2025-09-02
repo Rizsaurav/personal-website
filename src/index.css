@@ -1,0 +1,174 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Minimalistic Design System - Clean, Modern, Breathable */
+
+@layer base {
+  :root {
+    /* Base Colors - Soft and Minimalistic */
+    --background: 0 0% 98%;
+    --foreground: 222 15% 15%;
+    
+    /* Surface Colors */
+    --surface: 0 0% 100%;
+    --surface-variant: 210 15% 97%;
+    --surface-soft: 0 0% 96%;
+    
+    /* Text Colors */
+    --text-primary: 222 15% 15%;
+    --text-secondary: 222 10% 45%;
+    --text-muted: 222 8% 65%;
+    
+    /* Accent Colors - Pale and Refined */
+    --accent-primary: 180 25% 65%;
+    --accent-secondary: 200 30% 70%;
+    --accent-soft: 180 15% 85%;
+    
+    /* Glass Effect Colors */
+    --glass-bg: 0 0% 100% / 0.8;
+    --glass-border: 222 15% 15% / 0.1;
+    --glass-shadow: 222 15% 15% / 0.05;
+    
+    /* Shadows */
+    --shadow-soft: 0 2px 20px hsl(222 15% 15% / 0.08);
+    --shadow-medium: 0 8px 30px hsl(222 15% 15% / 0.12);
+    --shadow-strong: 0 20px 60px hsl(222 15% 15% / 0.15);
+    
+    /* Animation Curves */
+    --ease-out-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+    --ease-in-smooth: cubic-bezier(0.4, 0, 1, 1);
+    --ease-elastic: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    
+    /* Layout */
+    --radius-soft: 1rem;
+    --radius-medium: 1.5rem;
+    --spacing-section: 6rem;
+
+    --sidebar-background: 0 0% 98%;
+
+    --sidebar-foreground: 240 5.3% 26.1%;
+
+    --sidebar-primary: 240 5.9% 10%;
+
+    --sidebar-primary-foreground: 0 0% 98%;
+
+    --sidebar-accent: 240 4.8% 95.9%;
+
+    --sidebar-accent-foreground: 240 5.9% 10%;
+
+    --sidebar-border: 220 13% 91%;
+
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-body antialiased;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-heading;
+    line-height: 1.2;
+  }
+}
+
+@layer components {
+  /* Glass Card Effect */
+  .glass-card {
+    background: hsl(var(--glass-bg));
+    backdrop-filter: blur(20px) saturate(150%);
+    border: 1px solid hsl(var(--glass-border));
+    box-shadow: var(--shadow-soft);
+  }
+  
+  /* Slide Animation Utilities */
+  .slide-stack {
+    transform-style: preserve-3d;
+    perspective: 1000px;
+  }
+  
+  .slide-card {
+    transition: all 0.6s var(--ease-out-smooth);
+    transform-origin: center center;
+  }
+  
+  .slide-card.active {
+    transform: translateZ(20px) scale(1.02);
+    z-index: 10;
+  }
+  
+  .slide-card.background {
+    transform: translateZ(-10px) scale(0.95);
+    filter: blur(2px);
+    opacity: 0.7;
+  }
+  
+  /* Hover Animations */
+  .hover-lift {
+    transition: transform 0.3s var(--ease-out-smooth), box-shadow 0.3s var(--ease-out-smooth);
+  }
+  
+  .hover-lift:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-medium);
+  }
+  
+  /* Text Animations */
+  .text-reveal {
+    overflow: hidden;
+  }
+  
+  .text-reveal span {
+    display: inline-block;
+    animation: slideUp 0.8s var(--ease-out-smooth) forwards;
+    transform: translateY(100%);
+  }
+  
+}
