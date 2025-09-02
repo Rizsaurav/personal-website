@@ -11,7 +11,7 @@ import { getAnalytics, Analytics } from "firebase/analytics";
 
 // Your Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyD_EV3saZPWbvadL3KVyHvwhVySQd6uECs",
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
   authDomain: "blogs-1297a.firebaseapp.com",
   projectId: "blogs-1297a",
   storageBucket: "blogs-1297a.appspot.com", 
