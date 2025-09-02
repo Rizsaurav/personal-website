@@ -4,15 +4,14 @@ import path from "path";
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  base: "/portfolio-website/",
-  server: {
-    host: "::",
-    port: 8080,
+  base: "/portfolio-website/",  
+  build: {
+    outDir: "dist"               
   },
   plugins: [
     react(),
   ],
-  assetsInclude: ['**/*.md'], // include .md files
+  assetsInclude: ['**/*.md'],
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
