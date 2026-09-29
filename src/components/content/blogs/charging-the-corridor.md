@@ -29,17 +29,31 @@ Three public data sources, joined into one reproducible pipeline:
 
 The joining alone surfaced a data-quality surprise: the published `NEVI_ID` field is not a record key. 168 Phase II planning-area records carry no ID at all, and six IDs are each shared by two records in different towns. So every join runs on the row-level OBJECTID instead. This is the kind of thing you only learn by touching the data yourself.
 
+```stat
+474 | station records joined across three public sources
+$328.3M | public funds committed statewide
+21 | stations open to drivers
+```
+
 ## What the numbers said
 
 **Funding follows the template, not traffic.** An OLS regression of log grant on log traffic, log population, port count, and corridor indicators (n = 474, R² = 0.29, robust standard errors) is blunt: port count dominates (each additional port associates with roughly 11% higher grant, p < 0.001), while nearby traffic (p = 0.82) and county population (p = 0.89) have no measurable association with grant size. Plot grant against traffic on a log-log scale and you get a flat line: grants cluster in horizontal bands set by the template. High-traffic locations get no funding premium. The program is cost-responsive, not demand-responsive.
 
 **The market is concentrated, and the largest underserved segment is an absence.** Universal EV LLC alone holds 148 stations (31.2%) and $92.6 million (28.2%) of committed funds. The top four applicants control 62.7%. The Herfindahl-Hirschman Index is 1339: below the 1500 threshold for moderate concentration, but with a twist. The second-largest "applicant" by dollars is *No Applications Received*: $49.0 million across 89 rural areas where TxDOT invited private operators and nobody bid. The program's biggest underserved segment isn't a firm. It's a market absence.
 
+> The program's biggest underserved segment isn't a firm. It's a market absence.
+
 **The no-bid problem is predictable, and it comes down to people, not cars.** All 89 no-bid records sit in the County Seats track, where the bid rate is only 39% across 146 rural areas. A random forest on three structural features (traffic, population, remoteness) predicts bid versus no-bid with AUC 0.64 under repeated stratified 5-fold cross-validation, and a logistic regression on the same features reaches 0.69. The mechanism is plain: county population dominates (odds ratio 1.91, p = 0.003), while nearby traffic adds nothing once population is controlled (odds ratio 1.21, p = 0.33). Bidders respond more to population than to traffic. Bid success rises monotonically with county-population quartile, from 18.9% in the most rural quartile to 54.1% in the most urban. The market withdraws exactly where traffic and people are thinnest.
 
 **Four station archetypes, one of them a warning.** K-means (k = 4) on standardized station features recovers small-town corridor stations (103), eight-port metro hubs (69), urban infill in the densest locations with only four ports each (204), and rural outposts (98) at 300 kW median, the only cluster whose median bid status is zero. The segmentation independently rediscovers the no-bid problem.
 
 **The I-35 corridor passes the engineering test on paper.** Approximating I-35 with a 16-waypoint polyline and projecting 111 stations onto it, the mean gap is 4.3 miles and the maximum gap is 34.0 miles in Webb County. No gap exceeds the 50-mile rule. But within 25 miles of the Texas State campus, there are eight stations, and all eight remain in planning. The engineering checks out; execution speed is the binding constraint.
+
+```stat
+0.29 | OLS R-squared: grants follow the template, not traffic
+34.0 mi | widest I-35 gap, still under the 50-mile rule
+89 | rural areas where no private operator bid
+```
 
 ## What surprised me
 
