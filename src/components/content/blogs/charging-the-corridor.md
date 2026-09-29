@@ -4,7 +4,7 @@ date: "2026-09-28"
 author: "Saurav Rijal"
 summary: "Texas committed $328.3 million in public money to 474 EV fast-charging stations. I joined TxDOT's open station records with traffic counts and Census data to ask one question: does the money follow demand, or just a template? It follows the template."
 tags: ["research", "data-science", "energy"]
-coverImage: "/blog-covers/poster-nevi.jpg"
+coverImage: "/blog-covers/poster-nevi.svg"
 featured: true
 ---
 
@@ -12,7 +12,7 @@ featured: true
 
 Texas has committed $328.3 million in public funds to deploy 474 fast-charging stations for electric vehicles under the National Electric Vehicle Infrastructure (NEVI) program. I live in San Marcos, right on the I-35 corridor where a lot of these stations are supposed to go. What got under my skin was a simple observation from TxDOT's own open records: only 21 of the 474 stations were open to drivers, and 69.2% were still in planning. That gap between committed money and actual chargers made me want to audit the whole thing with the program's own data. So I did.
 
-![Conference poster: Charging the Corridor, a data-science audit of Texas EV charging deployment](/blog-covers/poster-nevi.jpg)
+![Conference poster: Charging the Corridor, a data-science audit of Texas EV charging deployment](/blog-covers/poster-nevi.svg)
 *The full poster: Charging the Corridor, a data-science audit of the Texas NEVI buildout.*
 
 ## Why this question

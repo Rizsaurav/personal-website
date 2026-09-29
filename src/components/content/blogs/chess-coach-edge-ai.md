@@ -9,7 +9,7 @@ tags:
   - react
   - chess
 featured: true
-coverImage: "/blog-covers/cover-chess-coach.jpg"
+coverImage: "/blog-covers/cover-chess-coach.svg"
 ---
 
 # I Built a Chess Coach That Lives Entirely on the Edge

@@ -9,7 +9,7 @@ tags:
   - fastapi
   - react
 featured: true
-coverImage: "/blog-covers/cover-sortify.jpg"
+coverImage: "/blog-covers/cover-sortify.svg"
 ---
 
 # Sortify: My Files Were a Mess, So I Taught an AI to Organize Them

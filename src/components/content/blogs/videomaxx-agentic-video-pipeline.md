@@ -9,7 +9,7 @@ tags:
   - llm
   - video
 featured: true
-coverImage: "/blog-covers/cover-videomaxx.jpg"
+coverImage: "/blog-covers/cover-videomaxx.svg"
 ---
 
 # VideoMaxx: Teaching an Army of AI Agents to Produce a Whole YouTube Video

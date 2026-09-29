@@ -8,7 +8,7 @@ tags:
   - react
   - scalability
   - markdown
-coverImage: "/blog-covers/cover-blogging-site.jpg"
+coverImage: "/blog-covers/cover-blogging-site.svg"
 ---
 
 # Building a Scalable Blogging Site: Is Hardcoding Easier for Developers?

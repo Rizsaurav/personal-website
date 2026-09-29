@@ -9,7 +9,7 @@ tags:
   - machine-learning
   - python
 featured: true
-coverImage: "/blog-covers/cover-cycling-safety.jpg"
+coverImage: "/blog-covers/cover-cycling-safety.svg"
 ---
 
 # Mapping Where San Marcos Fails Its Cyclists: With Data
