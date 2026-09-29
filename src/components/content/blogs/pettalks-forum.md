@@ -2,11 +2,12 @@
 title: "PetTalks: A Forum for People Who Talk About Their Pets (Everyone)"
 date: 2025-05-04
 author: Saurav Rijal
-summary: "A full-stack community forum — posts, comments, upvotes, search — built in 10 hours with React and a cloud SQL backend."
+summary: "A full-stack community forum: posts, comments, upvotes, search, built in 10 hours with React and a cloud SQL backend."
 tags:
   - web-dev
   - react
   - full-stack
+coverImage: "/blog-covers/cover-pettalks.jpg"
 ---
 
 # PetTalks: A Forum for People Who Talk About Their Pets (Everyone)
@@ -27,11 +28,11 @@ A complete forum in React with a cloud-hosted SQL database:
 - **Dedicated post pages** with comments, upvote buttons, and edit/delete
 - **Pseudo-authentication** so the multi-user experience feels real
 
-Built in about 10 hours — a sprint that taught me more about shipping than a month of tutorials.
+Built in about 10 hours, a sprint that taught me more about shipping than a month of tutorials.
 
 ## How I thought of it
 
-I picked the most boring-reliable architecture I could: React frontend, SQL backend, REST between them. The discipline was in *not* reaching for exotic tools. Forums are a solved problem; the learning was in executing the solved problem cleanly — schema design, optimistic UI updates for upvotes, and keeping the feed fast.
+I picked the most boring-reliable architecture I could: React frontend, SQL backend, REST between them. The discipline was in *not* reaching for exotic tools. Forums are a solved problem; the learning was in executing the solved problem cleanly, schema design, optimistic UI updates for upvotes, and keeping the feed fast.
 
 ## What I'd do next
 

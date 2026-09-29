@@ -199,7 +199,7 @@ export default function BlogIndex() {
   const rest = hero ? filtered.filter((p) => p.slug !== hero.slug) : filtered;
   const visible = rest.slice(0, visibleCount);
 
-  // Staff's Picks: prefer featured posts (excluding the hero), then newest.
+  // Read These: prefer featured posts (excluding the hero), then newest.
   const picks = useMemo(() => {
     if (!posts) return [];
     const pool = hero ? posts.filter((p) => p.slug !== hero.slug) : posts;
@@ -322,7 +322,7 @@ export default function BlogIndex() {
         )}
       </section>
 
-      {/* Staff's Picks */}
+      {/* Read These */}
       {picks.length > 0 && (
         <section className="border-t border-[#eef0f2]">
           <div className="mx-auto max-w-[1140px] px-6 py-16">
@@ -334,7 +334,7 @@ export default function BlogIndex() {
             <h2
               className={`${HEADING_FONT} mt-2.5 text-[30px] font-extrabold leading-none tracking-tight text-[#1c2333]`}
             >
-              Staff's Picks
+              Read These
             </h2>
             <div className="mt-10 space-y-10">
               {picks.map((post) => (

@@ -29,7 +29,7 @@ export const ProfileSection = () => {
           </div>
 
           <p className="text-text-secondary leading-relaxed">
-            I build data-intensive systems — agentic pipelines, geospatial ML, and
+            I build data-intensive systems: agentic pipelines, geospatial ML, and
             real-time AI apps. Senior in Computer Science (Applied Math minor) at
             Texas State, SWE intern at LaunchBox, and an undergraduate researcher
             working with energy and survey data. Applying to CS graduate programs
