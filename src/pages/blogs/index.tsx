@@ -1,70 +1,156 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
-import {
-  ArrowLeft,
-  ArrowRight,
-  Calendar,
-  Clock,
-  Search,
-  Tag,
-} from "lucide-react";
+import { ArrowLeft, Search } from "lucide-react";
 import { loadAllPosts, formatDate, type PostMeta } from "./posts";
 
-function PostCard({ post, index }: { post: PostMeta; index: number }) {
+const HEADING_FONT = "font-['Poppins','Montserrat',system-ui,sans-serif]";
+const BODY_FONT = "font-['Inter',system-ui,sans-serif]";
+const INITIAL_VISIBLE = 6;
+
+function BackToHome() {
   return (
-    <motion.article
-      initial={{ opacity: 0, y: 16 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.35, delay: Math.min(index * 0.05, 0.3) }}
+    <Link
+      to="/"
+      className={`${BODY_FONT} inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.14em] text-[#6e7377] hover:text-[#e54d66] transition-colors`}
     >
-      <Link to={`/blogs/${post.slug}`} className="group block h-full">
-        <div className="glass-card rounded-medium p-6 h-full hover-lift flex flex-col">
-          <div className="flex items-center justify-between text-sm text-text-muted mb-3">
-            <div className="flex items-center gap-3">
-              <span className="flex items-center gap-1">
-                <Calendar className="w-4 h-4" />
-                {formatDate(post.date)}
-              </span>
-              <span>•</span>
-              <span className="flex items-center gap-1">
-                <Clock className="w-4 h-4" />
-                {post.readTime}
-              </span>
-            </div>
-            {post.featured && (
-              <span className="px-2 py-0.5 bg-accent-custom-primary text-surface text-xs rounded-full font-medium">
-                Featured
-              </span>
+      <ArrowLeft className="h-4 w-4" /> Back to home
+    </Link>
+  );
+}
+
+function MetaLine({ post }: { post: PostMeta }) {
+  return (
+    <p
+      className={`${BODY_FONT} text-[10px] font-semibold uppercase tracking-[0.1em] text-[#6e7377]`}
+    >
+      {formatDate(post.date)}
+      {post.tags.length > 0 && <> • {post.tags.join(", ").toUpperCase()}</>}
+    </p>
+  );
+}
+
+function ReadMoreLink({ slug }: { slug: string }) {
+  return (
+    <Link
+      to={`/blogs/${slug}`}
+      className={`${BODY_FONT} inline-block text-[11px] font-bold uppercase tracking-[0.14em] text-[#e54d66] hover:text-[#d13a52] transition-colors`}
+    >
+      Read more →
+    </Link>
+  );
+}
+
+function HeroCard({ post }: { post: PostMeta }) {
+  return (
+    <section className="mx-auto max-w-[1280px] px-6 pt-8">
+      <Link to={`/blogs/${post.slug}`} className="group block">
+        <div className="relative flex flex-col md:block md:h-[440px]">
+          {/* Dark panel + cover photo band */}
+          <div className="md:absolute md:inset-0 flex flex-col md:flex-row">
+            <div className="hidden md:block md:w-[42%] bg-[#2c2d31]" />
+            {post.coverImage ? (
+              <img
+                src={post.coverImage}
+                alt={post.title}
+                className="h-64 w-full object-cover md:h-full md:w-[58%]"
+              />
+            ) : (
+              <div className="h-64 w-full bg-[#2c2d31] md:h-full md:w-[58%]" />
             )}
           </div>
-
-          <h3 className="text-xl font-bold text-text-primary mb-2 group-hover:text-accent-custom-primary transition-colors">
-            {post.title}
-          </h3>
-          <p className="text-text-secondary leading-relaxed mb-4 flex-1">
-            {post.summary}
-          </p>
-
-          {post.tags.length > 0 && (
-            <div className="flex flex-wrap gap-2 mb-4">
-              {post.tags.slice(0, 4).map((tag) => (
-                <span
-                  key={tag}
-                  className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-surface-soft text-xs text-text-muted border border-border"
-                >
-                  <Tag className="w-3 h-3" /> {tag}
-                </span>
-              ))}
-            </div>
-          )}
-
-          <span className="flex items-center text-accent-custom-primary text-sm font-medium group-hover:translate-x-1 transition-transform">
-            Read the story <ArrowRight className="w-4 h-4 ml-1" />
-          </span>
+          {/* Overlapping card */}
+          <div className="relative bg-[#f3f7fa] p-8 md:absolute md:left-[8%] md:top-1/2 md:w-[40%] md:-translate-y-1/2 md:p-10 lg:p-12">
+            <p
+              className={`${BODY_FONT} text-[10px] font-semibold uppercase tracking-[0.14em] text-[#6e7377]`}
+            >
+              {formatDate(post.date)} • Featured • {post.readTime}
+            </p>
+            <div className="mt-3 h-[3px] w-[45px] bg-[#e54d66]" />
+            <h2
+              className={`${HEADING_FONT} mt-5 text-[30px] font-extrabold leading-[1.25] tracking-tight text-[#14161a]`}
+            >
+              {post.title}
+            </h2>
+            <p
+              className={`${BODY_FONT} mt-4 text-[15px] leading-[1.7] text-[#6e7377] line-clamp-3`}
+            >
+              {post.summary}
+            </p>
+          </div>
         </div>
       </Link>
-    </motion.article>
+    </section>
+  );
+}
+
+function StoryCard({ post }: { post: PostMeta }) {
+  return (
+    <article>
+      {post.coverImage ? (
+        <img
+          src={post.coverImage}
+          alt={post.title}
+          className="aspect-square w-full object-cover"
+        />
+      ) : (
+        <div className="aspect-square w-full bg-[#2c2d31]" aria-hidden="true" />
+      )}
+      <div className="relative -mt-[28px] mr-[25px] bg-white p-6 pt-7">
+        <Link to={`/blogs/${post.slug}`}>
+          <h3
+            className={`${HEADING_FONT} text-[20px] font-bold leading-[1.3] tracking-tight text-[#232639]`}
+          >
+            {post.title}
+          </h3>
+        </Link>
+        <div className="mt-3">
+          <MetaLine post={post} />
+        </div>
+        <div className="my-4 h-[3px] w-10 bg-[#e54d66]" />
+        <p
+          className={`${BODY_FONT} text-[14px] leading-[1.65] text-[#8a8f93] line-clamp-3`}
+        >
+          {post.summary}
+        </p>
+        <div className="mt-4">
+          <ReadMoreLink slug={post.slug} />
+        </div>
+      </div>
+    </article>
+  );
+}
+
+function PickCard({ post }: { post: PostMeta }) {
+  return (
+    <article className="flex flex-col gap-5 sm:flex-row sm:gap-8">
+      {post.coverImage ? (
+        <img
+          src={post.coverImage}
+          alt={post.title}
+          className="h-48 w-full object-cover sm:h-32 sm:w-40 sm:shrink-0"
+        />
+      ) : (
+        <div
+          className="h-48 w-full bg-[#2c2d31] sm:h-32 sm:w-40 sm:shrink-0"
+          aria-hidden="true"
+        />
+      )}
+      <div>
+        <Link to={`/blogs/${post.slug}`}>
+          <h3
+            className={`${HEADING_FONT} text-[20px] font-bold leading-[1.3] tracking-tight text-[#232639]`}
+          >
+            {post.title}
+          </h3>
+        </Link>
+        <div className="mt-2">
+          <MetaLine post={post} />
+        </div>
+        <div className="mt-3">
+          <ReadMoreLink slug={post.slug} />
+        </div>
+      </div>
+    </article>
   );
 }
 
@@ -72,10 +158,15 @@ export default function BlogIndex() {
   const [posts, setPosts] = useState<PostMeta[] | null>(null);
   const [query, setQuery] = useState("");
   const [activeTag, setActiveTag] = useState<string | null>(null);
+  const [visibleCount, setVisibleCount] = useState(INITIAL_VISIBLE);
 
   useEffect(() => {
     loadAllPosts().then(setPosts);
   }, []);
+
+  useEffect(() => {
+    setVisibleCount(INITIAL_VISIBLE);
+  }, [query, activeTag, posts]);
 
   const tags = useMemo(() => {
     const set = new Set<string>();
@@ -96,155 +187,163 @@ export default function BlogIndex() {
     });
   }, [posts, query, activeTag]);
 
-  const showHero = !query.trim() && !activeTag;
-  const hero = showHero ? filtered.find((p) => p.featured) : undefined;
+  const isFiltering = query.trim() !== "" || activeTag !== null;
+
+  // Hero only shows when no filters are active: first featured post,
+  // otherwise the newest post (posts are date-desc from the loader).
+  const hero: PostMeta | undefined =
+    !isFiltering && filtered.length > 0
+      ? filtered.find((p) => p.featured) ?? filtered[0]
+      : undefined;
+
   const rest = hero ? filtered.filter((p) => p.slug !== hero.slug) : filtered;
+  const visible = rest.slice(0, visibleCount);
+
+  // Staff's Picks: prefer featured posts (excluding the hero), then newest.
+  const picks = useMemo(() => {
+    if (!posts) return [];
+    const pool = hero ? posts.filter((p) => p.slug !== hero.slug) : posts;
+    const out: PostMeta[] = [...pool.filter((p) => p.featured)];
+    for (const p of pool) {
+      if (out.length >= 3) break;
+      if (!out.includes(p)) out.push(p);
+    }
+    return out.slice(0, 3);
+  }, [posts, hero]);
+
+  if (!posts) {
+    return (
+      <div className="min-h-screen bg-white">
+        <div className="mx-auto max-w-[1280px] px-6 pt-10">
+          <BackToHome />
+        </div>
+        <p
+          className={`${BODY_FONT} py-32 text-center text-[14px] text-[#6e7377]`}
+        >
+          Loading stories…
+        </p>
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen">
-      <div className="max-w-5xl mx-auto px-6 py-10">
-        <Link
-          to="/"
-          className="inline-flex items-center gap-2 text-text-muted hover:text-accent-custom-primary transition-colors text-sm mb-8"
-        >
-          <ArrowLeft className="w-4 h-4" /> Back home
-        </Link>
+    <div className="min-h-screen bg-white">
+      <div className="mx-auto max-w-[1280px] px-6 pt-10">
+        <BackToHome />
+      </div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4 }}
-          className="mb-10"
-        >
-          <h1 className="text-4xl md:text-5xl font-bold text-text-primary mb-3">
-            Build Stories
-          </h1>
-          <p className="text-text-secondary text-lg max-w-2xl">
-            Every project documented: why it needed to exist, what it solves,
-            and how I thought of it.
-          </p>
-        </motion.div>
+      {hero && <HeroCard post={hero} />}
 
-        {/* Search + tag filters */}
-        <div className="mb-8 space-y-4">
-          <div className="relative max-w-md">
-            <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" />
-            <input
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search stories…"
-              className="w-full pl-10 pr-4 py-2.5 rounded-soft bg-surface-variant/30 border border-border text-text-primary placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-accent-custom-primary/40"
-            />
-          </div>
-          {tags.length > 0 && (
-            <div className="flex flex-wrap gap-2">
-              {tags.map((tag) => (
-                <button
-                  key={tag}
-                  onClick={() => setActiveTag(activeTag === tag ? null : tag)}
-                  className={`px-3 py-1.5 rounded-full text-sm border transition-colors ${
-                    activeTag === tag
-                      ? "bg-accent-custom-primary text-surface border-accent-custom-primary"
-                      : "bg-surface-variant/30 text-text-secondary border-border hover:border-accent-custom-primary/50"
-                  }`}
-                >
-                  {tag}
-                </button>
-              ))}
-              {activeTag && (
-                <button
-                  onClick={() => setActiveTag(null)}
-                  className="px-3 py-1.5 rounded-full text-sm text-text-muted hover:text-text-primary transition-colors"
-                >
-                  Clear
-                </button>
-              )}
+      {/* Latest Stories */}
+      <section className="mx-auto max-w-[1140px] px-6 py-16">
+        <p
+          className={`${BODY_FONT} text-[11px] font-semibold uppercase tracking-[0.18em] text-[#6e7377]`}
+        >
+          Browse and read the latest stuff
+        </p>
+        <div className="mb-10 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+          <h2
+            className={`${HEADING_FONT} mt-2.5 text-[30px] font-extrabold leading-none tracking-tight text-[#1c2333]`}
+          >
+            Latest Stories
+          </h2>
+          <div className="flex flex-col gap-4 md:items-end">
+            <div className="flex items-center gap-2 border-b border-[#e2e5e8] focus-within:border-[#e54d66]">
+              <Search className="h-4 w-4 shrink-0 text-[#6e7377]" />
+              <input
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="SEARCH POSTS"
+                aria-label="Search posts"
+                className={`${BODY_FONT} w-full bg-transparent pb-2 text-[13px] tracking-wide placeholder:text-[11px] placeholder:uppercase placeholder:tracking-[0.18em] placeholder:text-[#a7adb2] focus:outline-none`}
+              />
             </div>
-          )}
+            {tags.length > 0 && (
+              <div className="flex flex-wrap gap-5">
+                {["ALL", ...tags].map((t) => {
+                  const isActive =
+                    t === "ALL" ? activeTag === null : activeTag === t;
+                  return (
+                    <button
+                      key={t}
+                      onClick={() =>
+                        setActiveTag(
+                          t === "ALL" ? null : isActive ? null : t
+                        )
+                      }
+                      className={`${BODY_FONT} pb-1 text-[11px] font-semibold uppercase tracking-[0.14em] transition-colors ${
+                        isActive
+                          ? "border-b-2 border-[#e54d66] text-[#e54d66]"
+                          : "text-[#8a8f93] hover:text-[#14161a]"
+                      }`}
+                    >
+                      {t}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+          </div>
         </div>
 
-        {!posts ? (
-          <div className="grid gap-6 md:grid-cols-2">
-            {[...Array(4)].map((_, i) => (
-              <div
-                key={i}
-                className="animate-pulse bg-surface-soft h-56 w-full rounded-medium"
-              />
-            ))}
-          </div>
-        ) : filtered.length === 0 ? (
-          <div className="glass-card rounded-medium p-12 text-center">
-            <p className="text-text-secondary text-lg">
-              No stories match{query.trim() && <> “{query.trim()}”</>}
-              {activeTag && <> with tag “{activeTag}”</>}.
+        {visible.length === 0 ? (
+          <div className="py-16 text-center">
+            <p className={`${BODY_FONT} text-[15px] text-[#8a8f93]`}>
+              No stories match your search.
             </p>
             <button
               onClick={() => {
                 setQuery("");
                 setActiveTag(null);
               }}
-              className="mt-4 text-accent-custom-primary font-medium hover:underline"
+              className={`${BODY_FONT} mt-4 inline-block text-[11px] font-bold uppercase tracking-[0.14em] text-[#e54d66] hover:text-[#d13a52]`}
             >
               Clear filters
             </button>
           </div>
         ) : (
           <>
-            {hero && (
-              <motion.div
-                initial={{ opacity: 0, y: 16 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4 }}
-                className="mb-8"
-              >
-                <Link to={`/blogs/${hero.slug}`} className="group block">
-                  <div className="glass-card rounded-medium p-8 md:p-10 hover-lift bg-accent-custom-soft/10">
-                    <div className="flex items-center gap-3 text-sm text-text-muted mb-4">
-                      <span className="px-2.5 py-1 bg-accent-custom-primary text-surface text-xs rounded-full font-medium">
-                        Featured
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <Calendar className="w-4 h-4" /> {formatDate(hero.date)}
-                      </span>
-                      <span>•</span>
-                      <span className="flex items-center gap-1">
-                        <Clock className="w-4 h-4" /> {hero.readTime}
-                      </span>
-                    </div>
-                    <h2 className="text-3xl md:text-4xl font-bold text-text-primary mb-4 group-hover:text-accent-custom-primary transition-colors">
-                      {hero.title}
-                    </h2>
-                    <p className="text-text-secondary text-lg leading-relaxed mb-6 max-w-3xl">
-                      {hero.summary}
-                    </p>
-                    {hero.tags.length > 0 && (
-                      <div className="flex flex-wrap gap-2 mb-6">
-                        {hero.tags.map((tag) => (
-                          <span
-                            key={tag}
-                            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-surface-soft text-xs text-text-muted border border-border"
-                          >
-                            <Tag className="w-3 h-3" /> {tag}
-                          </span>
-                        ))}
-                      </div>
-                    )}
-                    <span className="inline-flex items-center text-accent-custom-primary font-medium group-hover:translate-x-1 transition-transform">
-                      Read the story <ArrowRight className="w-4 h-4 ml-2" />
-                    </span>
-                  </div>
-                </Link>
-              </motion.div>
-            )}
-
-            <div className="grid gap-6 md:grid-cols-2">
-              {rest.map((post, i) => (
-                <PostCard key={post.slug} post={post} index={i} />
+            <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+              {visible.map((post) => (
+                <StoryCard key={post.slug} post={post} />
               ))}
             </div>
+            {rest.length > visibleCount && (
+              <div className="mt-14 flex justify-center">
+                <button
+                  onClick={() => setVisibleCount(rest.length)}
+                  className={`${BODY_FONT} rounded-full bg-[#e54d66] px-9 py-3.5 text-[11px] font-bold uppercase tracking-[0.14em] text-white hover:bg-[#d13a52] transition-colors`}
+                >
+                  More posts
+                </button>
+              </div>
+            )}
           </>
         )}
-      </div>
+      </section>
+
+      {/* Staff's Picks */}
+      {picks.length > 0 && (
+        <section className="border-t border-[#eef0f2]">
+          <div className="mx-auto max-w-[1140px] px-6 py-16">
+            <p
+              className={`${BODY_FONT} text-[11px] font-semibold uppercase tracking-[0.18em] text-[#6e7377]`}
+            >
+              You have to read this!
+            </p>
+            <h2
+              className={`${HEADING_FONT} mt-2.5 text-[30px] font-extrabold leading-none tracking-tight text-[#1c2333]`}
+            >
+              Staff's Picks
+            </h2>
+            <div className="mt-10 space-y-10">
+              {picks.map((post) => (
+                <PickCard key={post.slug} post={post} />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
     </div>
   );
 }

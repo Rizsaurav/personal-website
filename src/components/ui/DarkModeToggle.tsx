@@ -11,8 +11,10 @@ export default function DarkModeToggle({ variant = "nav", className }: Props) {
 
   useEffect(() => {
     const stored = localStorage.getItem("theme");
-    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-    const shouldDark = stored ? stored === "dark" : prefersDark;
+    // Light mode is the site-wide default: only an explicit stored "dark"
+    // value enables dark mode. Do not consult prefers-color-scheme here, so
+    // the React render always agrees with the inline anti-flash script.
+    const shouldDark = stored === "dark";
     document.documentElement.classList.toggle("dark", shouldDark);
     setIsDark(shouldDark);
   }, []);

@@ -1,20 +1,47 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { marked } from "marked";
+import { marked, type Tokens } from "marked";
+import DOMPurify from "dompurify";
 import { motion } from "framer-motion";
 import {
-  ArrowLeft,
-  ArrowRight,
   Bookmark,
   Calendar,
   Clock,
   Share2,
-  Tag,
   User,
 } from "lucide-react";
 import { loadAllPosts, loadPost, formatDate, type PostMeta } from "./posts";
 import { CommentSection } from "./BlogComponents";
 import "./blogs.css";
+
+const HEADING_FONT = "font-['Poppins','Montserrat',system-ui,sans-serif]";
+const BODY_FONT = "font-['Inter',system-ui,sans-serif]";
+
+/* Escape everything interpolated into the renderer output so markdown
+   content can never break out of the attribute/text context. */
+function escapeAttr(value: string): string {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
+/* marked v16+: renderer methods receive a single token object
+   ({ href, title, text } for images). Every markdown image becomes a
+   large centered figure with its alt text as the caption. */
+marked.use({
+  renderer: {
+    image(token: Tokens.Image) {
+      const src = escapeAttr(token.href ?? "");
+      const alt = escapeAttr(token.text ?? "");
+      const caption = token.text
+        ? `<figcaption>${escapeAttr(token.text)}</figcaption>`
+        : "";
+      return `<figure class="blog-figure"><img src="${src}" alt="${alt}" loading="lazy" />${caption}</figure>`;
+    },
+  },
+});
 
 function sharedTagCount(a: PostMeta, b: PostMeta): number {
   return a.tags.filter((t) => b.tags.includes(t)).length;
@@ -40,11 +67,17 @@ export default function BlogPost() {
         return;
       }
       setPost(p);
-      setHtml((await marked.parse(p.body)) as string);
+      const raw = (await marked.parse(p.body)) as string;
+      setHtml(
+        DOMPurify.sanitize(raw, {
+          ADD_TAGS: ["figure", "figcaption"],
+          ADD_ATTR: ["loading"],
+        })
+      );
       const all = await loadAllPosts();
       setRelated(
         all
-          .filter((x) => x.slug !== slug)
+          .filter((x) => x.slug !== slug && sharedTagCount(x, p) > 0)
           .sort((a, b) => sharedTagCount(b, p) - sharedTagCount(a, p))
           .slice(0, 3)
       );
@@ -65,26 +98,24 @@ export default function BlogPost() {
     }
   };
 
-  const loading = useMemo(
-    () => !post && !missing,
-    [post, missing]
-  );
+  const loading = useMemo(() => !post && !missing, [post, missing]);
 
   if (missing) {
     return (
-      <div className="min-h-screen flex items-center justify-center px-6">
-        <div className="glass-card rounded-medium p-12 text-center max-w-md">
-          <h1 className="text-2xl font-bold text-text-primary mb-3">
-            Story not found
-          </h1>
-          <p className="text-text-secondary mb-6">
-            This post doesn’t exist or was moved.
+      <div className={`min-h-screen bg-white flex items-center justify-center px-6 ${BODY_FONT}`}>
+        <div className="text-center max-w-md">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#6e7377] mb-4">
+            404
           </p>
+          <h1 className={`${HEADING_FONT} text-[30px] font-extrabold tracking-tight text-[#14161a] mb-3`}>
+            Story not found.
+          </h1>
+          <p className="text-[#8a8f93] mb-8">This post doesn’t exist or was moved.</p>
           <Link
             to="/blogs"
-            className="inline-flex items-center gap-2 text-accent-custom-primary font-medium hover:underline"
+            className="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.14em] text-[#e54d66] hover:text-[#d13a52] transition-colors"
           >
-            <ArrowLeft className="w-4 h-4" /> Back to all stories
+            ← All stories
           </Link>
         </div>
       </div>
@@ -93,133 +124,167 @@ export default function BlogPost() {
 
   if (loading || !post) {
     return (
-      <div className="min-h-screen">
-        <div className="max-w-3xl mx-auto px-6 py-10 space-y-6">
-          <div className="animate-pulse bg-surface-soft h-8 w-40 rounded-md" />
-          <div className="animate-pulse bg-surface-soft h-16 w-full rounded-md" />
-          <div className="animate-pulse bg-surface-soft h-6 w-2/3 rounded-md" />
-          <div className="animate-pulse bg-surface-soft h-96 w-full rounded-medium" />
-        </div>
+      <div className={`min-h-screen bg-white flex items-center justify-center ${BODY_FONT}`}>
+        <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#6e7377]">
+          Loading story…
+        </p>
       </div>
     );
   }
 
+  const kicker = [post.date ? formatDate(post.date) : null, post.readTime]
+    .filter(Boolean)
+    .join(" • ");
+
   return (
-    <div className="min-h-screen">
-      <div className="max-w-3xl mx-auto px-6 py-10">
+    <div className={`min-h-screen bg-white ${BODY_FONT}`}>
+      {/* Back link */}
+      <div className="max-w-[1280px] mx-auto px-6 pt-10">
         <Link
           to="/blogs"
-          className="inline-flex items-center gap-2 text-text-muted hover:text-accent-custom-primary transition-colors text-sm mb-8"
+          className="inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#6e7377] hover:text-[#e54d66] transition-colors"
         >
-          <ArrowLeft className="w-4 h-4" /> All stories
+          ← All stories
         </Link>
+      </div>
 
-        <motion.article
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4 }}
+      <motion.article
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+      >
+        {/* Cover */}
+        {post.coverImage && (
+          <div className="max-w-[1280px] mx-auto px-6 mt-8">
+            <img
+              src={post.coverImage}
+              alt={post.title}
+              className="w-full aspect-[21/9] object-cover"
+            />
+          </div>
+        )}
+
+        {/* Header block — overlaps the cover on desktop, sits flat on mobile */}
+        <div
+          className={`relative max-w-[720px] bg-[#f3f7fa] p-8 md:p-10 ${
+            post.coverImage ? "ml-0 mt-0 lg:ml-[8%] lg:-mt-24" : "mx-auto mt-10"
+          }`}
         >
-          {post.coverImage && (
-            <div className="mb-8 rounded-medium overflow-hidden">
-              <img
-                src={post.coverImage}
-                alt={post.title}
-                className="w-full h-72 object-cover"
-              />
-            </div>
-          )}
-
-          {post.tags.length > 0 && (
-            <div className="flex flex-wrap gap-2 mb-5">
-              {post.tags.map((tag) => (
-                <span
-                  key={tag}
-                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-accent-custom-soft/20 text-accent-custom-primary text-xs font-medium"
-                >
-                  <Tag className="w-3 h-3" /> {tag}
-                </span>
-              ))}
-            </div>
-          )}
-
-          <h1 className="text-4xl md:text-5xl font-bold text-text-primary leading-tight mb-6">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#6e7377]">
+            {kicker}
+          </p>
+          <div className="mt-3 h-[3px] w-[45px] bg-[#e54d66]" />
+          <h1
+            className={`${HEADING_FONT} mt-5 text-[42px] lg:text-[48px] font-extrabold tracking-tight leading-[1.15] text-[#14161a] max-w-[20ch]`}
+          >
             {post.title}
           </h1>
-
-          <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-text-muted pb-8 mb-8 border-b border-border">
-            <span className="flex items-center gap-1.5">
-              <User className="w-4 h-4" />
-              <span className="font-medium text-text-primary">{post.author}</span>
+          <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-2 text-[13px] border-b border-[#eef0f2] pb-8">
+            <span className="inline-flex items-center gap-1.5 font-bold text-[#232639]">
+              <User className="w-4 h-4 text-[#6e7377]" /> {post.author}
             </span>
-            <span className="flex items-center gap-1.5">
+            <span className="inline-flex items-center gap-1.5 text-[#8a8f93]">
               <Calendar className="w-4 h-4" /> {formatDate(post.date)}
             </span>
-            <span className="flex items-center gap-1.5">
+            <span className="inline-flex items-center gap-1.5 text-[#8a8f93]">
               <Clock className="w-4 h-4" /> {post.readTime}
             </span>
           </div>
+        </div>
 
+        {/* Article body */}
+        <div className="px-6 mt-14">
           <div
-            className="blog-body prose prose-lg dark:prose-invert max-w-none"
+            className="magazine-article"
             dangerouslySetInnerHTML={{ __html: html }}
           />
+        </div>
 
-          <div className="mt-12 pt-6 border-t border-border flex items-center justify-end gap-2">
-            <button
-              onClick={() => setBookmarked((b) => !b)}
-              className={`flex items-center gap-2 px-4 py-2 rounded-full border text-sm transition-colors ${
-                bookmarked
-                  ? "bg-accent-custom-primary text-surface border-accent-custom-primary"
-                  : "border-border text-text-secondary hover:border-accent-custom-primary/50"
-              }`}
-            >
-              <Bookmark
-                className={`w-4 h-4 ${bookmarked ? "fill-current" : ""}`}
-              />
-              {bookmarked ? "Saved" : "Save"}
-            </button>
-            <button
-              onClick={share}
-              className="flex items-center gap-2 px-4 py-2 rounded-full border border-border text-sm text-text-secondary hover:border-accent-custom-primary/50 transition-colors"
-            >
-              <Share2 className="w-4 h-4" /> Share
-            </button>
-          </div>
-
-          {related.length > 0 && (
-            <div className="mt-12">
-              <h2 className="text-xl font-bold text-text-primary mb-5">
-                More build stories
-              </h2>
-              <div className="grid gap-4 md:grid-cols-3">
-                {related.map((r) => (
+        {/* Tags + share footer */}
+        <div className="px-6">
+          <div className="mx-auto max-w-[65ch] border-t border-[#eef0f2] mt-16 pt-8">
+            {post.tags.length > 0 && (
+              <div className="flex flex-wrap gap-x-5 gap-y-2 mb-8">
+                {post.tags.map((tag) => (
                   <Link
-                    key={r.slug}
-                    to={`/blogs/${r.slug}`}
-                    className="group glass-card rounded-soft p-5 hover-lift block"
+                    key={tag}
+                    to="/blogs"
+                    className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#6e7377] hover:text-[#e54d66] transition-colors"
                   >
-                    <div className="text-xs text-text-muted mb-2 flex items-center gap-2">
-                      <span className="flex items-center gap-1">
-                        <Calendar className="w-3 h-3" /> {formatDate(r.date)}
-                      </span>
-                      <span>•</span>
-                      <span>{r.readTime}</span>
-                    </div>
-                    <h3 className="font-semibold text-text-primary group-hover:text-accent-custom-primary transition-colors mb-2 line-clamp-2">
-                      {r.title}
-                    </h3>
-                    <span className="inline-flex items-center text-accent-custom-primary text-sm font-medium">
-                      Read <ArrowRight className="w-3.5 h-3.5 ml-1 group-hover:translate-x-0.5 transition-transform" />
-                    </span>
+                    #{tag}
                   </Link>
                 ))}
               </div>
+            )}
+            <div className="flex items-center gap-6">
+              <button
+                onClick={() => setBookmarked((b) => !b)}
+                aria-pressed={bookmarked}
+                className="inline-flex items-center gap-2 text-[13px] text-[#6e7377] hover:text-[#e54d66] transition-colors"
+              >
+                <Bookmark
+                  className={`w-4 h-4 ${bookmarked ? "fill-current text-[#e54d66]" : ""}`}
+                />
+                {bookmarked ? "Saved" : "Save"}
+              </button>
+              <button
+                onClick={share}
+                className="inline-flex items-center gap-2 text-[13px] text-[#6e7377] hover:text-[#e54d66] transition-colors"
+              >
+                <Share2 className="w-4 h-4" /> Share
+              </button>
             </div>
-          )}
+          </div>
+        </div>
 
-          <CommentSection />
-        </motion.article>
-      </div>
+        {/* Related posts */}
+        {related.length > 0 && (
+          <div className="max-w-[1140px] mx-auto px-6 py-16">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#6e7377] mb-2.5">
+              Related stories
+            </p>
+            <h2
+              className={`${HEADING_FONT} text-[30px] font-extrabold tracking-tight leading-none text-[#1c2333] mb-10`}
+            >
+              More build stories
+            </h2>
+            <div className="grid gap-8 md:grid-cols-3">
+              {related.map((r) => (
+                <Link
+                  key={r.slug}
+                  to={`/blogs/${r.slug}`}
+                  className="group flex gap-4 items-start"
+                >
+                  {r.coverImage && (
+                    <img
+                      src={r.coverImage}
+                      alt=""
+                      className="w-28 h-24 object-cover shrink-0"
+                    />
+                  )}
+                  <div>
+                    <h3
+                      className={`${HEADING_FONT} text-[17px] font-bold leading-[1.35] tracking-tight text-[#232639] group-hover:text-[#e54d66] transition-colors line-clamp-2`}
+                    >
+                      {r.title}
+                    </h3>
+                    <p className="mt-2 text-[10px] font-semibold uppercase tracking-[0.1em] text-[#6e7377]">
+                      {formatDate(r.date)} • {r.readTime}
+                    </p>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Comments */}
+        <div className="px-6 pb-20">
+          <div className="mx-auto max-w-[65ch]">
+            <CommentSection />
+          </div>
+        </div>
+      </motion.article>
     </div>
   );
 }
