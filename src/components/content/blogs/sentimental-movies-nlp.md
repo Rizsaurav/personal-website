@@ -8,7 +8,7 @@ tags:
   - machine-learning
   - fastapi
   - react
-coverImage: "/blog-covers/cover-sentimental-movies.jpg"
+coverImage: "/blog-covers/cover-sentimental-movies.svg"
 ---
 
 # Sentimental Movies: Ranking Films by How People Actually Felt

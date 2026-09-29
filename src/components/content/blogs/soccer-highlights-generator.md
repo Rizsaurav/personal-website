@@ -8,7 +8,7 @@ tags:
   - machine-learning
   - fastapi
   - nextjs
-coverImage: "/blog-covers/cover-soccer-highlights.jpg"
+coverImage: "/blog-covers/cover-soccer-highlights.svg"
 ---
 
 # Teaching a Computer to Edit Soccer Highlights

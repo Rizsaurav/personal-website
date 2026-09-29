@@ -8,7 +8,7 @@ tags:
   - computer-vision
   - pytorch
   - reinforcement-learning
-coverImage: "/blog-covers/cover-trac.jpg"
+coverImage: "/blog-covers/cover-trac.svg"
 ---
 
 # TRAC: Catching Cheaters With Autoencoders and Simulated Eyes
