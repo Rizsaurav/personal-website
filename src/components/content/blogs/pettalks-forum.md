@@ -7,7 +7,7 @@ tags:
   - web-dev
   - react
   - full-stack
-coverImage: "/blog-covers/cover-pettalks.jpg"
+coverImage: "/blog-covers/cover-pettalks.svg"
 ---
 
 # PetTalks: A Forum for People Who Talk About Their Pets (Everyone)

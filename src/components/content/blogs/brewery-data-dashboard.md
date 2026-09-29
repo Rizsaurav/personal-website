@@ -7,7 +7,7 @@ tags:
   - web-dev
   - react
   - data-viz
-coverImage: "/blog-covers/cover-brewery-dashboard.jpg"
+coverImage: "/blog-covers/cover-brewery-dashboard.svg"
 ---
 
 # A Brewery Dashboard That Actually Tells Stories With Data

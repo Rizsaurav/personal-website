@@ -8,7 +8,7 @@ tags:
   - nextjs
   - tts
   - automation
-coverImage: "/blog-covers/cover-tflash.jpg"
+coverImage: "/blog-covers/cover-tflash.svg"
 ---
 
 # T-Flash: The News, But Spoken
