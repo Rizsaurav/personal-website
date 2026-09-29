@@ -2,7 +2,7 @@ import { motion } from 'framer-motion';
 import { Mail, Linkedin, MapPin } from 'lucide-react';
 
 export const ContactSection = () => {
-  const linkedInUrl = "https://www.linkedin.com/in/saurav-rijal-08082a261/"; // <-- update this link
+  const linkedInUrl = "https://www.linkedin.com/in/saurav-rijal-08082a261/";
 
   return (
     <section id="contact" className="space-y-6">
@@ -11,7 +11,7 @@ export const ContactSection = () => {
           {/* Header */}
           <div>
             <h2 className="text-2xl font-bold text-text-primary mb-2">Let's Connect</h2>
-            <p className="text-text-secondary">Available for freelance projects and collaborations</p>
+            <p className="text-text-secondary">Open to research collaborations and new projects</p>
           </div>
 
           {/* Availability Status */}
@@ -39,7 +39,7 @@ export const ContactSection = () => {
               { 
                 icon: Linkedin, 
                 label: "LinkedIn", 
-                value: "Saurav Rijal", // Display Name
+                value: "Saurav Rijal",
                 href: linkedInUrl
               }
             ].map((contact) => (
