@@ -19,9 +19,32 @@ export function parseFrontMatter(content) {
   const match = /^---\n([\s\S]+?)\n---/.exec(content);
   if (!match) return { attributes: {}, body: content };
   const attributes = {};
+  const stripQuotes = (v) => v.replace(/^["']|["']$/g, "");
+  let listKey = null;
   match[1].split("\n").forEach((line) => {
-    const [key, ...rest] = line.split(":");
-    attributes[key.trim()] = rest.join(":").trim();
+    const item = /^\s*-\s+(.*)$/.exec(line);
+    if (item && listKey) {
+      attributes[listKey].push(stripQuotes(item[1].trim()));
+      return;
+    }
+    const idx = line.indexOf(":");
+    if (idx === -1) {
+      listKey = null;
+      return;
+    }
+    const key = line.slice(0, idx).trim();
+    const value = stripQuotes(line.slice(idx + 1).trim());
+    if (!key) {
+      listKey = null;
+      return;
+    }
+    if (value === "") {
+      attributes[key] = [];
+      listKey = key;
+    } else {
+      attributes[key] = value;
+      listKey = null;
+    }
   });
   const body = content.slice(match[0].length);
   return { attributes, body };

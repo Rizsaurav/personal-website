@@ -67,8 +67,8 @@ export const BlogSection = () => {
       <div className="glass-card rounded-medium p-8">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h2 className="text-2xl font-bold text-text-primary mb-2">Thoughts & Ideas</h2>
-            <p className="text-text-secondary">Writing about design, development, and creativity</p>
+            <h2 className="text-2xl font-bold text-text-primary mb-2">Build Stories</h2>
+            <p className="text-text-secondary">Build stories: why I built it, what it solves, how I thought of it</p>
           </div>
           <Button asChild variant="outline" size="sm">
             <Link to="/blogs">
@@ -167,4 +167,3 @@ export const BlogSection = () => {
     </section>
   );
 };
-3
