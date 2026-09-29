@@ -8,6 +8,7 @@ tags:
   - react
   - scalability
   - markdown
+coverImage: "/blog-covers/cover-blogging-site.jpg"
 ---
 
 # Building a Scalable Blogging Site: Is Hardcoding Easier for Developers?
@@ -20,7 +21,7 @@ This post walks you through **how I migrated my developer blog from hardcoded pa
 
 ## Why Not Just Hardcode?
 
-Let's be real — hardcoding is fast and feels good at first. Here's how I started:
+Let's be real, hardcoding is fast and feels good at first. Here's how I started:
 
 - Every blog post was its own React component under `pages/blogs/`
 - Each had its own route manually registered in `App.jsx` or `router.jsx`
@@ -29,12 +30,12 @@ Let's be real — hardcoding is fast and feels good at first. Here's how I start
 For a couple of posts, this is fine. But once I crossed 5–6 posts, problems started piling up:
 
 - I had to **manually copy boilerplate code** for each new blog post
-- There was **no separation of content and code** — my blog content was buried in JSX
+- There was **no separation of content and code**, my blog content was buried in JSX
 - I couldn't easily **filter or list posts by tag/date**
 - I had no simple way to **generate dynamic slugs or titles**
 - Content updates required **re-deploying the whole site**
 
-That's when I realized — this wasn't sustainable.
+That's when I realized, this wasn't sustainable.
 
 ---
 
@@ -187,7 +188,7 @@ return (
 
 text
 
-This means no more adding routes for new posts — the slug handles it.
+This means no more adding routes for new posts, the slug handles it.
 
 ---
 
@@ -206,7 +207,7 @@ I built my own commenting system using Firebase Firestore.
 
 ---
 
-## Reactions — The Right Way
+## Reactions: The Right Way
 
 Every user can react to a comment with only one reaction at a time. Reacting again replaces the previous one.
 
@@ -220,7 +221,7 @@ text
 
 We calculate counts by mapping over the `userReactions` values.
 
-Only authenticated users can delete their own comments — not others. This keeps things clean, secure, and friendly.
+Only authenticated users can delete their own comments, not others. This keeps things clean, secure, and friendly.
 
 ---
 
@@ -299,7 +300,7 @@ Here's where I plan to go next:
 
 ## Final Thoughts: Is Hardcoding Easier?
 
-Yes, hardcoding is easier — but only at first.
+Yes, hardcoding is easier, but only at first.
 
 If you're building something small that won't grow, go ahead and hardcode. But if you care about:
 
