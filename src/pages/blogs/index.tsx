@@ -1,179 +1,250 @@
-// src/pages/blogs/[slug].tsx
-import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import { marked } from "marked";
-import { Bookmark, Share2, Calendar, Clock, User } from "lucide-react";
-import { parseFrontMatter, estimateReadTime, CommentSection } from "./BlogComponents";
-import "./blogs.css";
+import { useEffect, useMemo, useState } from "react";
+import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
+import {
+  ArrowLeft,
+  ArrowRight,
+  Calendar,
+  Clock,
+  Search,
+  Tag,
+} from "lucide-react";
+import { loadAllPosts, formatDate, type PostMeta } from "./posts";
 
-type Meta = {
-  title: string;
-  date: string;
-  author: string;
-  authorImage?: string;
-  coverImage?: string;
-  tags: string[];
-  readTime: string;
-};
-
-export default function BlogPost() {
-  const { slug } = useParams();
-  const [postHtml, setPostHtml] = useState("");
-  const [isBookmarked, setIsBookmarked] = useState(false);
-  const [meta, setMeta] = useState<Meta>({
-    title: "",
-    date: "",
-    author: "",
-    authorImage: "",
-    coverImage: "",
-    tags: [],
-    readTime: "",
-  });
-
-  useEffect(() => {
-    const importAll = import.meta.glob("../../components/content/blogs/*.md", {
-      query: "?raw",
-      import: "default",
-    });
-
-    const loadPost = async () => {
-      const path = Object.keys(importAll).find((p) => p.includes(`${slug}.md`));
-
-      if (!path) {
-        setPostHtml("<h2>Post not found</h2>");
-        return;
-      }
-
-      const raw = await importAll[path]();
-      const { attributes, body } = parseFrontMatter(raw as string);
-
-      const normalized: Meta = {
-        title: attributes.title || "",
-        date: attributes.date || "",
-        author: attributes.author || "",
-        authorImage: attributes.authorImage || "",
-        coverImage: attributes.coverImage || "",
-        tags: Array.isArray(attributes.tags)
-          ? attributes.tags
-          : (attributes.tags || "")
-              .toString()
-              .split(",")
-              .map((t: string) => t.trim())
-              .filter(Boolean),
-        readTime: estimateReadTime(body),
-      };
-      setMeta(normalized);
-
-      // parse can be async → await to satisfy TS ('string | Promise<string>')
-      const html = (await marked.parse(body)) as string;
-      setPostHtml(html);
-    };
-
-    loadPost();
-  }, [slug]);
-
-  const handleShare = () => {
-    if (navigator.share) {
-      navigator.share({ title: meta.title, url: window.location.href });
-    } else {
-      navigator.clipboard.writeText(window.location.href);
-    }
-  };
-
+function PostCard({ post, index }: { post: PostMeta; index: number }) {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
-      <article className="prose-blog relative max-w-4xl mx-auto px-6 py-12 bg-white/70 dark:bg-black/40 backdrop-blur-xl rounded-3xl shadow-2xl transition-all duration-500 border border-white/20 dark:border-gray-700/30">
-        {/* Hero Image */}
-        {meta.coverImage && (
-          <div className="mb-10 rounded-2xl overflow-hidden shadow-2xl relative group">
-            <img
-              src={meta.coverImage}
-              alt={meta.title}
-              className="w-full h-80 object-cover transition-transform duration-700 group-hover:scale-105"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
-          </div>
-        )}
-
-        {/* Header */}
-        <header className="mb-12">
-          <h1 className="text-5xl md:text-6xl font-serif font-bold leading-tight mb-6 tracking-tight text-gray-900 dark:text-white bg-gradient-to-r from-gray-900 via-gray-700 to-gray-900 dark:from-white dark:via-gray-200 dark:to-white bg-clip-text text-transparent">
-            {meta.title}
-          </h1>
-          <div className="flex items-center gap-6 mb-8 p-6 bg-gray-50/50 dark:bg-gray-800/30 rounded-2xl backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50">
-            {meta.authorImage && (
-              <img
-                src={meta.authorImage}
-                alt={meta.author}
-                className="w-14 h-14 rounded-full object-cover ring-4 ring-white dark:ring-gray-800 shadow-lg"
-              />
-            )}
-            <div className="flex-1">
-              <div className="flex items-center gap-2 mb-2">
-                <User className="w-4 h-4 text-gray-500" />
-                <p className="font-semibold text-gray-800 dark:text-gray-200">{meta.author}</p>
-              </div>
-              <div className="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400">
-                <div className="flex items-center gap-1">
-                  <Calendar className="w-4 h-4" />
-                  {meta.date ? new Date(meta.date).toLocaleDateString() : ""}
-                </div>
-                <div className="flex items-center gap-1">
-                  <Clock className="w-4 h-4" />
-                  {meta.readTime}
-                </div>
-              </div>
+    <motion.article
+      initial={{ opacity: 0, y: 16 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.35, delay: Math.min(index * 0.05, 0.3) }}
+    >
+      <Link to={`/blogs/${post.slug}`} className="group block h-full">
+        <div className="glass-card rounded-medium p-6 h-full hover-lift flex flex-col">
+          <div className="flex items-center justify-between text-sm text-text-muted mb-3">
+            <div className="flex items-center gap-3">
+              <span className="flex items-center gap-1">
+                <Calendar className="w-4 h-4" />
+                {formatDate(post.date)}
+              </span>
+              <span>•</span>
+              <span className="flex items-center gap-1">
+                <Clock className="w-4 h-4" />
+                {post.readTime}
+              </span>
             </div>
+            {post.featured && (
+              <span className="px-2 py-0.5 bg-accent-custom-primary text-surface text-xs rounded-full font-medium">
+                Featured
+              </span>
+            )}
           </div>
 
-          {meta.tags?.length > 0 && (
-            <div className="flex flex-wrap gap-3 mb-8">
-              {meta.tags.map((tag) => (
+          <h3 className="text-xl font-bold text-text-primary mb-2 group-hover:text-accent-custom-primary transition-colors">
+            {post.title}
+          </h3>
+          <p className="text-text-secondary leading-relaxed mb-4 flex-1">
+            {post.summary}
+          </p>
+
+          {post.tags.length > 0 && (
+            <div className="flex flex-wrap gap-2 mb-4">
+              {post.tags.slice(0, 4).map((tag) => (
                 <span
                   key={tag}
-                  className="px-4 py-2 text-sm font-medium rounded-full bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/30 dark:to-indigo-900/30 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-700 hover:shadow-md transition-all duration-200"
+                  className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-surface-soft text-xs text-text-muted border border-border"
                 >
-                  #{tag}
+                  <Tag className="w-3 h-3" /> {tag}
                 </span>
               ))}
             </div>
           )}
-        </header>
 
-        {/* Blog Body */}
-        <div
-          className="blog-body prose prose-lg dark:prose-invert max-w-none text-gray-800 dark:text-gray-200 leading-relaxed"
-          dangerouslySetInnerHTML={{ __html: postHtml }}
-        />
+          <span className="flex items-center text-accent-custom-primary text-sm font-medium group-hover:translate-x-1 transition-transform">
+            Read the story <ArrowRight className="w-4 h-4 ml-1" />
+          </span>
+        </div>
+      </Link>
+    </motion.article>
+  );
+}
 
-        {/* Actions (bookmark + share only) */}
-        <div className="mt-16 pt-8 border-t border-gray-200 dark:border-gray-700">
-          <div className="flex gap-2 justify-end">
-            <button
-              onClick={() => setIsBookmarked((b) => !b)}
-              className={`flex items-center gap-2 px-4 py-2 rounded-full border transition-all ${
-                isBookmarked
-                  ? "bg-indigo-100 dark:bg-indigo-900/30 border-indigo-300 dark:border-indigo-700 text-indigo-700 dark:text-indigo-300"
-                  : "bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400"
-              }`}
-            >
-              <Bookmark className={`w-4 h-4 ${isBookmarked ? "fill-current" : ""}`} />
-              <span className="text-sm font-medium">Bookmark</span>
-            </button>
+export default function BlogIndex() {
+  const [posts, setPosts] = useState<PostMeta[] | null>(null);
+  const [query, setQuery] = useState("");
+  const [activeTag, setActiveTag] = useState<string | null>(null);
 
-            <button
-              onClick={handleShare}
-              className="flex items-center gap-2 px-4 py-2 rounded-full border bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700"
-            >
-              <Share2 className="w-4 h-4" />
-              <span className="text-sm font-medium">Share</span>
-            </button>
+  useEffect(() => {
+    loadAllPosts().then(setPosts);
+  }, []);
+
+  const tags = useMemo(() => {
+    const set = new Set<string>();
+    posts?.forEach((p) => p.tags.forEach((t) => set.add(t)));
+    return [...set].sort();
+  }, [posts]);
+
+  const filtered = useMemo(() => {
+    if (!posts) return [];
+    const q = query.trim().toLowerCase();
+    return posts.filter((p) => {
+      const matchesQuery =
+        !q ||
+        p.title.toLowerCase().includes(q) ||
+        p.summary.toLowerCase().includes(q);
+      const matchesTag = !activeTag || p.tags.includes(activeTag);
+      return matchesQuery && matchesTag;
+    });
+  }, [posts, query, activeTag]);
+
+  const showHero = !query.trim() && !activeTag;
+  const hero = showHero ? filtered.find((p) => p.featured) : undefined;
+  const rest = hero ? filtered.filter((p) => p.slug !== hero.slug) : filtered;
+
+  return (
+    <div className="min-h-screen">
+      <div className="max-w-5xl mx-auto px-6 py-10">
+        <Link
+          to="/"
+          className="inline-flex items-center gap-2 text-text-muted hover:text-accent-custom-primary transition-colors text-sm mb-8"
+        >
+          <ArrowLeft className="w-4 h-4" /> Back home
+        </Link>
+
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+          className="mb-10"
+        >
+          <h1 className="text-4xl md:text-5xl font-bold text-text-primary mb-3">
+            Build Stories
+          </h1>
+          <p className="text-text-secondary text-lg max-w-2xl">
+            Every project documented: why it needed to exist, what it solves,
+            and how I thought of it.
+          </p>
+        </motion.div>
+
+        {/* Search + tag filters */}
+        <div className="mb-8 space-y-4">
+          <div className="relative max-w-md">
+            <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" />
+            <input
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search stories…"
+              className="w-full pl-10 pr-4 py-2.5 rounded-soft bg-surface-variant/30 border border-border text-text-primary placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-accent-custom-primary/40"
+            />
           </div>
+          {tags.length > 0 && (
+            <div className="flex flex-wrap gap-2">
+              {tags.map((tag) => (
+                <button
+                  key={tag}
+                  onClick={() => setActiveTag(activeTag === tag ? null : tag)}
+                  className={`px-3 py-1.5 rounded-full text-sm border transition-colors ${
+                    activeTag === tag
+                      ? "bg-accent-custom-primary text-surface border-accent-custom-primary"
+                      : "bg-surface-variant/30 text-text-secondary border-border hover:border-accent-custom-primary/50"
+                  }`}
+                >
+                  {tag}
+                </button>
+              ))}
+              {activeTag && (
+                <button
+                  onClick={() => setActiveTag(null)}
+                  className="px-3 py-1.5 rounded-full text-sm text-text-muted hover:text-text-primary transition-colors"
+                >
+                  Clear
+                </button>
+              )}
+            </div>
+          )}
         </div>
 
-        {/* Comments */}
-        <CommentSection />
-      </article>
+        {!posts ? (
+          <div className="grid gap-6 md:grid-cols-2">
+            {[...Array(4)].map((_, i) => (
+              <div
+                key={i}
+                className="animate-pulse bg-surface-soft h-56 w-full rounded-medium"
+              />
+            ))}
+          </div>
+        ) : filtered.length === 0 ? (
+          <div className="glass-card rounded-medium p-12 text-center">
+            <p className="text-text-secondary text-lg">
+              No stories match{query.trim() && <> “{query.trim()}”</>}
+              {activeTag && <> with tag “{activeTag}”</>}.
+            </p>
+            <button
+              onClick={() => {
+                setQuery("");
+                setActiveTag(null);
+              }}
+              className="mt-4 text-accent-custom-primary font-medium hover:underline"
+            >
+              Clear filters
+            </button>
+          </div>
+        ) : (
+          <>
+            {hero && (
+              <motion.div
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4 }}
+                className="mb-8"
+              >
+                <Link to={`/blogs/${hero.slug}`} className="group block">
+                  <div className="glass-card rounded-medium p-8 md:p-10 hover-lift bg-accent-custom-soft/10">
+                    <div className="flex items-center gap-3 text-sm text-text-muted mb-4">
+                      <span className="px-2.5 py-1 bg-accent-custom-primary text-surface text-xs rounded-full font-medium">
+                        Featured
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <Calendar className="w-4 h-4" /> {formatDate(hero.date)}
+                      </span>
+                      <span>•</span>
+                      <span className="flex items-center gap-1">
+                        <Clock className="w-4 h-4" /> {hero.readTime}
+                      </span>
+                    </div>
+                    <h2 className="text-3xl md:text-4xl font-bold text-text-primary mb-4 group-hover:text-accent-custom-primary transition-colors">
+                      {hero.title}
+                    </h2>
+                    <p className="text-text-secondary text-lg leading-relaxed mb-6 max-w-3xl">
+                      {hero.summary}
+                    </p>
+                    {hero.tags.length > 0 && (
+                      <div className="flex flex-wrap gap-2 mb-6">
+                        {hero.tags.map((tag) => (
+                          <span
+                            key={tag}
+                            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-surface-soft text-xs text-text-muted border border-border"
+                          >
+                            <Tag className="w-3 h-3" /> {tag}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                    <span className="inline-flex items-center text-accent-custom-primary font-medium group-hover:translate-x-1 transition-transform">
+                      Read the story <ArrowRight className="w-4 h-4 ml-2" />
+                    </span>
+                  </div>
+                </Link>
+              </motion.div>
+            )}
+
+            <div className="grid gap-6 md:grid-cols-2">
+              {rest.map((post, i) => (
+                <PostCard key={post.slug} post={post} index={i} />
+              ))}
+            </div>
+          </>
+        )}
+      </div>
     </div>
   );
 }
