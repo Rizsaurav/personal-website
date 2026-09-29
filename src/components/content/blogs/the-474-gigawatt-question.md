@@ -4,14 +4,14 @@ date: "2026-09-28"
 author: "Saurav Rijal"
 summary: "ERCOT reported about 474 GW of large-load requests, roughly 90% of it data centers. Headlines read that as impending demand. I rebuilt the number from primary ERCOT documents and ran it through a probabilistic model: the honest answer is a 63.4 GW mean, not 474."
 tags: ["research", "data-science", "energy"]
-coverImage: "/blog-covers/poster-ercot.png"
+coverImage: "/blog-covers/poster-ercot.jpg"
 ---
 
 # The 474-Gigawatt Question: Auditing AI Data Center Load in the ERCOT Queue
 
 In July 2026, ERCOT told the Texas Senate Committee on Business and Commerce that it was tracking approximately 474 gigawatts of large-load interconnection requests, about 90% of it attributed to data centers. Days earlier, Texas's actual summer peak had been 91,134 MW. So the headline number was roughly five times the largest load the grid had ever served. Headlines routinely presented the queue as impending demand, and that bothered me, because a queue is not demand. A queue is a request inventory, and only a fraction of requests ever survive the study, approval, and construction stages. I wanted to know what the number actually means. So I audited it, using ERCOT's own documents and nothing else.
 
-![Conference poster: The 474-Gigawatt Question, auditing AI data center load in the ERCOT queue](/blog-covers/poster-ercot.png)
+![Conference poster: The 474-Gigawatt Question, auditing AI data center load in the ERCOT queue](/blog-covers/poster-ercot.jpg)
 *The full poster: The 474-Gigawatt Question, auditing AI data center load in the ERCOT interconnection queue.*
 
 ## Why this question
