@@ -1,9 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowLeft, Search } from "lucide-react";
+import { motion } from "framer-motion";
 import { loadAllPosts, formatDate, type PostMeta } from "./posts";
+import { CursorDot, Magnetic, Reveal } from "./interactions";
+import "./blogs.css";
 
-const HEADING_FONT = "font-['Poppins','Montserrat',system-ui,sans-serif]";
+const HEADING_FONT = "font-display";
 const BODY_FONT = "font-['Inter',system-ui,sans-serif]";
 const INITIAL_VISIBLE = 6;
 
@@ -33,124 +36,182 @@ function ReadMoreLink({ slug }: { slug: string }) {
   return (
     <Link
       to={`/blogs/${slug}`}
-      className={`${BODY_FONT} inline-block text-[11px] font-bold uppercase tracking-[0.14em] text-[#e54d66] hover:text-[#d13a52] transition-colors`}
+      className={`${BODY_FONT} group/lm inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.14em] text-[#e54d66] hover:text-[#d13a52] transition-colors`}
     >
-      Read more →
+      Read more
+      <span className="inline-block transition-transform duration-300 group-hover/lm:translate-x-1">
+        →
+      </span>
     </Link>
+  );
+}
+
+function SectionHeader({
+  index,
+  kicker,
+  title,
+}: {
+  index: string;
+  kicker: string;
+  title: string;
+}) {
+  return (
+    <Reveal>
+      <p className="blog-kicker">
+        <span className="text-[#e54d66]">{index}</span>
+        <span className="mx-3 text-[#d8d2c4]">/</span>
+        {kicker}
+      </p>
+      <h2 className={`${HEADING_FONT} blog-section-title mt-3`}>{title}</h2>
+    </Reveal>
   );
 }
 
 function HeroCard({ post }: { post: PostMeta }) {
   return (
     <section className="mx-auto max-w-[1280px] px-6 pt-8">
-      <Link to={`/blogs/${post.slug}`} className="group block">
-        <div className="relative flex flex-col md:block md:h-[440px]">
-          {/* Dark panel + cover photo band */}
-          <div className="md:absolute md:inset-0 flex flex-col md:flex-row">
-            <div className="hidden md:block md:w-[42%] bg-[#2c2d31]" />
-            {post.coverImage ? (
-              <img
-                src={post.coverImage}
-                alt={post.title}
-                className="h-64 w-full object-cover md:h-full md:w-[58%]"
-              />
-            ) : (
-              <div className="h-64 w-full bg-[#2c2d31] md:h-full md:w-[58%]" />
-            )}
+      <Reveal>
+        <Link to={`/blogs/${post.slug}`} className="group block">
+          <div className="blog-card-lift relative flex flex-col md:block md:h-[460px]">
+            {/* Dark panel + cover photo band */}
+            <div className="md:absolute md:inset-0 flex flex-col md:flex-row">
+              <div className="hidden md:block md:w-[42%] bg-[#1c2333]" />
+              <div className="blog-card-img h-64 w-full md:h-full md:w-[58%]">
+                {post.coverImage ? (
+                  <img
+                    src={post.coverImage}
+                    alt={post.title}
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  <div className="h-full w-full bg-[#1c2333]" />
+                )}
+              </div>
+            </div>
+            {/* Overlapping card */}
+            <div className="relative bg-white p-8 md:absolute md:left-[8%] md:top-1/2 md:w-[40%] md:-translate-y-1/2 md:p-10 lg:p-12 shadow-[0_20px_50px_rgba(20,22,26,0.10)]">
+              <p
+                className={`${BODY_FONT} text-[10px] font-semibold uppercase tracking-[0.14em] text-[#6e7377]`}
+              >
+                {formatDate(post.date)} • Featured • {post.readTime}
+              </p>
+              <div className="mt-3 h-[3px] w-[45px] bg-[#e54d66]" />
+              <h2
+                className={`${HEADING_FONT} mt-5 text-[clamp(1.9rem,3.6vw,2.9rem)] font-semibold leading-[1.12] tracking-tight text-[#14161a]`}
+              >
+                {post.title}
+              </h2>
+              <p
+                className={`${BODY_FONT} mt-4 text-[15px] leading-[1.7] text-[#6e7377] line-clamp-3`}
+              >
+                {post.summary}
+              </p>
+              <span
+                className={`${BODY_FONT} mt-6 inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.14em] text-[#e54d66]`}
+              >
+                Read the story
+                <span className="inline-block transition-transform duration-300 group-hover:translate-x-1.5">
+                  →
+                </span>
+              </span>
+            </div>
           </div>
-          {/* Overlapping card */}
-          <div className="relative bg-[#f3f7fa] p-8 md:absolute md:left-[8%] md:top-1/2 md:w-[40%] md:-translate-y-1/2 md:p-10 lg:p-12">
-            <p
-              className={`${BODY_FONT} text-[10px] font-semibold uppercase tracking-[0.14em] text-[#6e7377]`}
-            >
-              {formatDate(post.date)} • Featured • {post.readTime}
-            </p>
-            <div className="mt-3 h-[3px] w-[45px] bg-[#e54d66]" />
-            <h2
-              className={`${HEADING_FONT} mt-5 text-[30px] font-extrabold leading-[1.25] tracking-tight text-[#14161a]`}
-            >
-              {post.title}
-            </h2>
-            <p
-              className={`${BODY_FONT} mt-4 text-[15px] leading-[1.7] text-[#6e7377] line-clamp-3`}
-            >
-              {post.summary}
-            </p>
-          </div>
-        </div>
-      </Link>
+        </Link>
+      </Reveal>
     </section>
   );
 }
 
-function StoryCard({ post }: { post: PostMeta }) {
+function StoryCard({ post, index }: { post: PostMeta; index: number }) {
   return (
-    <article>
-      {post.coverImage ? (
-        <img
-          src={post.coverImage}
-          alt={post.title}
-          className="aspect-square w-full object-cover"
-        />
-      ) : (
-        <div className="aspect-square w-full bg-[#2c2d31]" aria-hidden="true" />
-      )}
-      <div className="relative -mt-[28px] mr-[25px] bg-white p-6 pt-7">
-        <Link to={`/blogs/${post.slug}`}>
-          <h3
-            className={`${HEADING_FONT} text-[20px] font-bold leading-[1.3] tracking-tight text-[#232639]`}
-          >
-            {post.title}
-          </h3>
-        </Link>
-        <div className="mt-3">
-          <MetaLine post={post} />
-        </div>
-        <div className="my-4 h-[3px] w-10 bg-[#e54d66]" />
-        <p
-          className={`${BODY_FONT} text-[14px] leading-[1.65] text-[#8a8f93] line-clamp-3`}
-        >
-          {post.summary}
-        </p>
-        <div className="mt-4">
-          <ReadMoreLink slug={post.slug} />
-        </div>
-      </div>
-    </article>
+    <Reveal delay={(index % 3) * 0.08}>
+      <Magnetic max={4} className="h-full">
+        <article className="blog-card-lift h-full bg-white">
+          <Link to={`/blogs/${post.slug}`} className="block" aria-label={post.title}>
+            <div className="blog-card-img aspect-[4/3] w-full">
+              {post.coverImage ? (
+                <img
+                  src={post.coverImage}
+                  alt={post.title}
+                  loading="lazy"
+                  className="h-full w-full object-cover"
+                />
+              ) : (
+                <div
+                  className="h-full w-full bg-[#1c2333]"
+                  aria-hidden="true"
+                />
+              )}
+            </div>
+          </Link>
+          <div className="relative -mt-[28px] mr-[25px] bg-white p-6 pt-7 border-t-2 border-[#e54d66]">
+            <Link to={`/blogs/${post.slug}`}>
+              <h3
+                className={`${HEADING_FONT} text-[21px] font-semibold leading-[1.25] tracking-tight text-[#232639] hover:text-[#e54d66] transition-colors`}
+              >
+                {post.title}
+              </h3>
+            </Link>
+            <div className="mt-3">
+              <MetaLine post={post} />
+            </div>
+            <p
+              className={`${BODY_FONT} mt-3 text-[14px] leading-[1.65] text-[#8a8f93] line-clamp-3`}
+            >
+              {post.summary}
+            </p>
+            <div className="mt-4">
+              <ReadMoreLink slug={post.slug} />
+            </div>
+          </div>
+        </article>
+      </Magnetic>
+    </Reveal>
   );
 }
 
-function PickCard({ post }: { post: PostMeta }) {
+function PickCard({ post, index }: { post: PostMeta; index: number }) {
   return (
-    <article className="flex flex-col gap-5 sm:flex-row sm:gap-8">
-      {post.coverImage ? (
-        <img
-          src={post.coverImage}
-          alt={post.title}
-          className="h-48 w-full object-cover sm:h-32 sm:w-40 sm:shrink-0"
-        />
-      ) : (
-        <div
-          className="h-48 w-full bg-[#2c2d31] sm:h-32 sm:w-40 sm:shrink-0"
-          aria-hidden="true"
-        />
-      )}
-      <div>
-        <Link to={`/blogs/${post.slug}`}>
-          <h3
-            className={`${HEADING_FONT} text-[20px] font-bold leading-[1.3] tracking-tight text-[#232639]`}
-          >
-            {post.title}
-          </h3>
+    <Reveal delay={index * 0.08}>
+      <article className="group flex flex-col gap-5 sm:flex-row sm:gap-8">
+        <Link
+          to={`/blogs/${post.slug}`}
+          className="blog-card-img block h-48 w-full shrink-0 sm:h-36 sm:w-48"
+          aria-label={post.title}
+        >
+          {post.coverImage ? (
+            <img
+              src={post.coverImage}
+              alt={post.title}
+              loading="lazy"
+              className="h-full w-full object-cover"
+            />
+          ) : (
+            <div className="h-full w-full bg-[#1c2333]" aria-hidden="true" />
+          )}
         </Link>
-        <div className="mt-2">
-          <MetaLine post={post} />
+        <div className="flex flex-col justify-center">
+          <p
+            className={`${BODY_FONT} text-[10px] font-bold uppercase tracking-[0.2em] text-[#e54d66]`}
+          >
+            N°{String(index + 1).padStart(2, "0")}
+          </p>
+          <Link to={`/blogs/${post.slug}`}>
+            <h3
+              className={`${HEADING_FONT} mt-2 text-[22px] font-semibold leading-[1.25] tracking-tight text-[#232639] group-hover:text-[#e54d66] transition-colors`}
+            >
+              {post.title}
+            </h3>
+          </Link>
+          <div className="mt-2">
+            <MetaLine post={post} />
+          </div>
+          <div className="mt-3">
+            <ReadMoreLink slug={post.slug} />
+          </div>
         </div>
-        <div className="mt-3">
-          <ReadMoreLink slug={post.slug} />
-        </div>
-      </div>
-    </article>
+      </article>
+    </Reveal>
   );
 }
 
@@ -213,7 +274,8 @@ export default function BlogIndex() {
 
   if (!posts) {
     return (
-      <div className="min-h-screen bg-white">
+      <div className="blog-paper min-h-screen">
+        <div className="blog-grain" aria-hidden="true" />
         <div className="mx-auto max-w-[1280px] px-6 pt-10">
           <BackToHome />
         </div>
@@ -227,7 +289,9 @@ export default function BlogIndex() {
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="blog-paper min-h-screen">
+      <div className="blog-grain" aria-hidden="true" />
+      <CursorDot />
       <div className="mx-auto max-w-[1280px] px-6 pt-10">
         <BackToHome />
       </div>
@@ -236,54 +300,51 @@ export default function BlogIndex() {
 
       {/* Latest Stories */}
       <section className="mx-auto max-w-[1140px] px-6 py-16">
-        <p
-          className={`${BODY_FONT} text-[11px] font-semibold uppercase tracking-[0.18em] text-[#6e7377]`}
-        >
-          Browse and read the latest stuff
-        </p>
         <div className="mb-10 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-          <h2
-            className={`${HEADING_FONT} mt-2.5 text-[30px] font-extrabold leading-none tracking-tight text-[#1c2333]`}
-          >
-            Latest Stories
-          </h2>
-          <div className="flex flex-col gap-4 md:items-end">
-            <div className="flex items-center gap-2 border-b border-[#e2e5e8] focus-within:border-[#e54d66]">
-              <Search className="h-4 w-4 shrink-0 text-[#6e7377]" />
-              <input
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="SEARCH POSTS"
-                aria-label="Search posts"
-                className={`${BODY_FONT} w-full bg-transparent pb-2 text-[13px] tracking-wide placeholder:text-[11px] placeholder:uppercase placeholder:tracking-[0.18em] placeholder:text-[#a7adb2] focus:outline-none`}
-              />
-            </div>
-            {tags.length > 0 && (
-              <div className="flex flex-wrap gap-5">
-                {["ALL", ...tags].map((t) => {
-                  const isActive =
-                    t === "ALL" ? activeTag === null : activeTag === t;
-                  return (
-                    <button
-                      key={t}
-                      onClick={() =>
-                        setActiveTag(
-                          t === "ALL" ? null : isActive ? null : t
-                        )
-                      }
-                      className={`${BODY_FONT} pb-1 text-[11px] font-semibold uppercase tracking-[0.14em] transition-colors ${
-                        isActive
-                          ? "border-b-2 border-[#e54d66] text-[#e54d66]"
-                          : "text-[#8a8f93] hover:text-[#14161a]"
-                      }`}
-                    >
-                      {t}
-                    </button>
-                  );
-                })}
+          <SectionHeader
+            index="01"
+            kicker="Browse and read the latest stuff"
+            title="Latest Stories"
+          />
+          <Reveal delay={0.1} className="md:pb-2">
+            <div className="flex flex-col gap-4 md:items-end">
+              <div className="flex items-center gap-2 border-b border-[#d8d2c4] focus-within:border-[#e54d66] transition-colors">
+                <Search className="h-4 w-4 shrink-0 text-[#6e7377]" />
+                <input
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  placeholder="SEARCH POSTS"
+                  aria-label="Search posts"
+                  className={`${BODY_FONT} w-full bg-transparent pb-2 text-[13px] tracking-wide placeholder:text-[11px] placeholder:uppercase placeholder:tracking-[0.18em] placeholder:text-[#a7adb2] focus:outline-none`}
+                />
               </div>
-            )}
-          </div>
+              {tags.length > 0 && (
+                <div className="flex flex-wrap gap-5">
+                  {["ALL", ...tags].map((t) => {
+                    const isActive =
+                      t === "ALL" ? activeTag === null : activeTag === t;
+                    return (
+                      <button
+                        key={t}
+                        onClick={() =>
+                          setActiveTag(
+                            t === "ALL" ? null : isActive ? null : t
+                          )
+                        }
+                        className={`${BODY_FONT} tag-pill pb-1 text-[11px] font-semibold uppercase tracking-[0.14em] ${
+                          isActive
+                            ? "border-b-2 border-[#e54d66] text-[#e54d66]"
+                            : "text-[#8a8f93] hover:text-[#14161a]"
+                        }`}
+                      >
+                        {t}
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          </Reveal>
         </div>
 
         {visible.length === 0 ? (
@@ -304,18 +365,20 @@ export default function BlogIndex() {
         ) : (
           <>
             <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-              {visible.map((post) => (
-                <StoryCard key={post.slug} post={post} />
+              {visible.map((post, i) => (
+                <StoryCard key={post.slug} post={post} index={i} />
               ))}
             </div>
             {rest.length > visibleCount && (
               <div className="mt-14 flex justify-center">
-                <button
+                <motion.button
+                  whileHover={{ y: -2 }}
+                  whileTap={{ scale: 0.97 }}
                   onClick={() => setVisibleCount(rest.length)}
-                  className={`${BODY_FONT} rounded-full bg-[#e54d66] px-9 py-3.5 text-[11px] font-bold uppercase tracking-[0.14em] text-white hover:bg-[#d13a52] transition-colors`}
+                  className={`${BODY_FONT} rounded-full bg-[#e54d66] px-9 py-3.5 text-[11px] font-bold uppercase tracking-[0.14em] text-white shadow-[0_10px_25px_rgba(229,77,102,0.35)] hover:bg-[#d13a52] transition-colors`}
                 >
                   More posts
-                </button>
+                </motion.button>
               </div>
             )}
           </>
@@ -324,21 +387,16 @@ export default function BlogIndex() {
 
       {/* Read These */}
       {picks.length > 0 && (
-        <section className="border-t border-[#eef0f2]">
+        <section className="border-t border-[#e7e2d8]">
           <div className="mx-auto max-w-[1140px] px-6 py-16">
-            <p
-              className={`${BODY_FONT} text-[11px] font-semibold uppercase tracking-[0.18em] text-[#6e7377]`}
-            >
-              You have to read this!
-            </p>
-            <h2
-              className={`${HEADING_FONT} mt-2.5 text-[30px] font-extrabold leading-none tracking-tight text-[#1c2333]`}
-            >
-              Read These
-            </h2>
+            <SectionHeader
+              index="02"
+              kicker="You have to read this!"
+              title="Read These"
+            />
             <div className="mt-10 space-y-10">
-              {picks.map((post) => (
-                <PickCard key={post.slug} post={post} />
+              {picks.map((post, i) => (
+                <PickCard key={post.slug} post={post} index={i} />
               ))}
             </div>
           </div>

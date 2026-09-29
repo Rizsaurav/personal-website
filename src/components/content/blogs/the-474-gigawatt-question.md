@@ -22,11 +22,19 @@ Four sub-questions drove the work. How fast did the queue grow, and is the growt
 
 Five verified queue snapshots trace the trajectory: 63 GW in December 2024, 137 GW on April 28, 2025, 226 GW on November 18, 2025, 410 GW on March 26, 2026, and about 474 GW on July 29, 2026. A log-linear fit gives a growth rate of 1.22 per year: doubling every 6.8 months, with R² = 0.97. The data-center share rose from 73% to about 90% over the same period, so the exponential trajectory is almost entirely an AI-infrastructure story. That part of the headline is true. The requests are real and they are compounding.
 
+```stat
+474 GW | large-load requests tracked by ERCOT, July 2026
+6.8 mo | queue doubling time (R² = 0.97)
+~90% | data-center share of the queue
+```
+
 ## The funnel: only 1.24% is energized
 
 Here is where the headline falls apart. Break the 474.7 GW June-2026 queue by study status and the dominant stage is "no studies submitted": 284.3 GW, or 59.9% of the queue. Only 5.9 GW, 1.24%, is observed energized. Approved-to-energize plus observed totals 1.92%. The Gini coefficient across stage megawatts is 0.639: extreme concentration in the unstudied tail.
 
 ERCOT's own utilization data corroborate the funnel. In the March 2026 status update, 9,042 MW was approved to energize while only 3,883 MW was observed at non-simultaneous peak (42.9%). Across the verified utilization rows, observed load at peak runs 43 to 54% of approved megawatts. There is a persistent double discount: approved is not built, and built is not coincident.
+
+> Approved is not built, and built is not coincident.
 
 ## Forecast whiplash: the models saw it too
 
@@ -37,6 +45,12 @@ I tested for a structural break with a Chow mean-shift test on the 2026-target f
 ## The Monte Carlo: how much load actually realizes?
 
 I ran 10,000 seeded Monte Carlo draws over the funnel, giving each stage a Beta-distributed conversion to realized load with documented assumed priors (for example, Beta(5,95) for "no studies submitted" and Beta(99,1) for "observed energized"). The result: realized load with mean 63.4 GW (sd 8.0), median 62.9 GW, and a 90% interval of 51.4 to 77.5 GW. I want to be explicit about what this is: a model output conditional on its assumed priors, not an ERCOT measurement. But its value is comparative. Even under generous priors for the advanced stages, realized load lands an order of magnitude below the headline queue, because 88% of requests sit in the two least-advanced stages.
+
+```stat
+63.4 GW | Monte Carlo mean for realized load
+1.24% | of the queue observed energized
+51–78 GW | 90% interval for realized load
+```
 
 ## What surprised me
 
