@@ -46,7 +46,8 @@ export const WritingIndex = () => {
   }, []);
 
   return (
-    <section id="writing" className="py-16 md:py-24">
+    <section id="writing" className="bg-surface-variant">
+      <div className="max-w-6xl mx-auto px-6 py-16 md:py-24">
       <div className="flex items-end justify-between mb-8 md:mb-12">
         <div>
           <p className="label-caps text-text-muted mb-3">02</p>
@@ -105,6 +106,7 @@ export const WritingIndex = () => {
             ))}
           </div>
         )}
+      </div>
       </div>
     </section>
   );

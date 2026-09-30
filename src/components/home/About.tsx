@@ -10,7 +10,8 @@ const facts = [
 export const About = () => {
   const reduce = useReducedMotion();
   return (
-    <section id="about" className="py-16 md:py-24">
+    <section id="about" className="bg-background">
+      <div className="max-w-6xl mx-auto px-6 py-16 md:py-24">
       <p className="label-caps text-text-muted mb-3">03</p>
       <h2 className="font-display text-4xl md:text-6xl text-text-primary mb-10 md:mb-14">
         About <span className="italic font-light">me</span>
@@ -47,6 +48,7 @@ export const About = () => {
             </motion.div>
           ))}
         </div>
+      </div>
       </div>
     </section>
   );
