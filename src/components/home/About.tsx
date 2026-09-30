@@ -10,45 +10,44 @@ const facts = [
 export const About = () => {
   const reduce = useReducedMotion();
   return (
-    <section id="about" className="bg-background">
-      <div className="max-w-6xl mx-auto px-6 py-16 md:py-24">
-      <p className="label-caps text-text-muted mb-3">03</p>
-      <h2 className="font-display text-4xl md:text-6xl text-text-primary mb-10 md:mb-14">
-        About <span className="italic font-light">me</span>
-      </h2>
+    <section id="about" className="max-w-6xl mx-auto px-4 md:px-6 py-6 scroll-mt-20">
+      <div className="px-2 mb-6">
+        <p className="label-caps text-text-muted mb-3">03 · About</p>
+        <h2 className="font-display text-3xl md:text-4xl text-text-primary">
+          A little more
+        </h2>
+      </div>
 
-      <div className="grid md:grid-cols-2 gap-10 md:gap-16">
+      <div className="rounded-[2rem] bg-surface-variant p-4 md:p-8">
         <motion.p
-          initial={reduce ? {} : { opacity: 0, y: 24 }}
+          initial={reduce ? {} : { opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-60px" }}
-          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-          className="text-lg md:text-xl text-text-secondary leading-relaxed"
+          viewport={{ once: true, margin: "-40px" }}
+          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+          className="text-text-secondary leading-relaxed max-w-2xl px-2 md:px-4 pt-2 md:pt-4"
         >
           I am a computer science senior drawn to{" "}
-          <span className="text-text-primary">systems that do real work</span>:
+          <span className="text-text-primary font-medium">systems that do real work</span>:
           pipelines that run themselves, models that answer to evidence, and
           infrastructure that holds up at scale. My projects tend to start from a
-          concrete annoyance and end as something other people can run. When I
-          am not building, I write up exactly how each one came together.
+          concrete annoyance and end as something other people can run.
         </motion.p>
 
-        <div>
+        <div className="grid sm:grid-cols-2 gap-4 mt-8">
           {facts.map((f, i) => (
             <motion.div
               key={f.k}
               initial={reduce ? {} : { opacity: 0, y: 16 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-60px" }}
-              transition={{ duration: 0.5, delay: i * 0.06, ease: [0.22, 1, 0.36, 1] }}
-              className="grid grid-cols-[7rem_1fr] gap-4 py-4 border-t hairline last:border-b"
+              viewport={{ once: true, margin: "-40px" }}
+              transition={{ duration: 0.5, delay: (i % 2) * 0.08, ease: [0.22, 1, 0.36, 1] }}
+              className="bg-surface rounded-2xl p-5 border hairline"
             >
-              <span className="label-caps text-text-muted pt-1">{f.k}</span>
-              <span className="text-text-primary leading-relaxed">{f.v}</span>
+              <p className="label-caps text-text-muted mb-2">{f.k}</p>
+              <p className="text-text-primary leading-relaxed text-[0.95rem]">{f.v}</p>
             </motion.div>
           ))}
         </div>
-      </div>
       </div>
     </section>
   );

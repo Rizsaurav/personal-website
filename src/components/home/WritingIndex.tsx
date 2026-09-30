@@ -47,11 +47,11 @@ export const WritingIndex = () => {
 
   return (
     <section id="writing" className="bg-surface-variant">
-      <div className="max-w-6xl mx-auto px-6 py-16 md:py-24">
+      <div className="max-w-6xl mx-auto px-6 py-14 md:py-20">
       <div className="flex items-end justify-between mb-8 md:mb-12">
         <div>
           <p className="label-caps text-text-muted mb-3">02</p>
-          <h2 className="font-display text-4xl md:text-6xl text-text-primary">
+          <h2 className="font-display text-3xl md:text-4xl text-text-primary">
             Build <span className="italic font-light">stories</span>
           </h2>
         </div>
