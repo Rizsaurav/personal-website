@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <rect width="1200" height="630" fill="#0E1526"/>
+  <g stroke="#FFFFFF" stroke-opacity="0.06" stroke-width="1">
+    <path d="M0 105 H1200 M0 210 H1200 M0 315 H1200 M0 420 H1200 M0 525 H1200"/>
+    <path d="M200 0 V630 M400 0 V630 M600 0 V630 M800 0 V630 M1000 0 V630"/>
+  </g>
+  <path d="M150 530 C 480 520 760 410 1050 80 L1050 80 L150 530 Z" fill="#FF6B4A" fill-opacity="0.12"/>
+  <line x1="150" y1="530" x2="1050" y2="80" stroke="#FFFFFF" stroke-opacity="0.35" stroke-width="2" stroke-dasharray="10 8"/>
+  <path d="M150 530 C 480 520 760 410 1050 80" fill="none" stroke="#FF6B4A" stroke-width="7" stroke-linecap="round"/>
+  <circle cx="1050" cy="80" r="10" fill="#FF6B4A"/>
+  <circle cx="150" cy="530" r="10" fill="#FFFFFF" fill-opacity="0.85"/>
+  <text x="150" y="120" font-family="Georgia, 'Times New Roman', serif" font-size="64" fill="#FFFFFF" letter-spacing="2">The Open-Weight</text>
+  <text x="150" y="196" font-family="Georgia, 'Times New Roman', serif" font-size="64" fill="#FFFFFF" letter-spacing="2">Oligopoly</text>
+  <text x="152" y="248" font-family="Verdana, system-ui, sans-serif" font-size="22" fill="#FF6B4A" letter-spacing="6">20,000 MODELS &#183; GINI 0.918 &#183; 2.84B DOWNLOADS</text>
+  <text x="150" y="580" font-family="Verdana, system-ui, sans-serif" font-size="18" fill="#FFFFFF" fill-opacity="0.45" letter-spacing="3">WHO ACTUALLY OWNS THE DOWNLOADS</text>
+</svg>

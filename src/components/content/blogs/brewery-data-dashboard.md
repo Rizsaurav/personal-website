@@ -1,8 +1,8 @@
 ---
-title: "A Brewery Dashboard That Actually Tells Stories With Data"
+title: "A Brewery Explorer That Feels Instant"
 date: 2025-04-20
 author: Saurav Rijal
-summary: "A responsive React dashboard over the Open Brewery DB API: live search, filters, charts with a point of view, and deep-linked detail pages."
+summary: "A responsive React app over the Open Brewery DB API: live search, filters, interactive charts, and deep-linked detail pages."
 tags:
   - web-dev
   - react

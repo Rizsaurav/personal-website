@@ -1,8 +1,8 @@
 const items = [
   "Agentic pipelines",
-  "Geospatial ML",
+  "LLM evaluation",
   "Edge AI",
-  "Data visualization",
+  "Full-stack engineering",
   "NLP",
   "Real-time systems",
 ];

@@ -25,22 +25,23 @@ export const Hero = () => {
           <div>
             <span className="inline-flex items-center gap-2 rounded-full bg-surface px-4 py-1.5 text-xs font-medium text-text-secondary shadow-sm">
               <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
-              Open to full-time opportunities
+              Open to forward-deployed AI roles
             </span>
 
             <h1 className="font-display text-4xl md:text-6xl text-text-primary mt-5 leading-[1.05]">
               Saurav Rijal
             </h1>
             <p className="label-caps text-text-muted mt-3">
-              Data-intensive systems · Agentic AI
+              AI systems · ML infrastructure
             </p>
 
             <p className="text-text-secondary leading-relaxed mt-5 max-w-xl">
-              Computer science senior at Texas State and SWE intern at LaunchBox.
-              I build pipelines that run themselves, models that answer to
-              evidence, and infrastructure that holds up at scale. Each project
-              below ships with a build story explaining exactly how it came
-              together.
+              Computer science senior at Texas State and SWE intern at LaunchBox,
+              where I build agentic internal tools with client engineering teams.
+              I work on AI systems end to end: pipelines that run themselves,
+              models measured against evidence, and infrastructure that holds up
+              at scale. Each project below ships with a build story explaining
+              exactly how it came together.
             </p>
 
             <div className="flex flex-wrap gap-3 mt-7">
