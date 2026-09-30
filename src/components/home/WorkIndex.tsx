@@ -20,8 +20,15 @@ const ProjectCard = ({
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-40px" }}
       transition={{ duration: 0.5, delay: (index % 2) * 0.08, ease: [0.22, 1, 0.36, 1] }}
-      className="group bg-surface rounded-3xl overflow-hidden hover-lift border hairline"
+      className="group relative bg-surface rounded-3xl overflow-hidden hover-lift border hairline cursor-pointer"
     >
+      <a
+        href={project.demoUrl ?? project.codeUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label={`${project.title} — open ${project.demoUrl ? "live demo" : "source code"}`}
+        className="absolute inset-0 z-0"
+      />
       {cover && (
         <div className="relative overflow-hidden aspect-[16/9] bg-neutral-950">
           <img
@@ -56,7 +63,7 @@ const ProjectCard = ({
             </span>
           ))}
         </div>
-        <div className="flex flex-wrap gap-x-5 gap-y-2 mt-5 pt-5 border-t hairline">
+        <div className="relative z-10 flex flex-wrap gap-x-5 gap-y-2 mt-5 pt-5 border-t hairline">
           {project.demoUrl && (
             <a
               href={project.demoUrl}
