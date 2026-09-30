@@ -8,22 +8,33 @@ import { loadCoverMap } from "@/data/covers";
 import { loadPost, type PostMeta } from "@/pages/blogs/posts";
 
 /* ------------------------------------------------------------------ */
-/* Accordion row: expands a quiet preview on hover (fine pointers),    */
-/* tap / click anywhere opens the full dossier modal.                 */
+/* Accordion row: hover (or keyboard focus) expands a quiet preview.   */
+/* The preview stays expanded until the user taps/clicks elsewhere,   */
+/* a different row is hovered, or the dossier modal opens. Tap / click */
+/* anywhere on the row opens the full dossier modal.                  */
 /* ------------------------------------------------------------------ */
 const ProjectRow = ({
   project,
   index,
+  expanded,
+  onHover,
   onOpen,
 }: {
   project: Project;
   index: number;
+  expanded: boolean;
+  onHover: () => void;
   onOpen: (p: Project) => void;
 }) => {
   return (
     <button
       onClick={() => onOpen(project)}
-      className="project-row group w-full text-left border-t hairline last:border-b px-2 md:px-4 cursor-pointer"
+      onMouseEnter={onHover}
+      onFocus={onHover}
+      aria-expanded={expanded}
+      className={`project-row group w-full text-left border-t hairline last:border-b px-2 md:px-4 cursor-pointer${
+        expanded ? " is-expanded" : ""
+      }`}
     >
       <div className="flex items-center gap-4 py-5">
         <span className="label-caps text-text-muted w-8 shrink-0">
@@ -43,7 +54,7 @@ const ProjectRow = ({
             {project.tech.slice(0, 6).join("  ·  ")}
           </p>
           <p className="text-xs font-medium text-text-primary mt-3 pb-6">
-            Open dossier <ArrowUpRight className="w-3.5 h-3.5 inline -mt-0.5" />
+            Click for more info <ArrowUpRight className="w-3.5 h-3.5 inline -mt-0.5" />
           </p>
         </div>
       </div>
@@ -337,11 +348,29 @@ export const WorkIndex = () => {
   const [showAll, setShowAll] = useState(false);
   const [active, setActive] = useState<Project | null>(null);
   const [covers, setCovers] = useState<Record<string, string>>({});
+  const [expandedId, setExpandedId] = useState<string | null>(null);
   const featured = projects.filter((p) => p.featured);
 
   useEffect(() => {
     loadCoverMap().then(setCovers);
   }, []);
+
+  /* An expanded preview persists until the user taps/clicks elsewhere. */
+  useEffect(() => {
+    if (!expandedId) return;
+    const onPointerDown = (e: PointerEvent) => {
+      if (!(e.target as HTMLElement).closest(".project-row")) {
+        setExpandedId(null);
+      }
+    };
+    document.addEventListener("pointerdown", onPointerDown);
+    return () => document.removeEventListener("pointerdown", onPointerDown);
+  }, [expandedId]);
+
+  const openProject = (p: Project) => {
+    setExpandedId(null);
+    setActive(p);
+  };
 
   const activeCover = active?.blogSlug ? covers[active.blogSlug] : undefined;
 
@@ -364,7 +393,14 @@ export const WorkIndex = () => {
 
       <div className="rounded-[2rem] bg-surface-variant px-4 md:px-8 py-2">
         {featured.map((p, i) => (
-          <ProjectRow key={p.id} project={p} index={i} onOpen={setActive} />
+          <ProjectRow
+            key={p.id}
+            project={p}
+            index={i}
+            expanded={expandedId === p.id}
+            onHover={() => setExpandedId(p.id)}
+            onOpen={openProject}
+          />
         ))}
       </div>
 
@@ -373,7 +409,7 @@ export const WorkIndex = () => {
           <AllProjectsOverlay
             onClose={() => setShowAll(false)}
             covers={covers}
-            onOpen={setActive}
+            onOpen={openProject}
           />
         )}
       </AnimatePresence>
