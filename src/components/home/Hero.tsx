@@ -1,5 +1,5 @@
-import { useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
+import heroPhoto from "@/assets/h.jpg";
 import { ArrowDown } from "lucide-react";
 
 const stats = [
@@ -10,7 +10,6 @@ const stats = [
 
 export const Hero = () => {
   const reduce = useReducedMotion();
-  const [imgOk, setImgOk] = useState(true);
   return (
     <section className="max-w-6xl mx-auto px-4 md:px-6 pt-24 md:pt-28 pb-4">
       <motion.div
@@ -20,24 +19,14 @@ export const Hero = () => {
         className="rounded-[2rem] bg-surface-variant px-6 py-10 md:p-14"
       >
         <div className="grid md:grid-cols-[auto_1fr] gap-8 md:gap-12 items-center">
-          {imgOk ? (
-            <motion.img
-              src="/profile.jpg"
-              alt="Saurav Rijal"
-              onError={() => setImgOk(false)}
-              initial={reduce ? {} : { opacity: 0, scale: 0.94 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.7, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
-              className="w-36 h-36 md:w-52 md:h-52 rounded-full object-cover grayscale ring-4 ring-surface mx-auto md:mx-0"
-            />
-          ) : (
-            <div
-              aria-label="Saurav Rijal"
-              className="w-36 h-36 md:w-52 md:h-52 rounded-full bg-text-primary text-background ring-4 ring-surface mx-auto md:mx-0 flex items-center justify-center font-display text-5xl md:text-7xl"
-            >
-              SR
-            </div>
-          )}
+          <motion.img
+            src={heroPhoto}
+            alt="Saurav Rijal"
+            initial={reduce ? {} : { opacity: 0, scale: 0.94 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.7, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
+            className="w-36 h-36 md:w-52 md:h-52 rounded-full object-cover grayscale ring-4 ring-surface mx-auto md:mx-0"
+          />
 
           <div>
             <span className="inline-flex items-center gap-2 rounded-full bg-surface px-4 py-1.5 text-xs font-medium text-text-secondary shadow-sm">
