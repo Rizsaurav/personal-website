@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,300;1,9..144,400;1,9..144,500&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -170,5 +171,50 @@
     animation: slideUp 0.8s var(--ease-out-smooth) forwards;
     transform: translateY(100%);
   }
-  
+
+  /* ---- Editorial homepage system ---- */
+  .font-display {
+    font-family: 'Fraunces', Georgia, 'Times New Roman', serif;
+    font-optical-sizing: auto;
+  }
+
+  .label-caps {
+    font-size: 0.72rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+
+  .hairline {
+    border-color: hsl(var(--text-primary) / 0.14);
+  }
+
+  .index-row {
+    transition: background-color 0.25s var(--ease-out-smooth);
+  }
+
+  .index-row:hover {
+    background-color: hsl(var(--text-primary) / 0.035);
+  }
+
+  .index-row .row-arrow {
+    transition: transform 0.25s var(--ease-out-smooth), opacity 0.25s var(--ease-out-smooth);
+    opacity: 0.3;
+  }
+
+  .index-row:hover .row-arrow {
+    transform: translate(4px, -4px);
+    opacity: 1;
+  }
+
+  ::selection {
+    background: hsl(var(--accent-primary) / 0.4);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .text-reveal span {
+    animation: none;
+    transform: none;
+  }
 }
