@@ -248,3 +248,92 @@
     animation: none;
   }
 }
+/* Accordion dossier rows: preview expands on hover (fine pointers only) */
+.acc-preview {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.acc-preview-inner {
+  overflow: hidden;
+}
+.row-plus {
+  transition: transform 0.3s ease;
+}
+@media (hover: hover) {
+  .project-row:hover .acc-preview {
+    grid-template-rows: 1fr;
+  }
+  .project-row:hover .row-plus {
+    transform: rotate(45deg);
+  }
+}
+
+/* Dossier modal build-story typography */
+.modal-prose {
+  font-size: 0.95rem;
+  line-height: 1.75;
+  color: hsl(var(--text-secondary));
+}
+.modal-prose > *:first-child {
+  margin-top: 0;
+}
+.modal-prose p,
+.modal-prose ul,
+.modal-prose ol {
+  margin: 1em 0;
+}
+.modal-prose h1,
+.modal-prose h2,
+.modal-prose h3 {
+  font-family: 'Fraunces', Georgia, 'Times New Roman', serif;
+  color: hsl(var(--text-primary));
+  line-height: 1.25;
+  margin: 1.6em 0 0.6em;
+  letter-spacing: -0.01em;
+}
+.modal-prose h1 { font-size: 1.5rem; }
+.modal-prose h2 { font-size: 1.3rem; }
+.modal-prose h3 { font-size: 1.1rem; }
+.modal-prose a {
+  color: hsl(var(--text-primary));
+  font-weight: 500;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.modal-prose img {
+  border-radius: 12px;
+  max-width: 100%;
+  margin: 1.5em auto;
+  display: block;
+}
+.modal-prose pre {
+  background: hsl(var(--surface-variant));
+  border-radius: 12px;
+  padding: 1em 1.2em;
+  overflow-x: auto;
+  font-size: 0.85rem;
+  margin: 1.2em 0;
+}
+.modal-prose code {
+  font-family: ui-monospace, SFMono-Regular, monospace;
+}
+.modal-prose :not(pre) > code {
+  background: hsl(var(--surface-variant));
+  border-radius: 6px;
+  padding: 0.15em 0.4em;
+  font-size: 0.85em;
+}
+.modal-prose blockquote {
+  border-left: 3px solid hsl(var(--text-primary));
+  padding-left: 1em;
+  margin: 1.2em 0;
+  color: hsl(var(--text-muted));
+}
+.modal-prose ul,
+.modal-prose ol {
+  padding-left: 1.4em;
+}
+.modal-prose li {
+  margin: 0.4em 0;
+}
