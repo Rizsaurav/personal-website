@@ -1,58 +1,55 @@
 import { motion, useReducedMotion } from "framer-motion";
-import { ArrowUpRight, Github, Linkedin, Mail } from "lucide-react";
+import { ArrowUpRight, Github, Linkedin } from "lucide-react";
 
 export const Footer = () => {
   const reduce = useReducedMotion();
   return (
-    <footer id="contact" className="bg-text-primary text-background">
-      <div className="max-w-6xl mx-auto px-6 pt-16 md:pt-24 pb-10">
-        <p className="label-caps opacity-50 mb-3">04</p>
-        <motion.h2
-          initial={reduce ? {} : { opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-60px" }}
-          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-          className="font-display text-4xl md:text-6xl mb-10"
-        >
-          Say <span className="italic font-light">hello</span>
-        </motion.h2>
+    <footer id="contact" className="max-w-6xl mx-auto px-4 md:px-6 pt-6 pb-8 scroll-mt-20">
+      <motion.div
+        initial={reduce ? {} : { opacity: 0, y: 28 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-60px" }}
+        transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+        className="rounded-[2rem] bg-[#101013] text-white px-6 py-14 md:p-20 text-center ring-1 ring-white/10"
+      >
+        <p className="label-caps text-white/50 mb-4">04 · Contact</p>
+        <h2 className="font-display text-3xl md:text-5xl leading-tight">
+          Tell me about your<br className="hidden md:block" /> next project
+        </h2>
+        <p className="text-white/60 mt-5 max-w-md mx-auto leading-relaxed">
+          Research collaborations, internships, or just a good systems
+          conversation. My inbox is open.
+        </p>
 
-        <motion.a
-          href="mailto:rizsaurav@gmail.com"
-          initial={reduce ? {} : { opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-60px" }}
-          transition={{ duration: 0.6, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
-          className="group inline-flex items-baseline gap-3 font-display text-[clamp(1.8rem,6vw,4.5rem)] leading-none"
-        >
-          <span className="underline underline-offset-8 decoration-background/25 group-hover:decoration-background transition-all">
-            rizsaurav@gmail.com
-          </span>
-          <ArrowUpRight className="w-8 h-8 md:w-12 md:h-12 shrink-0 transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" />
-        </motion.a>
-
-        <div className="flex flex-wrap items-center gap-x-8 gap-y-3 mt-12">
-          {[
-            { icon: Github, label: "GitHub", href: "https://github.com/Rizsaurav" },
-            { icon: Linkedin, label: "LinkedIn", href: "https://www.linkedin.com/in/saurav-rijal-08082a261/" },
-            { icon: Mail, label: "Email", href: "mailto:rizsaurav@gmail.com" },
-          ].map((s) => (
-            <a
-              key={s.label}
-              href={s.href}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="label-caps opacity-60 hover:opacity-100 transition-opacity inline-flex items-center gap-2"
-            >
-              <s.icon className="w-4 h-4" /> {s.label}
-            </a>
-          ))}
+        <div className="flex flex-wrap justify-center gap-3 mt-9">
+          <a
+            href="mailto:rizsaurav@gmail.com"
+            className="inline-flex items-center gap-2 text-sm font-medium bg-white text-black rounded-full px-7 py-3 hover:opacity-85 transition-opacity"
+          >
+            rizsaurav@gmail.com <ArrowUpRight className="w-4 h-4" />
+          </a>
+          <a
+            href="https://github.com/Rizsaurav"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 text-sm font-medium rounded-full px-6 py-3 border border-white/25 text-white hover:bg-white hover:text-black transition-colors"
+          >
+            <Github className="w-4 h-4" /> GitHub
+          </a>
+          <a
+            href="https://www.linkedin.com/in/saurav-rijal-08082a261/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 text-sm font-medium rounded-full px-6 py-3 border border-white/25 text-white hover:bg-white hover:text-black transition-colors"
+          >
+            <Linkedin className="w-4 h-4" /> LinkedIn
+          </a>
         </div>
+      </motion.div>
 
-        <div className="border-t border-background/20 mt-12 pt-6 flex flex-wrap justify-between gap-2">
-          <span className="label-caps opacity-50">Saurav Rijal</span>
-          <span className="label-caps opacity-50">San Marcos, Texas · 2026</span>
-        </div>
+      <div className="flex flex-wrap justify-between gap-2 px-2 pt-6">
+        <span className="text-xs text-text-muted">© 2026 Saurav Rijal</span>
+        <span className="text-xs text-text-muted">San Marcos, Texas</span>
       </div>
     </footer>
   );
