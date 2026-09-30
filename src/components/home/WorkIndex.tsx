@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { ArrowUpRight, Github, X, BookOpen } from "lucide-react";
 import { projects, type Project } from "@/data/projects";
@@ -110,12 +110,6 @@ const AllProjectsOverlay = ({
   covers: Record<string, string>;
 }) => {
   const reduce = useReducedMotion();
-  const [filter, setFilter] = useState<string | null>(null);
-  const allTech = useMemo(
-    () => Array.from(new Set(projects.flatMap((p) => p.tech))).sort(),
-    []
-  );
-  const visible = filter ? projects.filter((p) => p.tech.includes(filter)) : projects;
 
   useEffect(() => {
     document.body.style.overflow = "hidden";
@@ -152,34 +146,8 @@ const AllProjectsOverlay = ({
           </button>
         </div>
 
-        <div className="flex flex-wrap gap-2 mb-6">
-          <button
-            onClick={() => setFilter(null)}
-            className={`px-3.5 py-1.5 rounded-full text-xs font-medium transition-colors ${
-              filter === null
-                ? "bg-text-primary text-background"
-                : "bg-surface border hairline text-text-secondary hover:text-text-primary"
-            }`}
-          >
-            All
-          </button>
-          {allTech.map((t) => (
-            <button
-              key={t}
-              onClick={() => setFilter(filter === t ? null : t)}
-              className={`px-3.5 py-1.5 rounded-full text-xs font-medium transition-colors ${
-                filter === t
-                  ? "bg-text-primary text-background"
-                  : "bg-surface border hairline text-text-secondary hover:text-text-primary"
-              }`}
-            >
-              {t}
-            </button>
-          ))}
-        </div>
-
         <div className="rounded-3xl bg-surface-variant p-3 md:p-4 space-y-2">
-          {visible.map((p) => {
+          {projects.map((p) => {
             const cover = p.blogSlug ? covers[p.blogSlug] : undefined;
             return (
               <div
@@ -255,11 +223,6 @@ const AllProjectsOverlay = ({
               </div>
             );
           })}
-          {visible.length === 0 && (
-            <p className="text-sm text-text-muted text-center py-8">
-              No projects use {filter} yet.
-            </p>
-          )}
         </div>
       </div>
     </motion.div>
