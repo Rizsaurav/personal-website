@@ -15,7 +15,7 @@
     
     /* Surface Colors */
     --surface: 0 0% 100%;
-    --surface-variant: 210 15% 97%;
+    --surface-variant: 220 18% 94%;
     --surface-soft: 0 0% 96%;
     
     /* Text Colors */
@@ -70,7 +70,7 @@
     --foreground: 0 0% 95%;
 
     --surface: 222 14% 9%;
-    --surface-variant: 222 12% 12%;
+    --surface-variant: 222 16% 11%;
     --surface-soft: 222 12% 16%;
 
     --text-primary: 0 0% 95%;

@@ -23,7 +23,7 @@ const ProjectCard = ({
       className="group bg-surface rounded-3xl overflow-hidden hover-lift border hairline"
     >
       {cover && (
-        <div className="overflow-hidden aspect-[16/9]">
+        <div className="relative overflow-hidden aspect-[16/9] bg-neutral-950">
           <img
             src={cover}
             alt=""
@@ -31,6 +31,14 @@ const ProjectCard = ({
             loading="lazy"
             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
           />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/45 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-5">
+            <p className="text-white/95 text-sm leading-relaxed">
+              {project.description}
+            </p>
+          </div>
+          <span className="absolute top-4 right-4 w-10 h-10 rounded-full bg-black/70 backdrop-blur text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-1 group-hover:translate-y-0">
+            <ArrowUpRight className="w-5 h-5" />
+          </span>
         </div>
       )}
       <div className="p-6">
@@ -42,7 +50,7 @@ const ProjectCard = ({
           {project.tech.slice(0, 4).map((t) => (
             <span
               key={t}
-              className="px-3 py-1 rounded-full bg-surface-variant text-xs text-text-secondary"
+              className="px-3 py-1 rounded-full bg-text-primary text-background text-xs font-medium"
             >
               {t}
             </span>
@@ -81,7 +89,13 @@ const ProjectCard = ({
   );
 };
 
-const AllProjectsOverlay = ({ onClose }: { onClose: () => void }) => {
+const AllProjectsOverlay = ({
+  onClose,
+  covers,
+}: {
+  onClose: () => void;
+  covers: Record<string, string>;
+}) => {
   const reduce = useReducedMotion();
 
   useEffect(() => {
@@ -119,24 +133,83 @@ const AllProjectsOverlay = ({ onClose }: { onClose: () => void }) => {
           </button>
         </div>
 
-        <div className="rounded-3xl bg-surface-variant p-3 md:p-4">
-          {projects.map((p) => (
-            <a
-              key={p.id}
-              href={p.demoUrl ?? p.codeUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="index-row flex items-center justify-between gap-4 px-4 py-4 rounded-2xl"
-            >
-              <span>
-                <span className="font-medium text-text-primary block">{p.title}</span>
-                <span className="text-xs text-text-muted mt-0.5 block">
-                  {p.tech.slice(0, 4).join(" · ")}
-                </span>
-              </span>
-              <ArrowUpRight className="row-arrow w-5 h-5 text-text-primary shrink-0" />
-            </a>
-          ))}
+        <div className="rounded-3xl bg-surface-variant p-3 md:p-4 space-y-2">
+          {projects.map((p) => {
+            const cover = p.blogSlug ? covers[p.blogSlug] : undefined;
+            return (
+              <div
+                key={p.id}
+                className="bg-surface rounded-2xl p-4 md:p-5 flex gap-4 md:gap-5 border hairline"
+              >
+                {cover && (
+                  <img
+                    src={cover}
+                    alt=""
+                    aria-hidden
+                    loading="lazy"
+                    className="w-20 h-20 md:w-28 md:h-28 rounded-xl object-cover shrink-0"
+                  />
+                )}
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-start justify-between gap-3">
+                    <h3 className="font-display text-lg md:text-xl text-text-primary leading-snug">
+                      {p.title}
+                    </h3>
+                    <a
+                      href={p.demoUrl ?? p.codeUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={`Open ${p.title}`}
+                      className="w-9 h-9 rounded-full bg-text-primary text-background flex items-center justify-center shrink-0 hover:opacity-80 transition-opacity"
+                    >
+                      <ArrowUpRight className="w-4 h-4" />
+                    </a>
+                  </div>
+                  <p className="text-sm text-text-secondary leading-relaxed mt-1.5 line-clamp-2">
+                    {p.description}
+                  </p>
+                  <div className="flex flex-wrap gap-1.5 mt-3">
+                    {p.tech.slice(0, 5).map((t) => (
+                      <span
+                        key={t}
+                        className="px-2.5 py-0.5 rounded-full bg-text-primary text-background text-[11px] font-medium"
+                      >
+                        {t}
+                      </span>
+                    ))}
+                  </div>
+                  <div className="flex flex-wrap gap-x-4 gap-y-1 mt-3">
+                    {p.demoUrl && (
+                      <a
+                        href={p.demoUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-xs font-medium text-text-primary inline-flex items-center gap-1 hover:opacity-60 transition-opacity"
+                      >
+                        Live demo <ArrowUpRight className="w-3.5 h-3.5" />
+                      </a>
+                    )}
+                    <a
+                      href={p.codeUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-xs font-medium text-text-primary inline-flex items-center gap-1 hover:opacity-60 transition-opacity"
+                    >
+                      <Github className="w-3.5 h-3.5" /> Code
+                    </a>
+                    {p.blogSlug && (
+                      <a
+                        href={`/blogs/${p.blogSlug}`}
+                        className="text-xs font-medium text-text-primary inline-flex items-center gap-1 hover:opacity-60 transition-opacity"
+                      >
+                        <BookOpen className="w-3.5 h-3.5" /> Build story
+                      </a>
+                    )}
+                  </div>
+                </div>
+              </div>
+            );
+          })}
         </div>
       </div>
     </motion.div>
@@ -181,7 +254,7 @@ export const WorkIndex = () => {
       </div>
 
       <AnimatePresence>
-        {showAll && <AllProjectsOverlay onClose={() => setShowAll(false)} />}
+        {showAll && <AllProjectsOverlay onClose={() => setShowAll(false)} covers={covers} />}
       </AnimatePresence>
     </section>
   );
