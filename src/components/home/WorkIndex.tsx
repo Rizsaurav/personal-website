@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { ArrowUpRight, Github, X, BookOpen } from "lucide-react";
 import { projects, type Project } from "@/data/projects";
@@ -20,8 +20,15 @@ const ProjectCard = ({
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-40px" }}
       transition={{ duration: 0.5, delay: (index % 2) * 0.08, ease: [0.22, 1, 0.36, 1] }}
-      className="group bg-surface rounded-3xl overflow-hidden hover-lift border hairline"
+      className="group relative bg-surface rounded-3xl overflow-hidden hover-lift border hairline cursor-pointer"
     >
+      <a
+        href={project.demoUrl ?? project.codeUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label={`${project.title} — open ${project.demoUrl ? "live demo" : "source code"}`}
+        className="absolute inset-0 z-0"
+      />
       {cover && (
         <div className="relative overflow-hidden aspect-[16/9] bg-neutral-950">
           <img
@@ -42,6 +49,12 @@ const ProjectCard = ({
         </div>
       )}
       <div className="p-6">
+        <div className="flex items-center justify-between mb-3">
+          <span className="label-caps text-text-muted">0{index + 1}</span>
+          <span className="text-[11px] font-medium px-2.5 py-1 rounded-full border hairline text-text-secondary">
+            Featured
+          </span>
+        </div>
         <h3 className="font-display text-2xl text-text-primary">{project.title}</h3>
         <p className="text-sm text-text-secondary leading-relaxed mt-2">
           {project.description}
@@ -56,7 +69,7 @@ const ProjectCard = ({
             </span>
           ))}
         </div>
-        <div className="flex flex-wrap gap-x-5 gap-y-2 mt-5 pt-5 border-t hairline">
+        <div className="relative z-10 flex flex-wrap gap-x-5 gap-y-2 mt-5 pt-5 border-t hairline">
           {project.demoUrl && (
             <a
               href={project.demoUrl}
@@ -97,6 +110,12 @@ const AllProjectsOverlay = ({
   covers: Record<string, string>;
 }) => {
   const reduce = useReducedMotion();
+  const [filter, setFilter] = useState<string | null>(null);
+  const allTech = useMemo(
+    () => Array.from(new Set(projects.flatMap((p) => p.tech))).sort(),
+    []
+  );
+  const visible = filter ? projects.filter((p) => p.tech.includes(filter)) : projects;
 
   useEffect(() => {
     document.body.style.overflow = "hidden";
@@ -133,8 +152,34 @@ const AllProjectsOverlay = ({
           </button>
         </div>
 
+        <div className="flex flex-wrap gap-2 mb-6">
+          <button
+            onClick={() => setFilter(null)}
+            className={`px-3.5 py-1.5 rounded-full text-xs font-medium transition-colors ${
+              filter === null
+                ? "bg-text-primary text-background"
+                : "bg-surface border hairline text-text-secondary hover:text-text-primary"
+            }`}
+          >
+            All
+          </button>
+          {allTech.map((t) => (
+            <button
+              key={t}
+              onClick={() => setFilter(filter === t ? null : t)}
+              className={`px-3.5 py-1.5 rounded-full text-xs font-medium transition-colors ${
+                filter === t
+                  ? "bg-text-primary text-background"
+                  : "bg-surface border hairline text-text-secondary hover:text-text-primary"
+              }`}
+            >
+              {t}
+            </button>
+          ))}
+        </div>
+
         <div className="rounded-3xl bg-surface-variant p-3 md:p-4 space-y-2">
-          {projects.map((p) => {
+          {visible.map((p) => {
             const cover = p.blogSlug ? covers[p.blogSlug] : undefined;
             return (
               <div
@@ -210,6 +255,11 @@ const AllProjectsOverlay = ({
               </div>
             );
           })}
+          {visible.length === 0 && (
+            <p className="text-sm text-text-muted text-center py-8">
+              No projects use {filter} yet.
+            </p>
+          )}
         </div>
       </div>
     </motion.div>
