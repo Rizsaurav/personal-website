@@ -249,23 +249,47 @@
   }
 }
 /* Accordion dossier rows: preview expands on hover (fine pointers only) */
+/* Accordion preview: slow, soft expansion with a staggered content settle.
+   Driven by .is-expanded (not :hover), so the preview stays open until the
+   user taps/clicks elsewhere. */
 .acc-preview {
   display: grid;
   grid-template-rows: 0fr;
-  transition: grid-template-rows 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+  transition: grid-template-rows 0.9s cubic-bezier(0.32, 0.72, 0, 1);
 }
 .acc-preview-inner {
   overflow: hidden;
+  opacity: 0;
+  transform: translateY(12px);
+  transition:
+    opacity 0.5s ease,
+    transform 0.9s cubic-bezier(0.32, 0.72, 0, 1);
+}
+.project-row.is-expanded .acc-preview {
+  grid-template-rows: 1fr;
+}
+.project-row.is-expanded .acc-preview-inner {
+  opacity: 1;
+  transform: translateY(0);
+  transition:
+    opacity 0.65s ease 0.2s,
+    transform 0.9s cubic-bezier(0.32, 0.72, 0, 1) 0.12s;
 }
 .row-plus {
-  transition: transform 0.3s ease;
+  transition: transform 0.8s cubic-bezier(0.32, 0.72, 0, 1);
 }
-@media (hover: hover) {
-  .project-row:hover .acc-preview {
-    grid-template-rows: 1fr;
+.project-row.is-expanded .row-plus {
+  transform: rotate(45deg);
+}
+@media (prefers-reduced-motion: reduce) {
+  .acc-preview,
+  .acc-preview-inner,
+  .row-plus {
+    transition: none;
   }
-  .project-row:hover .row-plus {
-    transform: rotate(45deg);
+  .acc-preview-inner {
+    opacity: 1;
+    transform: none;
   }
 }
 
