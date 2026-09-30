@@ -62,4 +62,4 @@ A few things I won't oversell. The Monte Carlo output depends on assumed stage-c
 
 ## Where this lives
 
-I wrote the full audit up as an IEEE-format paper with a fully reproducible, assertion-gated pipeline, and made a conference poster for it (embedded above). It's independent research, not published or peer-reviewed anywhere. The takeaway I'd put in front of any grid planner: the queue is a request inventory, not a load commitment. Treating it as demand overstates the load by roughly an order of magnitude. Plan accordingly.
+I wrote the full audit up as a research paper with a fully reproducible, assertion-gated pipeline, and made a conference poster for it (embedded above). It's independent research, not published or peer-reviewed anywhere. The takeaway I'd put in front of any grid planner: the queue is a request inventory, not a load commitment. Treating it as demand overstates the load by roughly an order of magnitude. Plan accordingly.

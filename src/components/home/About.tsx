@@ -3,7 +3,7 @@ import { motion, useReducedMotion } from "framer-motion";
 const facts = [
   { k: "Education", v: "B.S. Computer Science, Texas State University. Applied Math minor." },
   { k: "Currently", v: "SWE intern at LaunchBox, building agentic internal tools." },
-  { k: "Research", v: "Undergraduate researcher, energy systems and survey data. Two IEEE-format papers." },
+  { k: "Research", v: "Undergraduate researcher, energy systems and survey data. Two research papers." },
   { k: "Next", v: "Applying to CS graduate programs for Fall 2027." },
 ];
 

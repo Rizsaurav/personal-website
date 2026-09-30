@@ -67,4 +67,4 @@ I want to be straight about what this analysis can and can't say. Nearly 70% of 
 
 ## Where this lives
 
-I wrote the full analysis up as an IEEE-format paper with a reproducible pipeline, and made a conference poster for it (embedded above). It's independent research, not published or peer-reviewed anywhere. The headline finding still holds: the chargers are coming, and whether they become inflexible load or flexible grid assets is the open question for the energy transition.
+I wrote the full analysis up as a research paper with a reproducible pipeline, and made a conference poster for it (embedded above). It's independent research, not published or peer-reviewed anywhere. The headline finding still holds: the chargers are coming, and whether they become inflexible load or flexible grid assets is the open question for the energy transition.
