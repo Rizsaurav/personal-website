@@ -1,7 +1,14 @@
 import { useEffect, useState } from "react";
-import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
+import {
+  motion,
+  AnimatePresence,
+  useReducedMotion,
+  useMotionValue,
+  useSpring,
+} from "framer-motion";
 import { ArrowUpRight, Github, X, BookOpen } from "lucide-react";
 import { projects, type Project } from "@/data/projects";
+import { loadCoverMap } from "@/data/covers";
 
 const pad = (n: number) => String(n).padStart(2, "0");
 
@@ -41,13 +48,19 @@ const FeaturedRow = ({
   index,
   open,
   onToggle,
+  onHoverCover,
 }: {
   project: Project;
   index: number;
   open: boolean;
   onToggle: () => void;
+  onHoverCover: (slug: string | null) => void;
 }) => (
-  <div className="border-t hairline last:border-b">
+  <div
+    className="border-t hairline last:border-b"
+    onMouseEnter={() => onHoverCover(project.blogSlug ?? null)}
+    onMouseLeave={() => onHoverCover(null)}
+  >
     <button
       onClick={onToggle}
       aria-expanded={open}
@@ -167,36 +180,85 @@ const AllProjectsOverlay = ({ onClose }: { onClose: () => void }) => {
 export const WorkIndex = () => {
   const [openId, setOpenId] = useState<number | null>(null);
   const [showAll, setShowAll] = useState(false);
+  const [covers, setCovers] = useState<Record<string, string>>({});
+  const [activeCover, setActiveCover] = useState<string | null>(null);
+  const [finePointer, setFinePointer] = useState(false);
+  const reduce = useReducedMotion();
   const featured = projects.filter((p) => p.featured);
 
+  const mx = useMotionValue(0);
+  const my = useMotionValue(0);
+  const sx = useSpring(mx, { stiffness: 260, damping: 28 });
+  const sy = useSpring(my, { stiffness: 260, damping: 28 });
+
+  useEffect(() => {
+    loadCoverMap().then(setCovers);
+    setFinePointer(window.matchMedia("(pointer: fine)").matches);
+  }, []);
+
+  const showPreview = finePointer && !reduce && activeCover && covers[activeCover];
+
   return (
-    <section id="work" className="py-16 md:py-24">
-      <div className="flex items-end justify-between mb-8 md:mb-12">
-        <div>
-          <p className="label-caps text-text-muted mb-3">01</p>
-          <h2 className="font-display text-4xl md:text-6xl text-text-primary">
-            Selected <span className="italic font-light">work</span>
-          </h2>
+    <section id="work" className="bg-background">
+      <div className="max-w-6xl mx-auto px-6 py-16 md:py-24">
+        <div className="flex items-end justify-between mb-8 md:mb-12">
+          <div>
+            <p className="label-caps text-text-muted mb-3">01</p>
+            <h2 className="font-display text-4xl md:text-6xl text-text-primary">
+              Selected <span className="italic font-light">work</span>
+            </h2>
+          </div>
+          <button
+            onClick={() => setShowAll(true)}
+            className="label-caps text-text-primary border-b hairline pb-1 hover:opacity-60 transition-opacity inline-flex items-center gap-1 shrink-0"
+          >
+            View all ({projects.length}) <ArrowUpRight className="w-4 h-4" />
+          </button>
         </div>
-        <button
-          onClick={() => setShowAll(true)}
-          className="label-caps text-text-primary border-b hairline pb-1 hover:opacity-60 transition-opacity inline-flex items-center gap-1 shrink-0"
+
+        <div
+          onMouseMove={(e) => {
+            mx.set(e.clientX);
+            my.set(e.clientY);
+          }}
         >
-          View all ({projects.length}) <ArrowUpRight className="w-4 h-4" />
-        </button>
+          {featured.map((p, i) => (
+            <FeaturedRow
+              key={p.id}
+              project={p}
+              index={i}
+              open={openId === p.id}
+              onToggle={() => setOpenId(openId === p.id ? null : p.id)}
+              onHoverCover={setActiveCover}
+            />
+          ))}
+        </div>
+
+        <p className="label-caps text-text-muted mt-6 hidden md:block">
+          Hover a project to preview it
+        </p>
       </div>
 
-      <div>
-        {featured.map((p, i) => (
-          <FeaturedRow
-            key={p.id}
-            project={p}
-            index={i}
-            open={openId === p.id}
-            onToggle={() => setOpenId(openId === p.id ? null : p.id)}
-          />
-        ))}
-      </div>
+      {/* Floating cover preview that follows the cursor */}
+      <AnimatePresence>
+        {showPreview && (
+          <motion.div
+            className="fixed top-0 left-0 z-40 pointer-events-none hidden md:block"
+            style={{ x: sx, y: sy }}
+            initial={{ opacity: 0, scale: 0.85, rotate: -4 }}
+            animate={{ opacity: 1, scale: 1, rotate: 3 }}
+            exit={{ opacity: 0, scale: 0.85 }}
+            transition={{ duration: 0.25 }}
+          >
+            <img
+              src={covers[activeCover!]}
+              alt=""
+              aria-hidden
+              className="w-[22rem] h-[14rem] object-cover rounded-lg shadow-2xl -translate-x-1/2 -translate-y-[110%] border hairline"
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <AnimatePresence>
         {showAll && <AllProjectsOverlay onClose={() => setShowAll(false)} />}
