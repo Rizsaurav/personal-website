@@ -2,12 +2,6 @@ import { motion, useReducedMotion } from "framer-motion";
 import heroPhoto from "@/assets/h.jpg";
 import { ArrowDown } from "lucide-react";
 
-const stats = [
-  { n: "10", label: "Projects shipped" },
-  { n: "13", label: "Build stories" },
-  { n: "2027", label: "B.S. Computer Science" },
-];
-
 export const Hero = () => {
   const reduce = useReducedMotion();
   return (
@@ -31,7 +25,7 @@ export const Hero = () => {
           <div>
             <span className="inline-flex items-center gap-2 rounded-full bg-surface px-4 py-1.5 text-xs font-medium text-text-secondary shadow-sm">
               <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
-              Available for research collaborations
+              Open to full-time opportunities
             </span>
 
             <h1 className="font-display text-4xl md:text-6xl text-text-primary mt-5 leading-[1.05]">
@@ -64,20 +58,6 @@ export const Hero = () => {
               </a>
             </div>
           </div>
-        </div>
-
-        <div className="grid grid-cols-3 gap-4 mt-10 md:mt-12 pt-8 border-t hairline">
-          {stats.map((s, i) => (
-            <motion.div
-              key={s.label}
-              initial={reduce ? {} : { opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.35 + i * 0.08 }}
-            >
-              <p className="font-display text-3xl md:text-4xl text-text-primary">{s.n}</p>
-              <p className="text-xs md:text-sm text-text-secondary mt-1">{s.label}</p>
-            </motion.div>
-          ))}
         </div>
       </motion.div>
     </section>
