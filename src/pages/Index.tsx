@@ -1,113 +1,61 @@
-import { motion } from "framer-motion";
-import { ProfileSection } from "@/components/sections/ProfileSection";
-import { WorkSection } from "@/components/sections/WorkSection";
-import { BlogSection } from "@/components/sections/BlogSection";
-import { ContactSection } from "@/components/sections/ContactSection";
-import DarkModeToggle from "@/components/ui/DarkModeToggle"; 
+import { motion, MotionConfig } from "framer-motion";
+import { Hero } from "@/components/home/Hero";
+import { WorkIndex } from "@/components/home/WorkIndex";
+import { WritingIndex } from "@/components/home/WritingIndex";
+import { About } from "@/components/home/About";
+import { Footer } from "@/components/home/Footer";
+import DarkModeToggle from "@/components/ui/DarkModeToggle";
+
+const links = [
+  { label: "Work", href: "#work" },
+  { label: "Writing", href: "#writing" },
+  { label: "About", href: "#about" },
+  { label: "Contact", href: "#contact" },
+];
 
 const Index = () => {
   return (
-    <div className="min-h-screen bg-background">
-      {/* Navigation Header */}
-      <motion.header
-        className="fixed top-0 left-0 right-0 z-50 glass-card"
-        initial={{ y: -100, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
-      >
-        <div className="container mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <div className="w-2 h-2 bg-accent-custom-primary rounded-full"></div>
-              <span className="font-medium text-text-primary">Saurav Rijal</span>
-            </div>
-
-            <nav className="flex items-center space-x-6 md:space-x-8">
-              <a
-                href="#profile"
-                className="text-text-secondary hover:text-accent-custom-primary transition-colors"
-              >
-                About
-              </a>
-              <button
-                onClick={() => {
-                  window.dispatchEvent(new CustomEvent("openWorkModal"));
-                }}
-                className="text-text-secondary hover:text-accent-custom-primary transition-colors"
-              >
-                Work
-              </button>
-              <a
-                href="/blogs"
-                className="text-text-secondary hover:text-accent-custom-primary transition-colors"
-              >
-                Blog
-              </a>
-              <a
-                href="#contact"
-                className="text-text-secondary hover:text-accent-custom-primary transition-colors"
-              >
-                Contact
-              </a>
-
-              {/* Dark Mode Toggle as nav item */}
-              <div className="flex items-center">
-                <DarkModeToggle />
-              </div>
+    <MotionConfig reducedMotion="user">
+      <div className="min-h-screen bg-background text-foreground">
+        {/* Slim nav */}
+        <motion.header
+          className="fixed top-0 left-0 right-0 z-50 bg-background/85 backdrop-blur-md border-b hairline"
+          initial={{ y: -64, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+        >
+          <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+            <a href="#top" className="font-display text-xl text-text-primary">
+              Saurav <span className="italic font-light">Rijal</span>
+            </a>
+            <nav className="flex items-center gap-5 md:gap-8">
+              {links.map((l) => (
+                <a
+                  key={l.label}
+                  href={l.href}
+                  className="label-caps text-text-secondary hover:text-text-primary transition-colors hidden sm:inline"
+                >
+                  {l.label}
+                </a>
+              ))}
+              <DarkModeToggle />
             </nav>
           </div>
-        </div>
-      </motion.header>
+        </motion.header>
 
-      {/* Main Content */}
-      <main className="pt-20">
-        <div className="container mx-auto px-6 py-12">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-            {/* Left Column */}
-            <div className="space-y-12">
-              <motion.div
-                id="profile"
-                initial={{ opacity: 0, y: 50 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.2 }}
-              >
-                <ProfileSection />
-              </motion.div>
-
-              <motion.div
-                id="contact"
-                initial={{ opacity: 0, y: 50 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.6 }}
-              >
-                <ContactSection />
-              </motion.div>
-            </div>
-
-            {/* Right Column */}
-            <div className="space-y-12">
-              <motion.div
-                id="work"
-                initial={{ opacity: 0, y: 50 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.4 }}
-              >
-                <WorkSection />
-              </motion.div>
-
-              <motion.div
-                id="blog"
-                initial={{ opacity: 0, y: 50 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.8 }}
-              >
-                <BlogSection />
-              </motion.div>
-            </div>
-          </div>
-        </div>
-      </main>
-    </div>
+        <main id="top" className="max-w-6xl mx-auto px-6">
+          <Hero />
+          <div className="border-t hairline" />
+          <WorkIndex />
+          <div className="border-t hairline" />
+          <WritingIndex />
+          <div className="border-t hairline" />
+          <About />
+          <div className="border-t hairline" />
+          <Footer />
+        </main>
+      </div>
+    </MotionConfig>
   );
 };
 
