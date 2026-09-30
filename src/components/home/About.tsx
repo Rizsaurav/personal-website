@@ -2,9 +2,9 @@ import { motion, useReducedMotion } from "framer-motion";
 
 const facts = [
   { k: "Education", v: "B.S. Computer Science, Texas State University. Applied Math minor." },
-  { k: "Currently", v: "SWE intern at LaunchBox, building agentic internal tools." },
-  { k: "Research", v: "Undergraduate researcher, energy systems and survey data. Two research papers." },
-  { k: "Next", v: "Applying to CS graduate programs for Fall 2027." },
+  { k: "Currently", v: "SWE intern at LaunchBox, shipping agentic internal tools with client teams." },
+  { k: "Research", v: "Undergraduate researcher in empirical ML and energy systems. Three papers, all reproducible from public repos." },
+  { k: "Next", v: "Seeking forward-deployed AI roles; applying to CS graduate programs for Fall 2027." },
 ];
 
 export const About = () => {

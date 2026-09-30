@@ -1,5 +1,5 @@
 import { motion, useReducedMotion } from "framer-motion";
-import { Bot, Map, Cpu, BarChart3 } from "lucide-react";
+import { Bot, Gauge, Cpu, Layers } from "lucide-react";
 
 const areas = [
   {
@@ -8,19 +8,19 @@ const areas = [
     desc: "Multi-agent video and document workflows that plan, call tools, and recover from failures on their own.",
   },
   {
-    icon: Map,
-    title: "Geospatial ML",
-    desc: "Risk models on real city data, from cycling safety maps to infrastructure siting analysis.",
+    icon: Gauge,
+    title: "LLM measurement",
+    desc: "Large-scale audits of the open-weight ecosystem: concentration, licensing, and what actually predicts downloads.",
   },
   {
     icon: Cpu,
     title: "Edge AI",
-    desc: "Small models running on-device: chess coaching and vision apps tuned for phones, not data centers.",
+    desc: "Models running where the user is: chess coaching and vision apps tuned for phones, not data centers.",
   },
   {
-    icon: BarChart3,
-    title: "Data visualization",
-    desc: "Dashboards and analyses that turn messy survey, traffic, and energy data into decisions.",
+    icon: Layers,
+    title: "Full-stack engineering",
+    desc: "Shipped web apps and internal tools: React frontends, Postgres backends, agentic workflows in production.",
   },
 ];
 
