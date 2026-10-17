@@ -14,6 +14,7 @@ import {
   startSmoothScroll,
   gate,
 } from "@/lib/motion";
+import chipPhoto from "@/assets/h.jpg";
 import { Output } from "./rack-outputs";
 import { Chars } from "./reveal";
 import { DotField } from "./DotField";
@@ -1062,12 +1063,8 @@ export function ComputeJourney() {
               <i className="mf-pins mf-pins-x" />
               <i className="mf-pins mf-pins-y" />
               <div className="mf-package">
-                <div className="mf-floor">
-                  {[0, 1, 2, 3, 4, 5].map((n) => (
-                    <i key={n} />
-                  ))}
-                  <b>SR</b>
-                </div>
+                {/* swap src/assets/chip.jpg in later for a different photo here */}
+                <img src={chipPhoto} alt="" />
                 <span className="mf-marking">SR—01 / SAURAV RIJAL</span>
                 <b className="mf-notch" />
               </div>
