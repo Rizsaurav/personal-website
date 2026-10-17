@@ -39,7 +39,7 @@ function BioTwinShots() {
         width={s.w}
         height={s.h}
         alt={s.cap}
-        loading="lazy"
+       
         decoding="async"
         className="shot-main"
       />
@@ -98,7 +98,7 @@ function PlayScriptPhones() {
             width={p.w}
             height={p.h}
             alt={p.alt}
-            loading="lazy"
+           
             decoding="async"
           />
         ))}
