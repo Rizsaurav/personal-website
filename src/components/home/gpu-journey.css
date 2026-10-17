@@ -1227,3 +1227,104 @@ html.lite .boot-die i {
 .is-immersive .rig-track {
   will-change: transform;
 }
+
+/* ---------------------------- die interaction ---------------------------- */
+.boot-die-wrap {
+  transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+  touch-action: pan-y;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.boot-die.is-rip i {
+  animation: die-rip 0.95s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  animation-delay: calc(
+    sqrt(pow(var(--c) - var(--cx, 0), 2) + pow(var(--r) - var(--cy, 0), 2)) * 55ms
+  );
+}
+@keyframes die-rip {
+  0% {
+    scale: 1;
+    box-shadow: 0 0 0 0 transparent;
+  }
+  28% {
+    scale: 2;
+    box-shadow: 0 0 14px 2px color-mix(in srgb, currentColor 70%, transparent);
+  }
+  100% {
+    scale: 1;
+    box-shadow: 0 0 0 0 transparent;
+  }
+}
+
+/* chip face: an etched monogram over a floorplan, so the portrait is not repeated from the hero */
+.mf-floor {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template: repeat(6, 1fr) / repeat(6, 1fr);
+  gap: 4%;
+  padding: 11% 11% 21%;
+}
+.mf-floor i {
+  border: 1px solid color-mix(in srgb, var(--paper) 32%, transparent);
+  background: color-mix(in srgb, var(--paper) 5%, transparent);
+  border-radius: 2px;
+}
+.mf-floor i:nth-child(1) {
+  grid-area: 1 / 1 / 3 / 4;
+}
+.mf-floor i:nth-child(2) {
+  grid-area: 1 / 4 / 2 / 7;
+}
+.mf-floor i:nth-child(3) {
+  grid-area: 2 / 4 / 4 / 7;
+  background: repeating-linear-gradient(45deg, color-mix(in srgb, var(--paper) 14%, transparent) 0 2px, transparent 2px 7px);
+}
+.mf-floor i:nth-child(4) {
+  grid-area: 3 / 1 / 5 / 3;
+}
+.mf-floor i:nth-child(5) {
+  grid-area: 4 / 3 / 7 / 5;
+}
+.mf-floor i:nth-child(6) {
+  grid-area: 4 / 5 / 7 / 7;
+}
+.mf-floor b {
+  position: absolute;
+  inset: 0 0 8%;
+  display: grid;
+  place-items: center;
+  font-family: "Fraunces", Georgia, serif;
+  font-weight: 300;
+  font-size: clamp(54px, 15vh, 150px);
+  letter-spacing: -0.06em;
+  color: var(--paper);
+  text-shadow: 0 0 22px rgb(0 0 0 / 0.7);
+}
+
+/* phones: the die section is a tall runway holding a sticky stage (lighter than a pin spacer) */
+.journey.is-dive .boot {
+  height: 330svh;
+}
+.journey.is-dive .boot-stage {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  padding: 84px 20px 28px;
+  align-content: center;
+  gap: 22px;
+}
+.journey.is-dive .boot-die {
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+.journey.is-dive .boot-die-wrap {
+  width: min(66vw, 300px);
+}
+.journey.is-dive .boot-title {
+  font-size: clamp(38px, 11vw, 60px);
+}
+.journey.is-dive .boot-story {
+  font-size: clamp(17px, 4.6vw, 22px);
+  gap: 10px;
+}

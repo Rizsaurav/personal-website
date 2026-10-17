@@ -14,7 +14,6 @@ import {
   startSmoothScroll,
   gate,
 } from "@/lib/motion";
-import heroPhoto from "@/assets/h.jpg";
 import { Output } from "./rack-outputs";
 import { Chars } from "./reveal";
 import { DotField } from "./DotField";
@@ -873,38 +872,57 @@ export function ComputeJourney() {
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
     mm.add(COMPACT_MOTION_QUERY, () => {
       if (reduced.matches) return;
-      // phones: same story, scrubbed instead of pinned
-      gsap.fromTo(
-        one(".boot-die"),
-        { rotateX: 62, rotateZ: -18, scale: 0.78 },
-        {
-          rotateX: 0,
-          rotateZ: 0,
-          scale: 1,
-          ease: "none",
-          scrollTrigger: {
-            trigger: one(".boot-die"),
-            start: "top 92%",
-            end: "center 55%",
-            scrub: true,
-          },
+      // phones: the dive is real too. A tall section holds a sticky stage (no pin spacer); the die lights
+      // up, tells its story, then the camera pushes through it.
+      el.classList.add("is-dive");
+      const dive = gsap.timeline({
+        defaults: { ease: "none" },
+        scrollTrigger: {
+          trigger: one(".boot"),
+          start: "top top",
+          end: "bottom bottom",
+          scrub: true,
+          invalidateOnRefresh: true,
         },
-      );
-      gsap.fromTo(
-        one(".boot-die"),
-        { "--w": 0 },
-        {
-          "--w": 1,
-          ease: "none",
-          scrollTrigger: {
-            trigger: one(".boot-die"),
-            start: "top 80%",
-            end: "bottom 60%",
-            scrub: true,
-          },
-        },
-      );
-      q(".boot-story li, .mf-entry, .mf-callout").forEach((li) => {
+      });
+      gsap.set(q(".boot-story li"), { opacity: 0, x: -20 });
+      dive
+        .fromTo(
+          one(".boot-die"),
+          { rotateX: 64, rotateZ: -18, scale: 0.8, "--w": 0 },
+          { rotateX: 14, rotateZ: 0, scale: 1, "--w": 1, duration: 1 },
+          0,
+        )
+        .to(
+          q(".boot-story li"),
+          { opacity: 1, x: 0, stagger: 0.28, duration: 0.3 },
+          0.6,
+        )
+        .fromTo(one(".boot-die"), { "--k": 0 }, { "--k": 3, duration: 1 }, 0.6)
+        .to(one(".boot-die"), { rotateX: 0, duration: 0.8 }, 1.6)
+        .to(
+          [
+            q(".boot-story"),
+            one(".boot-line-a"),
+            one(".boot-line-b"),
+            q(".boot-hint"),
+          ],
+          { opacity: 0, duration: 0.5 },
+          2.6,
+        )
+        .fromTo(
+          one(".boot-die"),
+          { "--out": 0 },
+          { "--out": 1, duration: 0.7 },
+          2.6,
+        )
+        .to(
+          one(".boot-die"),
+          { scale: 16, duration: 1.1, ease: "power3.in" },
+          2.9,
+        )
+        .to(one(".boot-die"), { opacity: 0, duration: 0.3 }, 3.7);
+      q(".mf-entry, .mf-callout").forEach((li) => {
         gsap.fromTo(
           li,
           { opacity: 0, x: -20 },
@@ -955,30 +973,57 @@ export function ComputeJourney() {
           },
         );
       });
+      return () => el.classList.remove("is-dive");
     });
 
     return () => mm.revert();
   }, []);
 
-  /** The die answers touch: hovered cells and their neighbours heat up, then cool. */
-  const heat = (e: React.PointerEvent<HTMLDivElement>) => {
-    const t = e.target as HTMLElement;
-    if (t.tagName !== "I") return;
-    const cells = Array.from(e.currentTarget.children).filter(
-      (c) => c.tagName === "I",
-    ) as HTMLElement[];
-    const idx = cells.indexOf(t);
+  /**
+   * The die answers touch and pointer. Hovering tilts it toward the cursor and leaves a short heat
+   * trail; a tap or click sends a ripple outward from the exact cell (with a small haptic on phones)
+   * and presses the die toward the finger, then it springs back.
+   */
+  const dieAt = (e: React.PointerEvent<HTMLDivElement>) => {
+    const wrap = e.currentTarget;
+    const die = wrap.firstElementChild as HTMLElement;
+    const r = wrap.getBoundingClientRect();
+    const nx = (e.clientX - r.left) / r.width - 0.5;
+    const ny = (e.clientY - r.top) / r.height - 0.5;
+    return {
+      wrap,
+      die,
+      nx,
+      ny,
+      col: Math.min(11, Math.max(0, Math.floor((nx + 0.5) * 12))),
+      row: Math.min(11, Math.max(0, Math.floor((ny + 0.5) * 12))),
+    };
+  };
+  const dieMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (e.pointerType === "touch") return;
+    const { wrap, die, nx, ny, col, row } = dieAt(e);
+    wrap.style.transform = `perspective(900px) rotateX(${(-ny * 16).toFixed(1)}deg) rotateY(${(nx * 16).toFixed(1)}deg)`;
+    const cells = die.children;
     [0, -1, 1, -12, 12].forEach((d, k) => {
-      const c = cells[idx + d];
-      if (
-        !c ||
-        (Math.abs(d) === 1 &&
-          Math.floor((idx + d) / 12) !== Math.floor(idx / 12))
-      )
-        return;
+      const i = row * 12 + col + d;
+      const c = cells[i] as HTMLElement | undefined;
+      if (!c || (Math.abs(d) === 1 && Math.floor(i / 12) !== row)) return;
       c.style.setProperty("--h", k === 0 ? "1" : "0.55");
       window.setTimeout(() => c.style.setProperty("--h", "0"), 320);
     });
+  };
+  const dieDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    const { wrap, die, nx, ny, col, row } = dieAt(e);
+    die.style.setProperty("--cx", String(col));
+    die.style.setProperty("--cy", String(row));
+    die.classList.remove("is-rip");
+    void die.offsetWidth; // restart the CSS animation from the new origin
+    die.classList.add("is-rip");
+    wrap.style.transform = `perspective(900px) rotateX(${(-ny * 22).toFixed(1)}deg) rotateY(${(nx * 22).toFixed(1)}deg) scale(0.97)`;
+    navigator.vibrate?.(8);
+  };
+  const dieRest = (e: React.PointerEvent<HTMLDivElement>) => {
+    e.currentTarget.style.transform = "";
   };
 
   /** Keyboard focus on an off-screen bay scrolls the playhead to it. */
@@ -1025,8 +1070,19 @@ export function ComputeJourney() {
               </em>
             </span>
           </h2>
-          <div className="boot-die-wrap" aria-hidden="true">
-            <div className="boot-die" onPointerMove={heat} onPointerDown={heat}>
+          <div
+            className="boot-die-wrap"
+            aria-hidden="true"
+            onPointerMove={dieMove}
+            onPointerDown={dieDown}
+            onPointerUp={dieRest}
+            onPointerLeave={dieRest}
+            onPointerCancel={dieRest}
+          >
+            <div
+              className="boot-die"
+              onAnimationEnd={(e) => e.currentTarget.classList.remove("is-rip")}
+            >
               <u className="boot-scan" />
               {Array.from({ length: CELLS }, (_, i) => {
                 const r = Math.floor(i / 12),
@@ -1037,6 +1093,8 @@ export function ComputeJourney() {
                     style={
                       {
                         "--d": (Math.hypot(c - 5.5, r - 5.5) / 7.78).toFixed(3),
+                        "--r": r,
+                        "--c": c,
                         "--t1": r < 6 && c < 6 ? 1 : 0.2,
                         "--t2": r % 2 === 0 ? 1 : 0.2,
                       } as React.CSSProperties
@@ -1137,7 +1195,12 @@ export function ComputeJourney() {
               <i className="mf-pins mf-pins-x" />
               <i className="mf-pins mf-pins-y" />
               <div className="mf-package">
-                <img src={heroPhoto} alt="" />
+                <div className="mf-floor">
+                  {[0, 1, 2, 3, 4, 5].map((n) => (
+                    <i key={n} />
+                  ))}
+                  <b>SR</b>
+                </div>
                 <span className="mf-marking">SR—01 / SAURAV RIJAL</span>
                 <b className="mf-notch" />
               </div>
