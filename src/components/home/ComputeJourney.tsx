@@ -140,6 +140,15 @@ const nearBoard = routes(31, 8);
 export function ComputeJourney() {
   const root = useRef<HTMLElement>(null);
   const rigST = useRef<ScrollTrigger | null>(null);
+  const heatTimers = useRef(new Map<HTMLElement, number>());
+  const lastHeatCell = useRef(-1);
+  useEffect(() => {
+    const timers = heatTimers.current;
+    return () => {
+      timers.forEach((id) => window.clearTimeout(id));
+      timers.clear();
+    };
+  }, []);
   useEffect(() => startSmoothScroll(), []);
 
   useLayoutEffect(() => {
@@ -443,6 +452,11 @@ export function ComputeJourney() {
 
       // HUD shows only real state: scroll position, active bay, its stack
       let lastBay = -1;
+      let lastPercent = -1;
+      const hudUnits = q(".hud-unit");
+      const settleLean = gsap
+        .delayedCall(0.12, () => skewers.forEach((sk) => sk(0)))
+        .pause();
       function onRigUpdate(self: ScrollTrigger) {
         const t = self.progress * (self.animation?.duration() ?? total);
         const idx = Math.max(
@@ -452,9 +466,7 @@ export function ComputeJourney() {
         if (idx !== lastBay) {
           lastBay = idx;
           panels.forEach((p, j) => p.classList.toggle("is-active", j === idx));
-          q(".hud-unit").forEach((u, j) =>
-            u.classList.toggle("is-on", j === idx),
-          );
+          hudUnits.forEach((u, j) => u.classList.toggle("is-on", j === idx));
           meters.bayLabel.textContent = bays[idx].name;
           meters.bay.textContent = `0${idx + 1} / 0${bays.length}`;
           meters.stack.textContent = projects
@@ -462,10 +474,15 @@ export function ComputeJourney() {
             .tech.slice(0, 3)
             .join(" · ");
         }
-        meters.pos.textContent = `${Math.round(self.progress * 100)}%`;
+        const percent = Math.round(self.progress * 100);
+        if (percent !== lastPercent) {
+          meters.pos.textContent = `${percent}%`;
+          lastPercent = percent;
+        }
         // layers lean into the motion: velocity becomes skew
         const lean = gsap.utils.clamp(-9, 9, self.getVelocity() / -260);
         skewers.forEach((sk) => sk(lean));
+        settleLean.restart(true);
       }
 
       const rig = gsap.timeline({
@@ -893,19 +910,34 @@ export function ComputeJourney() {
     };
   };
   const dieMove = (e: React.PointerEvent<HTMLDivElement>) => {
-    if (e.pointerType === "touch") return;
+    if (
+      e.pointerType === "touch" ||
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    )
+      return;
     const { wrap, die, nx, ny, col, row } = dieAt(e);
     wrap.style.transform = `perspective(900px) rotateX(${(-ny * 16).toFixed(1)}deg) rotateY(${(nx * 16).toFixed(1)}deg)`;
+    const cell = row * 12 + col;
+    if (lastHeatCell.current === cell) return;
+    lastHeatCell.current = cell;
     const cells = die.children;
     [0, -1, 1, -12, 12].forEach((d, k) => {
       const i = row * 12 + col + d;
       const c = cells[i] as HTMLElement | undefined;
       if (!c || (Math.abs(d) === 1 && Math.floor(i / 12) !== row)) return;
       c.style.setProperty("--h", k === 0 ? "1" : "0.55");
-      window.setTimeout(() => c.style.setProperty("--h", "0"), 320);
+      window.clearTimeout(heatTimers.current.get(c));
+      heatTimers.current.set(
+        c,
+        window.setTimeout(() => {
+          c.style.setProperty("--h", "0");
+          heatTimers.current.delete(c);
+        }, 320),
+      );
     });
   };
   const dieDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const { wrap, die, nx, ny, col, row } = dieAt(e);
     die.style.setProperty("--cx", String(col));
     die.style.setProperty("--cy", String(row));
@@ -916,6 +948,7 @@ export function ComputeJourney() {
     navigator.vibrate?.(8);
   };
   const dieRest = (e: React.PointerEvent<HTMLDivElement>) => {
+    lastHeatCell.current = -1;
     e.currentTarget.style.transform = "";
   };
 

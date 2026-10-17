@@ -24,16 +24,9 @@ try {
 } catch {
   /* storage blocked: fall back to detection */
 }
-export const LITE =
-  stored === "1" ||
-  (stored !== "0" &&
-    !!nav &&
-    ((nav.deviceMemory ?? 8) <= 4 ||
-      (nav.hardwareConcurrency ?? 8) <= 4 ||
-      !!nav.connection?.saveData ||
-      ["slow-2g", "2g", "3g"].includes(nav.connection?.effectiveType ?? "") ||
-      (typeof matchMedia !== "undefined" &&
-        matchMedia("(prefers-reduced-data: reduce)").matches)));
+// Full motion for everyone by default. Lite is only what the visitor picks with the header switch.
+export const LITE = stored === "1";
+void nav;
 if (LITE && typeof document !== "undefined")
   document.documentElement.classList.add("lite");
 /** Scrub lag is a luxury: lite devices follow the scrollbar directly. */
@@ -42,66 +35,79 @@ export const SCRUB: number | true = true;
 /** Pinned, scrubbed scenes only run on roomy screens that allow motion. */
 export const IMMERSIVE_QUERY =
   "(min-width: 1024px) and (min-height: 620px) and (prefers-reduced-motion: no-preference)";
-export const COMPACT_MOTION_QUERY = "(max-width: 1023px), (max-height: 619px)";
+export const COMPACT_MOTION_QUERY =
+  "(max-width: 1023px) and (prefers-reduced-motion: no-preference), (max-height: 619px) and (prefers-reduced-motion: no-preference)";
 
 let lenis: Lenis | null = null;
-let wakeLenis: () => void = () => {};
-
-/** If the device can't hold ~30fps while scrolling, drop to lite effects on the fly. */
-function watchFrameRate() {
-  if (
-    typeof document === "undefined" ||
-    document.documentElement.classList.contains("lite")
-  )
-    return;
-  let sampling = false;
+/** Sample only visible, actively scrolling frames; always cancel on route teardown. */
+function watchFrameRate(onSlow: () => void) {
+  let frame = 0;
+  let last = 0;
+  let lastScroll = 0;
+  let done = false;
   const deltas: number[] = [];
-  const start = () => {
-    if (sampling) return;
-    sampling = true;
-    window.removeEventListener("scroll", start);
-    let last = performance.now();
-    const frame = (t: number) => {
-      deltas.push(t - last);
-      last = t;
-      if (deltas.length < 120) return requestAnimationFrame(frame);
+  const sample = (now: number) => {
+    frame = 0;
+    if (document.hidden || now - lastScroll > 180) {
+      last = 0;
+      return;
+    }
+    if (last) deltas.push(now - last);
+    last = now;
+    if (deltas.length >= 120) {
+      done = true;
       const sorted = deltas.slice(10).sort((a, b) => a - b);
-      if (sorted[Math.floor(sorted.length / 2)] > 30) {
-        document.documentElement.classList.add("lite");
-        lenis?.destroy();
-        lenis = null;
-      }
-    };
-    requestAnimationFrame(frame);
+      if (sorted[Math.floor(sorted.length / 2)] > 30) onSlow();
+      return;
+    }
+    frame = requestAnimationFrame(sample);
   };
-  window.addEventListener("scroll", start, { passive: true });
+  const scroll = () => {
+    lastScroll = performance.now();
+    if (!done && !frame) frame = requestAnimationFrame(sample);
+  };
+  window.addEventListener("scroll", scroll, { passive: true });
+  return () => {
+    cancelAnimationFrame(frame);
+    window.removeEventListener("scroll", scroll);
+  };
 }
 
-/**
- * One shared playhead: Lenis smooths the wheel, GSAP's ticker drives Lenis, and every
- * ScrollTrigger reads the smoothed position. The ticker only runs while scrolling
- * so an idle tab costs nothing.
- */
+/** Keep one shared Lenis/GSAP clock; release it on route changes or reduced motion. */
 export function startSmoothScroll() {
-  watchFrameRate();
-  if (LITE || window.matchMedia("(prefers-reduced-motion: reduce)").matches)
-    return;
-  // The standard integration: GSAP's ticker drives Lenis every frame. Starting and stopping the
-  // ticker around scrolls caused a hitch on the first frame of each scroll, so it stays on.
-  lenis = new Lenis({
-    lerp: 0.12,
-    wheelMultiplier: 1,
-    anchors: { offset: -64 },
-  });
-  const tick = (t: number) => lenis?.raf(t * 1000);
-  lenis.on("scroll", ScrollTrigger.update);
-  gsap.ticker.add(tick);
-  gsap.ticker.lagSmoothing(0);
-  wakeLenis = () => {};
-  return () => {
+  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
+  let instance: Lenis | null = null;
+  let stopWatching = () => {};
+  const tick = (t: number) => instance?.raf(t * 1000);
+  const stop = () => {
+    stopWatching();
+    stopWatching = () => {};
     gsap.ticker.remove(tick);
-    lenis?.destroy();
-    lenis = null;
+    if (lenis === instance) lenis = null;
+    instance?.destroy();
+    instance = null;
+  };
+  const configure = () => {
+    stop();
+    if (reduced.matches || document.documentElement.classList.contains("lite"))
+      return;
+    instance = new Lenis({
+      lerp: 0.12,
+      wheelMultiplier: 1,
+      anchors: { offset: -64 },
+    });
+    lenis = instance;
+    instance.on("scroll", ScrollTrigger.update);
+    gsap.ticker.add(tick);
+    gsap.ticker.lagSmoothing(0);
+    // no automatic downgrade: a slow frame never takes motion away
+    stopWatching = () => {};
+  };
+  configure();
+  reduced.addEventListener("change", configure);
+  return () => {
+    reduced.removeEventListener("change", configure);
+    stop();
   };
 }
 
@@ -121,7 +127,6 @@ export function gate(el: Element) {
 
 export function scrollToY(y: number) {
   if (lenis) {
-    wakeLenis();
     lenis.scrollTo(y, { duration: 1.1 });
   } else window.scrollTo({ top: y });
 }
@@ -140,7 +145,12 @@ export function setDarkStage(key: string, on: boolean) {
 export function trackDirection() {
   let last = window.scrollY;
   let raf = 0;
+  let rest = 0;
   const on = () => {
+    window.clearTimeout(rest);
+    rest = window.setTimeout(() => {
+      delete document.documentElement.dataset.dir;
+    }, 220);
     if (raf) return;
     raf = requestAnimationFrame(() => {
       raf = 0;
@@ -155,5 +165,7 @@ export function trackDirection() {
   return () => {
     window.removeEventListener("scroll", on);
     cancelAnimationFrame(raf);
+    window.clearTimeout(rest);
+    delete document.documentElement.dataset.dir;
   };
 }

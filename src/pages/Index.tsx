@@ -1,3 +1,4 @@
+import { onIdle } from "@/lib/idle";
 import { lazy, Suspense, useEffect, useState } from "react";
 import { Menu, X } from "lucide-react";
 import { Hero } from "@/components/home/Hero";
@@ -17,19 +18,10 @@ const Index = () => {
   const [open, setOpen] = useState(false);
   const [ready, setReady] = useState(false);
   useEffect(() => {
-    // start downloading the scenes immediately; they mount on idle once the hero has painted
-    loadScenes();
-    const idle = (
-      window as Window & {
-        requestIdleCallback?: (
-          cb: () => void,
-          o?: { timeout: number },
-        ) => number;
-      }
-    ).requestIdleCallback;
-    const go = () => setReady(true);
-    if (idle) idle(go, { timeout: 1200 });
-    else setTimeout(go, 200);
+    void loadScenes().catch(() => {
+      /* React.lazy handles a retry on mount. */
+    });
+    return onIdle(() => setReady(true), 1200);
   }, []);
   return (
     <>

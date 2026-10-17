@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { scrollToY, trackDirection } from "@/lib/motion";
+import { scrollToY, trackDirection, ScrollTrigger } from "@/lib/motion";
 import "./rail.css";
 
 const chapters = [
@@ -32,9 +32,20 @@ export function ChapterRail() {
       /* private mode: the trail just starts fresh */
     }
     let pos: number[] = [];
+    let range = 1;
+    let saveTimer = 0;
+    const save = () => {
+      window.clearTimeout(saveTimer);
+      saveTimer = 0;
+      try {
+        sessionStorage.setItem(KEY, String(max));
+      } catch {
+        /* storage unavailable */
+      }
+    };
     let raf = 0;
     const measure = () => {
-      const range = Math.max(
+      range = Math.max(
         1,
         document.documentElement.scrollHeight - window.innerHeight,
       );
@@ -55,18 +66,10 @@ export function ChapterRail() {
     };
     function update() {
       raf = 0;
-      const range = Math.max(
-        1,
-        document.documentElement.scrollHeight - window.innerHeight,
-      );
       const p = Math.min(1, window.scrollY / range);
       if (p > max) {
         max = p;
-        try {
-          sessionStorage.setItem(KEY, String(max));
-        } catch {
-          /* ignore */
-        }
+        if (!saveTimer) saveTimer = window.setTimeout(save, 600);
       }
       el!.style.setProperty("--p", String(p));
       el!.style.setProperty("--m", String(max));
@@ -79,7 +82,11 @@ export function ChapterRail() {
         if (p >= x - 0.004) active = i;
         nodes[i].classList.toggle("is-seen", max >= x - 0.004);
       });
-      nodes.forEach((n, i) => n.classList.toggle("is-on", i === active));
+      nodes.forEach((n, i) => {
+        n.classList.toggle("is-on", i === active);
+        if (i === active) n.setAttribute("aria-current", "step");
+        else n.removeAttribute("aria-current");
+      });
     }
     const on = () => {
       if (!raf) raf = requestAnimationFrame(update);
@@ -89,11 +96,16 @@ export function ChapterRail() {
     const late = window.setTimeout(measure, 2500);
     window.addEventListener("scroll", on, { passive: true });
     window.addEventListener("resize", measure);
+    window.addEventListener("pagehide", save);
+    ScrollTrigger.addEventListener("refresh", measure);
     const ro = new ResizeObserver(measure);
     ro.observe(document.documentElement);
     measure();
     return () => {
+      save();
       stopDir();
+      ScrollTrigger.removeEventListener("refresh", measure);
+      window.removeEventListener("pagehide", save);
       window.clearTimeout(settle);
       window.clearTimeout(late);
       window.removeEventListener("scroll", on);
@@ -105,7 +117,10 @@ export function ChapterRail() {
 
   const jump = (id: string) => {
     const t = document.getElementById(id);
-    if (t) scrollToY(t.getBoundingClientRect().top + window.scrollY);
+    if (t)
+      scrollToY(
+        Math.max(0, t.getBoundingClientRect().top + window.scrollY - 64),
+      );
   };
 
   return (
