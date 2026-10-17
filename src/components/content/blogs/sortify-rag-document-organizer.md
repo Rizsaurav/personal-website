@@ -10,6 +10,30 @@ tags:
   - react
 featured: true
 coverImage: "/blog-covers/cover-sortify.svg"
+visuals:
+  - type: pipeline
+    after: "What it does"
+    title: "From upload to a grounded answer"
+    caption: "One embedding pipeline serves both classification and search."
+    stages:
+      - name: "Upload and classify"
+        desc: "Academic files are uploaded and the system categorizes them automatically."
+      - name: "Chunk"
+        desc: "Documents get chunked."
+      - name: "Embed"
+        tag: "Sentence Transformers"
+        desc: "Each chunk is embedded as a vector."
+      - name: "Store"
+        tag: "Postgres, pgvector"
+        desc: "Embeddings are stored in Postgres with pgvector."
+      - name: "Retrieve"
+        desc: "A query retrieves the semantically closest chunks."
+      - name: "Answer"
+        tag: "RAG chatbot"
+        desc: "The LLM answers from those chunks, not from its parametric memory, with the source documents cited."
+pull:
+  after: "Why it needed to exist"
+  text: "The problem isn't storage, it's retrieval."
 ---
 
 # Sortify: My Files Were a Mess, So I Taught an AI to Organize Them

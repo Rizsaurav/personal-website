@@ -1,32 +1,36 @@
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { lazy, Suspense } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import PageTransitions from "@/components/transition/PageTransitions";
 import Index from "./pages/Index";
-import BlogIndex from "./pages/blogs/index";
+const BlogIndex = lazy(() => import("./pages/blogs/index"));
 import NotFound from "./pages/NotFound";
-import BlogPost from "./pages/blogs/[slug]"; 
-
-const queryClient = new QueryClient();
+const BlogPost = lazy(() => import("./pages/blogs/[slug]"));
 
 const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/blogs" element={<BlogIndex />} />
-          <Route path="/blogs/:slug" element={<BlogPost />} /> 
+  <>
+    <BrowserRouter>
+      <Suspense
+        fallback={
+          <p role="status" className="p-8 text-text-secondary">
+            Loading page…
+          </p>
+        }
+      >
+        <PageTransitions>
+          {(location) => (
+            <Routes location={location}>
+              <Route path="/" element={<Index />} />
+              <Route path="/blogs" element={<BlogIndex />} />
+              <Route path="/blogs/:slug" element={<BlogPost />} />
 
-          {/* CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
+              {/* CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          )}
+        </PageTransitions>
+      </Suspense>
+    </BrowserRouter>
+  </>
 );
 
 export default App;

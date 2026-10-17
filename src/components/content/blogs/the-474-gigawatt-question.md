@@ -1,10 +1,45 @@
 ---
+kind: research
 title: "The 474-Gigawatt Question: Auditing AI Data Center Load in the ERCOT Queue"
 date: "2026-09-28"
 author: "Saurav Rijal"
 summary: "ERCOT reported about 474 GW of large-load requests, roughly 90% of it data centers. Headlines read that as impending demand. I rebuilt the number from primary ERCOT documents and ran it through a probabilistic model: the honest answer is a 63.4 GW mean, not 474."
 tags: ["research", "data-science", "energy"]
 coverImage: "/blog-covers/poster-ercot.svg"
+visuals:
+  - type: line
+    after: "The growth: real, exponential, and almost entirely AI"
+    title: "ERCOT large-load queue, five verified snapshots"
+    unit: " GW"
+    caption: "A log-linear fit gives 1.22 per year, a doubling every 6.8 months (R-squared 0.97). The December 2024 snapshot has no day in the article and is plotted at the start of the month."
+    data:
+      - { date: "2024-12-01", label: "Dec 2024", value: 63, display: "63 GW" }
+      - { date: "2025-04-28", label: "Apr 2025", value: 137, display: "137 GW" }
+      - { date: "2025-11-18", label: "Nov 2025", value: 226, display: "226 GW" }
+      - { date: "2026-03-26", label: "Mar 2026", value: 410, display: "410 GW" }
+      - { date: "2026-07-29", label: "Jul 2026", value: 474, display: "about 474 GW" }
+  - type: bars
+    after: "The funnel: only 1.24% is energized"
+    title: "Where the 474.7 GW June-2026 queue sits"
+    unit: "%"
+    max: 100
+    caption: "Share of the queue by study status. Three of the stages in the article are shown."
+    data:
+      - { label: "No studies submitted", value: 59.9, display: "59.9%", note: "284.3 GW of the queue." }
+      - { label: "Approved to energize, plus observed", value: 1.92, display: "1.92%" }
+      - { label: "Observed energized", value: 1.24, display: "1.24%", note: "5.9 GW is observed energized." }
+  - type: bars
+    after: "Forecast whiplash: the models saw it too"
+    title: "Forecasts of the 2026 summer peak, by report vintage"
+    unit: " MW"
+    caption: "Dashed line: the observed 2026 summer peak of 91,134 MW (marked preliminary by ERCOT at the time)."
+    reference: { label: "Observed peak", value: 91134, display: "91,134 MW" }
+    data:
+      - { label: "May 2017", value: 82949, display: "82,949" }
+      - { label: "Dec 2021", value: 88057, display: "88,057" }
+      - { label: "May 2024", value: 89655, display: "89,655" }
+      - { label: "Feb 2025 (revised)", value: 108391, display: "108,391", note: "The first vintage to absorb the AI-load wave: 17,257 MW too high, 15.9% over." }
+      - { label: "May 2025", value: 95419, display: "95,419", note: "This vintage then revised sharply downward." }
 ---
 
 # The 474-Gigawatt Question: Auditing AI Data Center Load in the ERCOT Queue

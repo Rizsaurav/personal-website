@@ -10,6 +10,44 @@ tags:
   - chess
 featured: true
 coverImage: "/blog-covers/cover-chess-coach.svg"
+visuals:
+  - type: pipeline
+    kind: "Architecture"
+    after: "What it does"
+    title: "Everything runs on Cloudflare"
+    caption: "Frontend, API, AI inference and session storage, with no external services and no separate backend."
+    stages:
+      - name: "Static frontend"
+        tag: "Workers Assets"
+        desc: "Static assets serve through Workers Assets."
+      - name: "Move engine"
+        tag: "client-side minimax"
+        desc: "A client-side minimax engine with alpha-beta pruning and difficulty-tuned noise plays at five ELO-calibrated levels, 800 to 1800."
+      - name: "Move classification"
+        tag: "local, under 1 ms"
+        desc: "Every move is labeled Best, Good, Inaccuracy, Mistake or Blunder, computed locally in under a millisecond with no network call."
+      - name: "AI coach"
+        tag: "Workers AI, Llama 3.3 70B"
+        desc: "On demand: Analyse this move returns a natural-language critique with a concept tag, an eval score, and a best-move arrow drawn on the board."
+      - name: "Session state"
+        tag: "Durable Objects"
+        desc: "Session state lives in SQLite-backed Durable Objects."
+  - type: tabs
+    after: "How I thought of it"
+    title: "Two kinds of feedback"
+    tabs:
+      - label: "Fast feedback"
+        points:
+          - "Move classification runs as a local heuristic."
+          - "There is no round trip, so it feels instant."
+      - label: "Deep feedback"
+        points:
+          - "The LLM is reserved for explaining ideas in words."
+          - "Llama 3.3 70B only runs when you ask for depth."
+          - "That split is the whole UX: the slow thing only runs on request."
+pull:
+  after: "How I thought of it"
+  text: "That split is the whole UX: the app feels instant because the slow thing (the 70B model) only runs when you ask for depth."
 ---
 
 # I Built a Chess Coach That Lives Entirely on the Edge

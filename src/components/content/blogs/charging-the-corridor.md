@@ -1,4 +1,5 @@
 ---
+kind: research
 title: "Charging the Corridor: Auditing Texas's $328M EV Charger Buildout With Its Own Data"
 date: "2026-09-28"
 author: "Saurav Rijal"
@@ -6,6 +7,40 @@ summary: "Texas committed $328.3 million in public money to 474 EV fast-charging
 tags: ["research", "data-science", "energy"]
 coverImage: "/blog-covers/poster-nevi.svg"
 featured: true
+visuals:
+  - type: pipeline
+    kind: "Data flow"
+    after: "The data I pulled together"
+    title: "Three public sources, one reproducible pipeline"
+    stages:
+      - name: "TxDOT NEVI station records"
+        tag: "474 records"
+        desc: "Retrieved September 28, 2026, with per-station grant dollars, port counts, status labels, and applicant names."
+      - name: "TxDOT traffic counts"
+        tag: "about 97,000 count stations"
+        desc: "Each site was matched to its nearest AADT count station, with a median match distance of 0.12 miles."
+      - name: "Census county populations"
+        tag: "Vintage 2024"
+        desc: "Population estimates keyed by FIPS codes from the FCC Census Block API."
+      - name: "Join on OBJECTID"
+        desc: "The published NEVI_ID field is not a record key: 168 Phase II planning-area records carry no ID at all, and six IDs are each shared by two records in different towns. So every join runs on the row-level OBJECTID."
+  - type: bars
+    after: "What the numbers said"
+    title: "Bid success by county-population quartile"
+    unit: "%"
+    max: 100
+    caption: "The article reports bid success rising monotonically across quartiles; only the two endpoints are quoted there."
+    data:
+      - { label: "Most rural quartile", value: 18.9, display: "18.9%" }
+      - { label: "Most urban quartile", value: 54.1, display: "54.1%" }
+  - type: bars
+    after: "What the numbers said"
+    title: "Universal EV LLC, the largest applicant"
+    unit: "%"
+    max: 100
+    data:
+      - { label: "Share of stations (148)", value: 31.2, display: "31.2%" }
+      - { label: "Share of committed funds ($92.6M)", value: 28.2, display: "28.2%" }
 ---
 
 # Charging the Corridor: Auditing Texas's $328M EV Charger Buildout With Its Own Data

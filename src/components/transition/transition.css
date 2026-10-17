@@ -1,0 +1,35 @@
+.pt-root { --pt-l: 50vw; --pt-r: 50vw; }
+/* The outgoing page is frozen in flow, never repainted; everything animated is viewport-sized and sits on top. */
+.pt-out { pointer-events: none; }
+html[data-transition="on"] .pt-out,
+html[data-transition="on"] .pt-out * {
+  animation-play-state: paused !important;
+  transition: none !important;
+}
+.pt-in--live {
+  position: fixed; inset: 0; z-index: 70; overflow: hidden; pointer-events: none;
+  background: hsl(var(--background));
+  clip-path: inset(0% 50% 0% 50%);
+  contain: layout paint;
+}
+.pt-in--live > .pt-inner { transform-origin: 50% 40%; will-change: transform; }
+.pt-strip {
+  position: fixed; inset: 0; z-index: 75; pointer-events: none;
+  background: #131313; color: #ececec;
+  display: grid; place-items: center;
+  clip-path: inset(0% 50% 0% 50%);
+}
+.pt-label {
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase;
+  white-space: nowrap; text-align: center; display: grid; gap: 10px;
+}
+.pt-label b {
+  font-family: "Fraunces", serif; font-weight: 400; font-size: clamp(22px, 3vw, 40px);
+  letter-spacing: -0.01em; text-transform: none; color: #ececec;
+}
+.pt-label span { opacity: 0.55; }
+.pt-edge {
+  position: fixed; top: 0; bottom: 0; left: 50%; width: 1px; z-index: 76; will-change: transform;
+  background: #ececec; opacity: 0.5; pointer-events: none;
+}

@@ -1,0 +1,409 @@
+/* Research scene: static list by default, pinned and scrubbed with `.is-immersive`. */
+.rs {
+  background: hsl(var(--background));
+  scroll-margin-top: 64px;
+}
+.rs-stage {
+  position: relative;
+  max-width: 1104px;
+  margin: auto;
+  padding: 72px 24px;
+}
+.rs-grid,
+.rs-ghost,
+.rs-num,
+.rs-rail,
+.rs-ticks,
+.rs-idx {
+  display: none;
+}
+.rs-kick,
+.rs-meta,
+.rs-idx,
+.rs-note,
+.rs-ct,
+.rs-bl,
+.rs-bv {
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+}
+.rs-kick {
+  text-transform: uppercase;
+  color: hsl(var(--text-muted));
+  margin: 0 0 12px;
+}
+.rs-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+.rs-head h2 {
+  font-family: "Fraunces", Georgia, serif;
+  font-weight: 400;
+  font-size: clamp(28px, 4vw, 40px);
+  letter-spacing: -0.03em;
+}
+.rs-head h2 em {
+  font-weight: 300;
+}
+.rs-intro {
+  max-width: 34rem;
+  margin-top: 16px;
+  color: hsl(var(--text-secondary));
+  line-height: 1.7;
+}
+.rs-all {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid hsl(var(--text-primary) / 0.2);
+  font-size: 12px;
+  flex-shrink: 0;
+}
+.rs-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.rs-item {
+  display: grid;
+  gap: 24px;
+  padding: 36px 0;
+  border-top: 1px solid hsl(var(--text-primary) / 0.15);
+}
+.rs-copy {
+  display: grid;
+  gap: 10px;
+  align-content: start;
+}
+.rs-title {
+  font-family: "Fraunces", Georgia, serif;
+  font-weight: 400;
+  font-size: clamp(22px, 5vw, 28px);
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+.rs-title-vis {
+  display: none;
+}
+.rs-title .sr-only {
+  position: static;
+  width: auto;
+  height: auto;
+  clip: auto;
+  margin: 0;
+  overflow: visible;
+  white-space: normal;
+}
+.rs-meta {
+  color: hsl(var(--text-muted));
+}
+.rs-sum {
+  color: hsl(var(--text-secondary));
+  line-height: 1.7;
+  max-width: 40rem;
+}
+.rs-go {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  width: max-content;
+  border-bottom: 1px solid hsl(var(--text-primary) / 0.3);
+}
+.rs-chart {
+  margin: 0;
+  padding: 18px;
+  border: 1px solid hsl(var(--text-primary) / 0.15);
+  border-radius: 14px;
+  background: hsl(var(--surface));
+}
+.rs-ct {
+  text-transform: uppercase;
+  color: hsl(var(--text-muted));
+  margin-bottom: 16px;
+  line-height: 1.6;
+}
+.rs-note {
+  margin: 14px 0 0;
+  min-height: 3.2em;
+  line-height: 1.6;
+  color: hsl(var(--text-secondary));
+  letter-spacing: 0.02em;
+}
+.rs-bars {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 14px;
+}
+.rs-bars li {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 6px 12px;
+  outline: none;
+  cursor: default;
+}
+.rs-bl {
+  grid-column: 1;
+  color: hsl(var(--text-secondary));
+  text-transform: none;
+  font-size: 11px;
+  letter-spacing: 0.02em;
+}
+.rs-bv {
+  grid-column: 2;
+  grid-row: 1;
+  color: hsl(var(--text-primary));
+  font-size: 12px;
+}
+.rs-track {
+  grid-column: 1 / -1;
+  display: block;
+  height: 10px;
+  background: hsl(var(--text-primary) / 0.07);
+  border-radius: 2px;
+}
+.rs-bar {
+  display: block;
+  height: 100%;
+  background: hsl(var(--text-primary) / 0.75);
+  border-radius: 2px;
+  transition: background 0.3s;
+}
+.rs-bars li:hover .rs-bar,
+.rs-bars li:focus-visible .rs-bar {
+  background: hsl(var(--text-primary));
+}
+.rs-svg {
+  width: 100%;
+  height: auto;
+  overflow: visible;
+  color: hsl(var(--text-primary));
+}
+.rs-axis {
+  stroke: hsl(var(--text-primary) / 0.25);
+}
+.rs-line {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+}
+.rs-area {
+  fill: hsl(var(--text-primary) / 0.07);
+}
+.rs-pt {
+  outline: none;
+  cursor: default;
+}
+.rs-pt circle {
+  fill: hsl(var(--background));
+  stroke: currentColor;
+  stroke-width: 2;
+  transition: r 0.25s;
+}
+.rs-pt:hover circle,
+.rs-pt:focus-visible circle {
+  r: 7;
+  fill: currentColor;
+}
+.rs-val {
+  font: 600 11px Inter, sans-serif;
+  fill: currentColor;
+}
+.rs-lab {
+  font: 10px ui-monospace, monospace;
+  fill: hsl(var(--text-muted));
+}
+
+/* -------------------- immersive -------------------- */
+.is-immersive .rs-stage {
+  max-width: none;
+  height: 100vh;
+  height: 100svh;
+  padding: 0;
+  overflow: hidden;
+}
+.is-immersive .rs-grid {
+  display: block;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 170vh;
+  background:
+    repeating-linear-gradient(90deg, hsl(var(--text-primary) / 0.07) 0 1px, transparent 1px 56px),
+    repeating-linear-gradient(180deg, hsl(var(--text-primary) / 0.07) 0 1px, transparent 1px 56px);
+  -webkit-mask-image: radial-gradient(ellipse at 60% 55%, #000 15%, transparent 72%);
+  mask-image: radial-gradient(ellipse at 60% 55%, #000 15%, transparent 72%);
+}
+.is-immersive .rs-ghost {
+  display: block;
+  position: absolute;
+  left: 20vw;
+  bottom: -5vh;
+  white-space: nowrap;
+  font-family: "Fraunces", Georgia, serif;
+  font-size: 38vh;
+  letter-spacing: -0.05em;
+  line-height: 1;
+  color: transparent;
+  -webkit-text-stroke: 1px hsl(var(--text-primary) / 0.09);
+}
+.is-immersive .rs-head {
+  position: absolute;
+  z-index: 3;
+  top: 88px;
+  left: 40px;
+  right: 40px;
+  margin: 0;
+}
+.is-immersive .rs-intro {
+  display: none;
+}
+.is-immersive .rs-num {
+  display: block;
+  position: absolute;
+  left: 3vw;
+  bottom: 7vh;
+  height: 1em;
+  font-size: 24vh;
+  line-height: 1;
+  overflow: hidden;
+  font-family: "Fraunces", Georgia, serif;
+  font-weight: 300;
+  letter-spacing: -0.06em;
+  color: hsl(var(--text-primary));
+}
+.is-immersive .rs-num span {
+  display: block;
+  height: 1em;
+}
+.is-immersive .rs-rail {
+  display: block;
+  position: absolute;
+  left: 30vw;
+  top: 22vh;
+  bottom: 12vh;
+  width: 1px;
+  background: hsl(var(--text-primary) / 0.18);
+}
+.is-immersive .rs-rail b {
+  display: block;
+  height: 100%;
+  background: hsl(var(--text-primary));
+}
+.is-immersive .rs-list {
+  position: absolute;
+  inset: 0;
+}
+.is-immersive .rs-item {
+  position: absolute;
+  left: 33vw;
+  right: 9vw;
+  top: 20vh;
+  bottom: 10vh;
+  padding: 0;
+  border: 0;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  gap: 3vw;
+  align-items: center;
+}
+.is-immersive .rs-idx {
+  display: block;
+  color: hsl(var(--text-muted));
+}
+.is-immersive .rs-title {
+  font-size: clamp(22px, 2.3vw, 38px);
+  line-height: 1.12;
+}
+.is-immersive .rs-title .sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  clip: rect(0 0 0 0);
+  overflow: hidden;
+}
+.is-immersive .rs-title-vis {
+  display: block;
+}
+.is-immersive .rs-sum {
+  font-size: clamp(14px, 1.1vw, 18px);
+  color: hsl(var(--text-primary));
+}
+.is-immersive .rs-chart {
+  padding: clamp(14px, 2vh, 24px);
+  box-shadow: 0 30px 70px -40px hsl(var(--text-primary) / 0.35);
+}
+.rs-ticks button {
+  all: unset;
+}
+.is-immersive .rs-ticks {
+  display: grid;
+  gap: 6px;
+  position: absolute;
+  z-index: 4;
+  right: 96px;
+  top: 50%;
+  translate: 0 -50%;
+  justify-items: end;
+}
+.rs-tick {
+  display: inline-flex !important;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 10px;
+  border: 1px solid hsl(var(--text-primary) / 0.18);
+  border-radius: 999px;
+  background: hsl(var(--background) / 0.85);
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: hsl(var(--text-muted));
+  cursor: pointer;
+  transition: color 0.25s, border-color 0.25s, background 0.25s;
+}
+.rs-tick-t {
+  max-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  letter-spacing: 0;
+  transition: max-width 0.45s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.rs-tick:hover .rs-tick-t,
+.rs-tick:focus-visible .rs-tick-t {
+  max-width: 260px;
+}
+.rs-tick:hover,
+.rs-tick:focus-visible,
+.rs-tick.is-on {
+  color: hsl(var(--text-primary));
+  border-color: hsl(var(--text-primary) / 0.6);
+}
+.rs-tick.is-on {
+  background: hsl(var(--text-primary));
+  color: hsl(var(--background));
+}
+.rs.is-off .rs-grid,
+.rs.is-off .rs-ghost {
+  visibility: hidden;
+}
+html.lite .rs-grid {
+  -webkit-mask-image: none;
+  mask-image: none;
+}
+@media (max-width: 1099px) {
+  .rs-item {
+    grid-template-columns: 1fr;
+  }
+}
+@media (min-width: 700px) and (max-width: 1023px) {
+  .rs-item {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+}

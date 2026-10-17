@@ -9,6 +9,9 @@ tags:
   - scalability
   - markdown
 coverImage: "/blog-covers/cover-blogging-site.svg"
+pull:
+  after: "Final Thoughts: Is Hardcoding Easier?"
+  text: "Yes, hardcoding is easier, but only at first."
 ---
 
 # Building a Scalable Blogging Site: Is Hardcoding Easier for Developers?

@@ -8,6 +8,9 @@ tags:
   - react
   - data-viz
 coverImage: "/blog-covers/cover-brewery-dashboard.svg"
+pull:
+  after: "How I thought of it"
+  text: "I started from the charts, not the table."
 ---
 
 # A Brewery Dashboard That Actually Tells Stories With Data

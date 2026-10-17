@@ -10,6 +10,39 @@ tags:
   - video
 featured: true
 coverImage: "/blog-covers/cover-videomaxx.svg"
+visuals:
+  - type: pipeline
+    after: "What it does"
+    title: "From one topic to an uploaded video"
+    caption: "The article lists 15 sequential stages in eight groups; names and descriptions follow the article text."
+    stages:
+      - name: "Research"
+        tag: "Gemini 2.5 Pro"
+        desc: "Gemini 2.5 Pro with Google Search grounding, in a two-pass Finder to Architect pattern."
+      - name: "Verify"
+        tag: "Tavily"
+        desc: "Every source URL is cross-checked via Tavily."
+      - name: "Freeze"
+        tag: "SHA-256 fact sheet"
+        desc: "The fact sheet is hashed and committed to SQLite. Hallucinated claims hard-block the pipeline, and if the hash does not match at render time, the build stops."
+      - name: "Architect / Critic / Optimizer"
+        tag: "9-scene script"
+        desc: "The script gets a 9-scene structure, then an LLM self-review pass flags factual drift, pacing issues, and weak hooks, and an optimizer rewrites the flagged beats."
+      - name: "Assets"
+        tag: "CLIP ViT-B/32"
+        desc: "Multi-source fetch (Wikimedia, Archive.org, Pexels, Pixabay), then CLIP ViT-B/32 semantically ranks assets against each sentence."
+      - name: "TTS"
+        tag: "Kokoro-82M"
+        desc: "Kokoro-82M narrates, faster than real-time on Apple Silicon."
+      - name: "Alignment"
+        tag: "WhisperX"
+        desc: "WhisperX forced alignment produces word-level timestamps."
+      - name: "Render"
+        tag: "FFmpeg"
+        desc: "FFmpeg renders chapter-parallel, plus an automatic YouTube Shorts cut and upload via the YouTube Data API."
+pull:
+  after: "Why it needed to exist"
+  text: "So I designed VideoMaxx around one non-negotiable rule: no unverified claim ever reaches the render stage."
 ---
 
 # VideoMaxx: Teaching an Army of AI Agents to Produce a Whole YouTube Video

@@ -54,7 +54,8 @@ const ProjectRow = ({
             {project.tech.slice(0, 6).join("  ·  ")}
           </p>
           <p className="text-xs font-medium text-text-primary mt-3 pb-6">
-            Click for more info <ArrowUpRight className="w-3.5 h-3.5 inline -mt-0.5" />
+            Click for more info{" "}
+            <ArrowUpRight className="w-3.5 h-3.5 inline -mt-0.5" />
           </p>
         </div>
       </div>
@@ -106,15 +107,15 @@ const ProjectModal = ({
       post?.body
         ? DOMPurify.sanitize(modalMarked.parse(post.body) as string)
         : "",
-    [post, modalMarked]
+    [post, modalMarked],
   );
 
-  const tabs = (
-    [
-      { id: "overview", label: "Overview" },
-      ...(project.blogSlug ? [{ id: "story", label: "Build story" }] : []),
-    ] as const
-  );
+  const tabs = [
+    { id: "overview", label: "Overview" },
+    ...(project.blogSlug
+      ? [{ id: "story" as const, label: "Build story" }]
+      : []),
+  ] as const;
 
   return (
     <motion.div
@@ -148,7 +149,12 @@ const ProjectModal = ({
         <div className="overflow-y-auto">
           {cover && (
             <div className="h-48 md:h-64 overflow-hidden shrink-0">
-              <img src={cover} alt="" aria-hidden className="w-full h-full object-cover" />
+              <img
+                src={cover}
+                alt=""
+                aria-hidden
+                className="w-full h-full object-cover"
+              />
             </div>
           )}
 
@@ -164,7 +170,9 @@ const ProjectModal = ({
                   key={t.id}
                   onClick={() => setTab(t.id)}
                   className={`pb-3 text-sm font-medium transition-colors relative ${
-                    tab === t.id ? "text-text-primary" : "text-text-muted hover:text-text-secondary"
+                    tab === t.id
+                      ? "text-text-primary"
+                      : "text-text-muted hover:text-text-secondary"
                   }`}
                 >
                   {t.label}
@@ -234,11 +242,15 @@ const ProjectModal = ({
                     <Github className="w-4 h-4" /> View code on GitHub
                   </a>
                   {post && (
-                    <span className="text-xs text-text-muted">{post.readTime}</span>
+                    <span className="text-xs text-text-muted">
+                      {post.readTime}
+                    </span>
                   )}
                 </div>
                 {loadingStory && (
-                  <p className="text-sm text-text-muted">Loading build story…</p>
+                  <p className="text-sm text-text-muted">
+                    Loading build story…
+                  </p>
                 )}
                 {post && (
                   <div
@@ -294,7 +306,9 @@ const AllProjectsOverlay = ({
         <div className="flex items-center justify-between mb-8">
           <h2 className="font-display text-3xl md:text-4xl text-text-primary">
             All projects{" "}
-            <span className="text-text-muted text-2xl">({projects.length})</span>
+            <span className="text-text-muted text-2xl">
+              ({projects.length})
+            </span>
           </h2>
           <button
             onClick={onClose}
@@ -348,7 +362,7 @@ export const WorkIndex = () => {
   const [showAll, setShowAll] = useState(false);
   const [active, setActive] = useState<Project | null>(null);
   const [covers, setCovers] = useState<Record<string, string>>({});
-  const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [expandedId, setExpandedId] = useState<number | null>(null);
   const featured = projects.filter((p) => p.featured);
 
   useEffect(() => {
@@ -375,7 +389,10 @@ export const WorkIndex = () => {
   const activeCover = active?.blogSlug ? covers[active.blogSlug] : undefined;
 
   return (
-    <section id="work" className="max-w-6xl mx-auto px-4 md:px-6 py-6 scroll-mt-20">
+    <section
+      id="work"
+      className="max-w-6xl mx-auto px-4 md:px-6 py-6 scroll-mt-20"
+    >
       <div className="flex items-end justify-between px-2 mb-6">
         <div>
           <p className="label-caps text-text-muted mb-3">01 · Work</p>

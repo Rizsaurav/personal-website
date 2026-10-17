@@ -9,6 +9,26 @@ tags:
   - pytorch
   - reinforcement-learning
 coverImage: "/blog-covers/cover-trac.svg"
+visuals:
+  - type: pipeline
+    after: "What it does"
+    title: "The TRAC pipeline"
+    caption: "Components in the order the article lists them."
+    stages:
+      - name: "Gaze simulation"
+        tag: "MediaPipe"
+        desc: "Generates synthetic gaze trajectories so the system can be developed and tested without harvesting real students' eye data."
+      - name: "Autoencoder anomaly detection"
+        tag: "PyTorch"
+        desc: "Learns what normal test-taking behavior looks like, then flags deviations as anomalies. It is triage, not verdict: flagged cases go to human review."
+      - name: "Reinforcement learning"
+        tag: "stable-baselines3, Gymnasium"
+        desc: "Agents model gaze dynamics as a sequential decision process."
+      - name: "Train, evaluate, visualize, demo"
+        desc: "The whole loop from experiment to interpretable output."
+pull:
+  after: "How I thought of it"
+  text: "Simulation-first development is underused in ML, and this was my proof it works."
 ---
 
 # TRAC: Catching Cheaters With Autoencoders and Simulated Eyes

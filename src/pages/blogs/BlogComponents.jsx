@@ -5,7 +5,6 @@ import {
   MessageCircle, Send, Trash2, Reply,
   Heart, ThumbsUp, Lightbulb, Star
 } from "lucide-react";
-import "./blogs.css";
 
 import {
   collection, addDoc, onSnapshot, query, orderBy,

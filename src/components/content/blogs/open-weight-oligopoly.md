@@ -1,4 +1,5 @@
 ---
+kind: research
 title: "The Open-Weight Oligopoly: Who Actually Owns the Downloads"
 date: 2026-09-30
 author: Saurav Rijal
@@ -10,6 +11,28 @@ tags:
   - huggingface
 featured: true
 coverImage: "/blog-covers/cover-open-weight-oligopoly.svg"
+visuals:
+  - type: bars
+    after: "How concentrated is it"
+    title: "Share of trailing-30-day downloads"
+    unit: "%"
+    max: 100
+    caption: "Across 20,000 Hugging Face models and about 2.84 billion downloads."
+    data:
+      - { label: "Top 100 models", value: 48.4, display: "48.4%" }
+      - { label: "Top 1,000 models", value: 81.2, display: "81.2%" }
+      - { label: "Largest single publisher", value: 11.99, display: "11.99%", note: "Publisher Herfindahl index is only 375: an unconcentrated market." }
+  - type: bars
+    after: "The decentralization trend"
+    title: "Top-10 organizations' share of downloads, by model creation cohort"
+    unit: "%"
+    max: 100
+    data:
+      - { label: "Models created in 2022", value: 78.62, display: "78.62%" }
+      - { label: "Models created in 2026", value: 53.74, display: "53.74%" }
+pull:
+  after: "The decentralization trend"
+  text: "The open-weight ecosystem looks like a monopoly from the download curve and a bazaar from the publisher table."
 ---
 
 # The Open-Weight Oligopoly: Who Actually Owns the Downloads

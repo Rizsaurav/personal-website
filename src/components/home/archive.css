@@ -1,0 +1,201 @@
+.arc {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 720px;
+  background: hsl(var(--background));
+  padding: 96px 24px 72px;
+  scroll-margin-top: 64px;
+}
+.arc-wrap {
+  max-width: 1104px;
+  margin: auto;
+}
+.arc-kick,
+.arc-n,
+.arc-tags,
+.arc-tech {
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+}
+.arc-kick {
+  text-transform: uppercase;
+  color: hsl(var(--text-muted));
+  margin: 0 0 12px;
+}
+.arc-head-wrap h2 {
+  font-family: "Fraunces", Georgia, serif;
+  font-weight: 400;
+  font-size: clamp(28px, 4vw, 40px);
+  letter-spacing: -0.03em;
+}
+.arc-head-wrap h2 em {
+  font-weight: 300;
+}
+.arc-sub {
+  margin: 12px 0 36px;
+  color: hsl(var(--text-secondary));
+  font-size: 14px;
+}
+.arc-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid hsl(var(--text-primary) / 0.15);
+}
+.arc-row {
+  position: relative;
+  border-bottom: 1px solid hsl(var(--text-primary) / 0.15);
+  border-radius: 0;
+  margin: 0;
+  transition:
+    background 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+    margin 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+    border-radius 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.arc-row::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 14px;
+  bottom: 14px;
+  width: 2px;
+  background: hsl(var(--text-primary));
+  transform: scaleY(0);
+  transform-origin: 50% 0;
+  transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.arc-row.is-open {
+  background: hsl(var(--surface));
+  margin: 8px -16px;
+  border-radius: 16px;
+  border-color: transparent;
+  box-shadow: 0 24px 60px -36px hsl(var(--text-primary) / 0.45), 0 0 0 1px hsl(var(--text-primary) / 0.1);
+}
+.arc-row.is-open::before {
+  transform: scaleY(1);
+}
+.arc-head {
+  all: unset;
+  box-sizing: border-box;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 2.4rem minmax(0, 1fr) auto 1.5rem;
+  align-items: center;
+  gap: 12px;
+  padding: 22px 8px;
+  cursor: pointer;
+  transition: padding 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.arc-row.is-open .arc-head {
+  padding-inline: 24px;
+}
+.arc-head:focus-visible {
+  outline: 2px solid hsl(var(--text-primary));
+  outline-offset: -2px;
+  border-radius: 12px;
+}
+.arc-n {
+  color: hsl(var(--text-muted));
+}
+.arc-t {
+  font-size: 17px;
+  color: hsl(var(--text-primary));
+}
+.arc-tags {
+  color: hsl(var(--text-muted));
+  text-transform: none;
+}
+.arc-plus {
+  color: hsl(var(--text-primary));
+  transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.arc-row.is-open .arc-plus {
+  transform: rotate(135deg);
+}
+.arc-panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.arc-row.is-open .arc-panel {
+  grid-template-rows: 1fr;
+}
+.arc-inner {
+  overflow: hidden;
+  min-height: 0;
+  padding: 0 24px 0 calc(24px + 2.4rem + 12px);
+  opacity: 0;
+  transform: translateY(-8px);
+  transition:
+    opacity 0.35s ease,
+    transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.arc-row.is-open .arc-inner {
+  opacity: 1;
+  transform: none;
+  padding-bottom: 26px;
+  transition-delay: 0.08s;
+}
+.arc-desc {
+  max-width: 44rem;
+  color: hsl(var(--text-secondary));
+  line-height: 1.7;
+  font-size: 15px;
+}
+.arc-tech {
+  margin: 14px 0 0;
+  color: hsl(var(--text-muted));
+  line-height: 1.8;
+}
+.arc-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 18px;
+}
+.arc-links a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 16px;
+  border: 1px solid hsl(var(--text-primary) / 0.25);
+  border-radius: 999px;
+  font-size: 13px;
+  transition: background 0.25s, color 0.25s;
+}
+.arc-links a:first-child {
+  background: hsl(var(--text-primary));
+  color: hsl(var(--background));
+}
+.arc-links a:hover {
+  background: hsl(var(--text-primary));
+  color: hsl(var(--background));
+}
+@media (max-width: 767px) {
+  .arc {
+    padding: 56px 16px 40px;
+  }
+  .arc-head {
+    grid-template-columns: 1.8rem minmax(0, 1fr) 1.5rem;
+  }
+  .arc-tags {
+    display: none;
+  }
+  .arc-row.is-open {
+    margin-inline: -8px;
+  }
+  .arc-inner {
+    padding-left: 24px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .arc-row,
+  .arc-row::before,
+  .arc-panel,
+  .arc-inner,
+  .arc-plus,
+  .arc-head {
+    transition: none;
+  }
+}

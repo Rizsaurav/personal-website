@@ -1,0 +1,1229 @@
+/* Compute journey: boot sequence + horizontal rig.
+   Base rules are the static, accessible layout (mobile / reduced motion).
+   `.is-immersive` (set by JS) layers the pinned, scrubbed version on top. */
+
+.journey {
+  --paper: #ececec;
+  --machine: #131313;
+}
+.boot-stage,
+.rig-stage {
+  --dark: 1;
+  position: relative;
+  background: color-mix(
+    in srgb,
+    var(--machine) calc(var(--dark) * 100%),
+    hsl(var(--background))
+  );
+  color: color-mix(
+    in srgb,
+    var(--paper) calc(var(--dark) * 100%),
+    hsl(var(--text-primary))
+  );
+}
+.skip-ride {
+  position: absolute;
+  z-index: 60;
+  top: 76px;
+  left: 16px;
+  padding: 8px 14px;
+  background: hsl(var(--background));
+  color: hsl(var(--text-primary));
+  border-radius: 999px;
+  font-size: 12px;
+}
+
+/* ---------------------------- boot ---------------------------------- */
+.boot-stage {
+  padding: 96px 24px 72px;
+  display: grid;
+  justify-items: center;
+  gap: 40px;
+  overflow: hidden;
+}
+.boot-rails,
+.jx-corner {
+  display: none;
+}
+.boot-title {
+  font-family: "Fraunces", Georgia, serif;
+  font-weight: 400;
+  text-align: center;
+  letter-spacing: -0.045em;
+  line-height: 1.02;
+  font-size: clamp(40px, 11vw, 76px);
+}
+.boot-line {
+  display: block;
+}
+.boot-line em {
+  font-weight: 300;
+  opacity: 0.8;
+}
+.jx-word {
+  display: inline-block;
+  overflow: hidden;
+  padding: 0.08em 0 0.2em;
+  margin-bottom: -0.2em;
+  vertical-align: top;
+}
+.jx-char {
+  display: inline-block;
+}
+.boot-die-wrap {
+  width: min(78vw, 340px);
+}
+.boot-die {
+  aspect-ratio: 1;
+  display: grid;
+  grid-template: repeat(12, 1fr) / repeat(12, 1fr);
+  gap: 3px;
+  padding: 12px;
+  border: 1px solid currentColor;
+  border-radius: 10px;
+  position: relative;
+}
+.boot-scan {
+  display: none;
+}
+.is-immersive .boot-scan {
+  display: block;
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    transparent 40%,
+    color-mix(in srgb, currentColor 55%, transparent) 50%,
+    transparent 60%
+  );
+  mix-blend-mode: overlay;
+}
+.boot-die i {
+  background: currentColor;
+  opacity: 0.35;
+  border-radius: 1px;
+}
+
+/* ----------------------------- rig ---------------------------------- */
+.rig-stage {
+  padding: 0 24px 56px;
+}
+.rig-hud,
+.rig-back,
+.rig-fore,
+.rig-lid,
+.rig-end,
+.rig-ghost {
+  display: none;
+}
+.rig-viewport,
+.rig-track {
+  display: grid;
+  gap: 32px;
+}
+.rig-panel {
+  position: relative;
+}
+.rig-bay {
+  --background: 40 14% 96%;
+  --surface: 40 14% 98%;
+  --surface-variant: 40 9% 92%;
+  --text-primary: 0 0% 14%;
+  --text-secondary: 0 0% 38%;
+  --text-muted: 0 0% 43%;
+  color: hsl(var(--text-primary));
+  margin: 0;
+  border-radius: 14px;
+  overflow: hidden;
+  transform: none;
+  transition: none;
+}
+.rig-bay .rack-output {
+  transform: none;
+  transition: none;
+}
+.rig-bay .bay-copy h3 {
+  font-size: clamp(32px, 3.6vw, 46px);
+}
+.journey-tail {
+  padding-top: 40px;
+  padding-bottom: 8px;
+}
+
+/* ------------------------- immersive mode --------------------------- */
+.is-immersive .boot-stage {
+  --dark: 0;
+  height: 100vh;
+  height: 100svh;
+  padding: 0;
+  display: block;
+}
+.is-immersive .boot-rails {
+  display: block;
+  position: absolute;
+  inset: 0;
+}
+.is-immersive .boot-rails i {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.16;
+}
+.is-immersive .jx-corner {
+  display: block;
+  position: absolute;
+  z-index: 3;
+  opacity: 0.6;
+}
+.is-immersive .jx-tl {
+  top: 92px;
+  right: 40px;
+}
+.is-immersive .jx-br {
+  bottom: 32px;
+  left: 40px;
+}
+.is-immersive .boot-title {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+.is-immersive .boot-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  font-size: clamp(64px, 11.5vw, 190px);
+  white-space: nowrap;
+}
+.is-immersive .boot-line-a {
+  top: 50%;
+  margin-top: -0.55em;
+  left: 50%;
+  right: auto;
+  translate: -50% 0;
+  width: max-content;
+}
+.is-immersive .boot-line-b {
+  bottom: 10vh;
+  font-size: clamp(36px, 5.4vw, 88px);
+}
+.is-immersive .boot-die-wrap {
+  position: absolute;
+  z-index: 1;
+  left: 50%;
+  top: 50%;
+  width: min(54vh, 50vw);
+  margin: calc(min(54vh, 50vw) / -2) 0 0 calc(min(54vh, 50vw) / -2);
+  perspective: 1100px;
+}
+.is-immersive .boot-die {
+  overflow: hidden;
+  transform-style: preserve-3d;
+  box-shadow: 0 0 0 10px color-mix(in srgb, currentColor 6%, transparent);
+}
+.is-immersive .rig-stage {
+  height: 100vh;
+  height: 100svh;
+  padding: 0;
+  overflow: hidden;
+}
+.is-immersive .rig-hud,
+.is-immersive .rig-back,
+.is-immersive .rig-fore {
+  display: block;
+}
+.is-immersive .rig-back {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  white-space: nowrap;
+  font-family: "Fraunces", Georgia, serif;
+  font-size: 30vh;
+  letter-spacing: -0.05em;
+  text-transform: none;
+  line-height: 1;
+  margin-top: -0.55em;
+  color: transparent;
+  -webkit-text-stroke: 1px color-mix(in srgb, var(--paper) 10%, transparent);
+}
+.is-immersive .rig-fore {
+  position: absolute;
+  z-index: 4;
+  left: 0;
+  bottom: 0;
+  width: 700vw;
+  height: 14px;
+  pointer-events: none;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--paper) 40%, transparent) 0 1px,
+      transparent 1px 28px
+    )
+    bottom / 100% 6px no-repeat,
+    repeating-linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--paper) 55%, transparent) 0 1px,
+      transparent 1px 280px
+    )
+    bottom / 100% 14px no-repeat;
+}
+.is-immersive .rig-viewport {
+  position: absolute;
+  inset: 0;
+  display: block;
+  perspective: 1500px;
+  perspective-origin: 50% 46%;
+}
+.is-immersive .rig-track {
+  display: flex;
+  gap: 0;
+  height: 100%;
+  transform-style: preserve-3d;
+}
+.is-immersive .rig-panel {
+  flex: 0 0 100vw;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  padding-top: 64px;
+  transform-style: preserve-3d;
+}
+.is-immersive .rig-ghost {
+  display: block;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  translate: -50% -52%;
+  font-family: "Fraunces", Georgia, serif;
+  font-weight: 300;
+  font-size: min(78vh, 52vw);
+  line-height: 1;
+  letter-spacing: -0.06em;
+  color: color-mix(in srgb, var(--paper) 7%, transparent);
+  pointer-events: none;
+}
+.is-immersive .rig-bay {
+  position: relative;
+  width: min(1060px, 80vw);
+  box-shadow:
+    0 50px 120px -30px rgb(0 0 0 / 0.65),
+    0 0 0 1px rgb(255 255 255 / 0.08);
+}
+.is-immersive .rig-panel .bay-light {
+  transition: background 0.3s, box-shadow 0.3s;
+}
+.is-immersive .rig-panel.is-active .bay-light {
+  background: var(--paper, #ececec);
+  box-shadow: 0 0 10px rgb(236 236 236 / 0.7);
+}
+.is-immersive .rig-bay .bay-body {
+  min-height: 0;
+  padding: clamp(24px, 4vh, 40px) 32px;
+}
+
+/* enclosure panels that peel apart */
+.is-immersive .rig-lid {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 50%;
+  z-index: 5;
+  padding: 24px 28px;
+  background:
+    repeating-linear-gradient(
+      0deg,
+      transparent 0 5px,
+      hsl(var(--text-primary) / 0.05) 5px 6px
+    ),
+    hsl(var(--surface-variant));
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+}
+.is-immersive .rig-lid-l {
+  left: 0;
+  border-right: 1px solid hsl(var(--text-primary) / 0.35);
+}
+.is-immersive .rig-lid-r {
+  right: 0;
+  border-left: 1px solid hsl(var(--text-primary) / 0.35);
+  align-items: flex-end;
+}
+.lid-number {
+  font-family: "Fraunces", Georgia, serif;
+  font-size: clamp(80px, 12vw, 170px);
+  font-weight: 300;
+  line-height: 0.9;
+  letter-spacing: -0.06em;
+}
+.lid-title {
+  font-family: "Fraunces", Georgia, serif;
+  font-size: 26px;
+  letter-spacing: -0.02em;
+}
+.lid-grille {
+  flex: 1;
+  width: 70%;
+  margin: 28px 0;
+  background: repeating-linear-gradient(
+    0deg,
+    hsl(var(--text-primary) / 0.28) 0 2px,
+    transparent 2px 9px
+  );
+}
+
+.is-immersive .rig-end {
+  display: grid;
+  gap: 18px;
+  justify-items: center;
+  position: absolute;
+  inset: 0;
+  place-content: center;
+  z-index: 3;
+  text-align: center;
+  pointer-events: none;
+}
+.rig-end span {
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  opacity: 0.6;
+}
+.rig-end b {
+  font-family: "Fraunces", Georgia, serif;
+  font-weight: 400;
+  font-size: clamp(40px, 6vw, 92px);
+  letter-spacing: -0.045em;
+  line-height: 1.05;
+}
+.rig-end em {
+  font-weight: 300;
+}
+
+/* HUD */
+.is-immersive .rig-hud {
+  position: absolute;
+  inset: 0;
+  z-index: 6;
+  pointer-events: none;
+}
+.hud-top,
+.hud-bottom {
+  position: absolute;
+  left: 40px;
+  right: 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+.hud-top {
+  top: 88px;
+  align-items: center;
+}
+.hud-bottom {
+  bottom: 40px;
+}
+.hud-top span {
+  opacity: 0.6;
+}
+.hud-top ol {
+  display: flex;
+  gap: 20px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.hud-unit {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  opacity: 0.4;
+  transition: opacity 0.3s;
+}
+.hud-unit i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+.hud-unit.is-on {
+  opacity: 1;
+}
+.hud-unit.is-on i {
+  background: var(--paper, #ececec);
+  box-shadow: 0 0 8px rgb(236 236 236 / 0.6);
+}
+.hud-meters {
+  display: flex;
+  gap: 32px;
+  margin: 0;
+}
+.hud-meters dt {
+  opacity: 0.55;
+  margin-bottom: 6px;
+}
+.hud-meters dd {
+  margin: 0;
+  font-size: 15px;
+  letter-spacing: 0.02em;
+  font-variant-numeric: tabular-nums;
+  min-width: 7ch;
+}
+.hud-meters .m-stack {
+  font-size: 12px;
+  max-width: 44ch;
+}
+.hud-now {
+  text-align: right;
+  display: grid;
+  gap: 8px;
+  justify-items: end;
+}
+.hud-now span {
+  opacity: 0.55;
+}
+.hud-now b {
+  font-family: "Fraunces", Georgia, serif;
+  font-weight: 400;
+  font-size: 20px;
+  letter-spacing: -0.01em;
+  text-transform: none;
+}
+.rig-ruler {
+  display: block;
+  width: 220px;
+  height: 1px;
+  background: rgb(255 255 255 / 0.22);
+}
+.rig-ruler-fill {
+  display: block;
+  height: 3px;
+  margin-top: -1px;
+  background: currentColor;
+  text-decoration: none;
+}
+
+/* header turns to the machine's palette while it is on screen */
+html[data-stage="dark"] .portfolio-header {
+  --background: 0 0% 8%;
+  --text-primary: 0 0% 93%;
+  --text-secondary: 0 0% 72%;
+  border-color: rgb(255 255 255 / 0.12);
+}
+
+/* narrow screens keep the static layout */
+@media (max-width: 767px) {
+  .boot-stage {
+    padding-top: 88px;
+  }
+  .rig-stage {
+    padding: 0 16px 40px;
+  }
+}
+
+/* ---------------------------- the board ----------------------------- */
+.mf-stage {
+  --dark: 1;
+  position: relative;
+  background: var(--machine);
+  color: var(--paper);
+  padding: 96px 24px 72px;
+  overflow: hidden;
+}
+.mf-pcb,
+.mf-lines,
+.mf-node {
+  display: none;
+}
+.mf-lead {
+  margin-bottom: 28px;
+}
+.mf-kick,
+.mf-d,
+.mf-n,
+.mf-node {
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.mf-kick {
+  opacity: 0.55;
+}
+.mf-lead p {
+  margin: 10px 0 0;
+  font-family: "Fraunces", Georgia, serif;
+  font-size: clamp(30px, 8vw, 48px);
+  letter-spacing: -0.04em;
+  line-height: 1.05;
+}
+.mf-lead em {
+  font-weight: 300;
+  opacity: 0.75;
+}
+.mf-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 18px;
+}
+.mf-entry {
+  display: grid;
+  grid-template-columns: 2.4em 1fr;
+  gap: 8px;
+}
+.mf-n {
+  opacity: 0.5;
+  padding-top: 0.5em;
+}
+.mf-t {
+  display: block;
+  font-family: "Fraunces", Georgia, serif;
+  font-weight: 400;
+  font-size: clamp(22px, 6vw, 32px);
+  letter-spacing: -0.03em;
+}
+.mf-mark {
+  display: none;
+}
+.mf-d {
+  display: block;
+  margin-top: 4px;
+  opacity: 0.6;
+  text-transform: none;
+  letter-spacing: 0.02em;
+  font-size: 12px;
+  line-height: 1.6;
+}
+.mf-map {
+  margin: 40px auto 0;
+  display: grid;
+  justify-items: center;
+}
+.mf-chip {
+  position: relative;
+  width: min(60vw, 260px);
+  aspect-ratio: 1;
+  padding: 7%;
+  border: 1px solid color-mix(in srgb, var(--paper) 45%, transparent);
+  border-radius: 12px;
+}
+.mf-pins {
+  display: none;
+}
+.mf-package {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 4px;
+  background: #000;
+}
+.mf-package img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: grayscale(1) contrast(1.05);
+  display: block;
+}
+.mf-package::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    repeating-linear-gradient(0deg, rgb(0 0 0 / 0.14) 0 1px, transparent 1px 3px),
+    linear-gradient(180deg, transparent 55%, rgb(0 0 0 / 0.7));
+}
+.mf-marking {
+  position: absolute;
+  z-index: 2;
+  left: 12px;
+  bottom: 10px;
+  font:
+    9px ui-monospace,
+    monospace;
+  letter-spacing: 0.14em;
+}
+.mf-notch {
+  position: absolute;
+  z-index: 2;
+  top: 8px;
+  left: 8px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--paper);
+}
+
+.is-immersive .mf-stage {
+  height: 100vh;
+  height: 100svh;
+  padding: 0;
+  perspective: 1100px;
+  perspective-origin: 50% 45%;
+}
+.is-immersive .mf-pcb {
+  display: block;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 140vw;
+  height: 130vh;
+  -webkit-mask-image: radial-gradient(ellipse at 50% 50%, #000 18%, transparent 68%);
+  mask-image: radial-gradient(ellipse at 50% 50%, #000 18%, transparent 68%);
+}
+.is-immersive .mf-far {
+  color: color-mix(in srgb, var(--paper) 18%, transparent);
+}
+.is-immersive .mf-near {
+  color: color-mix(in srgb, var(--paper) 34%, transparent);
+  width: 170vw;
+  height: 150vh;
+}
+.is-immersive .mf-left {
+  position: absolute;
+  z-index: 3;
+  left: 6vw;
+  top: 15vh;
+  width: 48vw;
+  bottom: 6vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.is-immersive .mf-lead {
+  margin-bottom: 3.2vh;
+}
+.is-immersive .mf-lead p {
+  font-size: clamp(34px, 4.2vw, 68px);
+}
+.is-immersive .mf-list {
+  gap: 0;
+}
+.is-immersive .mf-entry {
+  position: relative;
+  padding: 1.5vh 0;
+  border-top: 1px solid color-mix(in srgb, var(--paper) 16%, transparent);
+  align-items: baseline;
+}
+.is-immersive .mf-t {
+  display: inline-block;
+  font-size: clamp(22px, 2.5vw, 40px);
+  line-height: 1.1;
+}
+.is-immersive .mf-mark {
+  display: block;
+  height: 2px;
+  width: 100%;
+  margin-top: 4px;
+  background: var(--paper);
+  opacity: 0.55;
+}
+.is-immersive .mf-d {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  translate: 0 -50%;
+  max-width: 15em;
+  margin: 0;
+  text-align: right;
+  font-size: 10px;
+}
+.is-immersive .mf-entry > div {
+  display: block;
+}
+.is-immersive .mf-map {
+  position: absolute;
+  z-index: 2;
+  right: 5vw;
+  top: 50%;
+  width: min(74vh, 36vw);
+  aspect-ratio: 1;
+  margin: calc(min(74vh, 36vw) / -2) 0 0;
+  display: block;
+  transform-style: preserve-3d;
+}
+.is-immersive .mf-lines {
+  display: block;
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  stroke: color-mix(in srgb, var(--paper) 45%, transparent);
+  stroke-width: 1;
+  overflow: visible;
+}
+.is-immersive .mf-chip {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 46%;
+  margin: calc(-23%) 0 0 calc(-23%);
+  transform-style: preserve-3d;
+  border-color: color-mix(in srgb, var(--paper) 55%, transparent);
+  background: var(--machine);
+}
+.is-immersive .mf-pins {
+  display: block;
+  position: absolute;
+  pointer-events: none;
+}
+.is-immersive .mf-pins-x {
+  inset: -16px 14px;
+  background:
+    repeating-linear-gradient(90deg, color-mix(in srgb, var(--paper) 55%, transparent) 0 2px, transparent 2px 12px)
+      top / 100% 14px no-repeat,
+    repeating-linear-gradient(90deg, color-mix(in srgb, var(--paper) 55%, transparent) 0 2px, transparent 2px 12px)
+      bottom / 100% 14px no-repeat;
+}
+.is-immersive .mf-pins-y {
+  inset: 14px -16px;
+  background:
+    repeating-linear-gradient(0deg, color-mix(in srgb, var(--paper) 55%, transparent) 0 2px, transparent 2px 12px)
+      left / 14px 100% no-repeat,
+    repeating-linear-gradient(0deg, color-mix(in srgb, var(--paper) 55%, transparent) 0 2px, transparent 2px 12px)
+      right / 14px 100% no-repeat;
+}
+.is-immersive .mf-node {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  position: absolute;
+  translate: -50% -50%;
+  white-space: nowrap;
+  padding: 6px 10px;
+  border: 1px solid color-mix(in srgb, var(--paper) 40%, transparent);
+  border-radius: 999px;
+  background: var(--machine);
+}
+.is-immersive .mf-node i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--paper, #ececec);
+  box-shadow: 0 0 8px rgb(236 236 236 / 0.6);
+}
+
+.mf-callouts {
+  list-style: none;
+  margin: 32px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+  text-align: center;
+}
+.mf-callout u {
+  display: none;
+}
+.mf-callout span {
+  font:
+    11px ui-monospace,
+    monospace;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.75;
+}
+.is-immersive .mf-callouts {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  margin: 0;
+  display: block;
+  pointer-events: none;
+}
+.is-immersive .mf-callout {
+  --half: calc(min(74vh, 36vw) * 0.333);
+  position: absolute;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: max-content;
+}
+.is-immersive .mf-callout u {
+  display: block;
+  width: clamp(40px, 7vw, 120px);
+  height: 1px;
+  background: currentColor;
+  opacity: 0.6;
+  flex: none;
+}
+.is-immersive .mf-callout span {
+  font-size: 11px;
+  line-height: 1.6;
+  max-width: 22ch;
+}
+.is-immersive .mf-c1 {
+  right: calc(50% + var(--half) + 40px);
+  top: calc(50% - var(--half) + 24px);
+  flex-direction: row-reverse;
+  text-align: right;
+}
+.is-immersive .mf-c2 {
+  left: calc(50% + var(--half) + 40px);
+  top: calc(50% - var(--half) + 64px);
+}
+.is-immersive .mf-c3 {
+  right: calc(50% + var(--half) + 40px);
+  bottom: calc(50% - var(--half) + 64px);
+  flex-direction: row-reverse;
+  text-align: right;
+}
+.is-immersive .mf-c4 {
+  left: calc(50% + var(--half) + 40px);
+  bottom: calc(50% - var(--half) + 24px);
+}
+
+/* ------------------- transition props between bays ------------------- */
+.prop {
+  display: none;
+}
+.is-immersive .rig-props {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+.is-immersive .prop {
+  display: block;
+  position: absolute;
+  left: 0;
+}
+.is-immersive .prop span {
+  position: absolute;
+  left: 0;
+  bottom: -26px;
+  font:
+    10px ui-monospace,
+    monospace;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  opacity: 0.5;
+}
+.is-immersive .prop-fan {
+  top: 50%;
+  width: min(86vh, 56vw);
+  margin-top: calc(min(86vh, 56vw) / -2);
+  color: color-mix(in srgb, var(--paper) 40%, transparent);
+}
+.is-immersive .prop-mem {
+  top: 50%;
+  display: flex;
+  gap: 18px;
+  height: 62vh;
+  margin-top: -31vh;
+  color: color-mix(in srgb, var(--paper) 45%, transparent);
+}
+.is-immersive .prop-mem > div {
+  position: relative;
+  width: 8vw;
+  height: 100%;
+  border: 1px solid currentColor;
+  border-radius: 3px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: center;
+  padding-bottom: 28px;
+  background: repeating-linear-gradient(90deg, currentColor 0 2px, transparent 2px 7px) bottom / 100% 18px no-repeat;
+}
+.is-immersive .prop-mem i {
+  width: 58%;
+  height: 14%;
+  border: 1px solid currentColor;
+  border-radius: 2px;
+  opacity: 0.8;
+}
+.is-immersive .prop-fins {
+  z-index: 5;
+  top: 0;
+  height: 100vh;
+  height: 100svh;
+  width: 72vw;
+  display: flex;
+  align-items: stretch;
+  justify-content: space-between;
+  pointer-events: none;
+  color: var(--paper);
+  opacity: 0.5;
+}
+.is-immersive .prop-fins i {
+  display: block;
+  align-self: center;
+  width: 1.3vw;
+  transform-origin: 50% 50%;
+  background: linear-gradient(180deg, transparent, color-mix(in srgb, currentColor 80%, transparent) 20%, color-mix(in srgb, currentColor 30%, transparent) 80%, transparent);
+  transform: skewX(-14deg);
+  filter: blur(0.6px);
+}
+
+.lid-serial,
+.lid-bottom {
+  font:
+    9px ui-monospace,
+    monospace;
+  letter-spacing: 0.12em;
+  color: hsl(var(--text-secondary));
+}
+
+/* ----------------------------- boot story --------------------------- */
+.boot-story {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 14px;
+  font-family: "Fraunces", Georgia, serif;
+  font-size: clamp(20px, 5vw, 26px);
+  letter-spacing: -0.02em;
+}
+.boot-story li {
+  display: flex;
+  gap: 14px;
+  align-items: baseline;
+}
+.boot-story span,
+.boot-hint {
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  opacity: 0.55;
+}
+.boot-hint {
+  text-transform: uppercase;
+  margin: 0;
+}
+.boot-die-wrap {
+  perspective: 1100px;
+}
+.boot-die {
+  --w: 1;
+  --k: 0;
+  --out: 0;
+}
+.boot-die i {
+  /* wave in from the centre, re-form with each story beat, then drain to the edges */
+  --lit: calc(0.08 + 0.87 * clamp(0, (var(--w) * 1.6 - var(--d)) * 3, 1));
+  --m1: clamp(0, var(--k), 1);
+  --m2: clamp(0, calc(var(--k) - 1), 1);
+  --m3: clamp(0, calc(var(--k) - 2), 1);
+  opacity: calc(
+    var(--lit) * (1 + (var(--t1) - 1) * var(--m1) + (var(--t2) - var(--t1)) * var(--m2) + (1 - var(--t2)) * var(--m3)) *
+      (1 - 0.75 * clamp(0, calc(var(--out) * 1.5 - (1 - var(--d))), 1))
+  );
+  transition:
+    scale 0.45s ease,
+    background 0.45s ease;
+  scale: calc(1 + var(--h, 0) * 0.55);
+  background: currentColor;
+}
+.is-immersive .boot-story {
+  position: absolute;
+  z-index: 3;
+  left: 40px;
+  bottom: 72px;
+  font-size: clamp(20px, 2.1vw, 34px);
+}
+.is-immersive .boot-hint {
+  position: absolute;
+  z-index: 3;
+  right: 40px;
+  bottom: 32px;
+}
+.is-immersive .boot-die-wrap {
+  pointer-events: auto;
+}
+
+/* whiteboard sizing follows viewport height so every row stays on screen */
+.is-immersive .mf-left {
+  top: 10vh;
+  bottom: 3vh;
+  justify-content: flex-start;
+}
+.is-immersive .mf-lead {
+  margin-bottom: 2vh;
+}
+.is-immersive .mf-lead p {
+  font-size: clamp(24px, 5.6vh, 60px);
+}
+.is-immersive .mf-t {
+  font-size: clamp(16px, 3vh, 34px);
+}
+.is-immersive .mf-entry {
+  padding: 0.85vh 0;
+}
+.is-immersive .mf-d {
+  font-size: clamp(9px, 1.25vh, 11px);
+}
+
+/* lite devices: same story, fewer effects */
+html.lite .mf-near,
+html.lite .prop-fins,
+html.lite .rig-back,
+html.lite .boot-scan {
+  display: none !important;
+}
+html.lite .mf-pcb,
+html.lite .fn-lines,
+html.lite .ab-grid {
+  -webkit-mask-image: none;
+  mask-image: none;
+}
+html.lite .rig-bay,
+html.lite .rig-lid,
+html.lite .mf-node,
+html.lite .fn-tick {
+  backdrop-filter: none;
+  box-shadow: none;
+}
+html.lite .boot-die {
+  box-shadow: none;
+}
+html.lite .boot-die i {
+  transition: none;
+}
+
+@media (max-width: 1199px) {
+  .is-immersive .mf-d {
+    display: none;
+  }
+}
+
+/* scenes that are far off-screen give their heavy layers back */
+.boot.is-off .boot-die-wrap,
+.boot.is-off .boot-rails,
+.manifesto.is-off .mf-pcb,
+.manifesto.is-off .mf-map,
+.rig.is-off .rig-viewport,
+.rig.is-off .rig-back,
+.rig.is-off .rig-fore,
+.rig.is-off .rig-props,
+.rig.is-off .prop {
+  visibility: hidden;
+}
+
+/* ambient signal field behind the boot stage */
+.boot-field {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.9;
+}
+.boot-field-wrap {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+.boot.is-off .boot-field-wrap {
+  visibility: hidden;
+}
+.is-immersive .jx-tl {
+  right: 5vw;
+}
+.is-immersive .jx-br {
+  left: 5vw;
+}
+
+/* real-screenshot and interview outputs */
+.shots-output .shot-main {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 34vh;
+  object-fit: cover;
+  object-position: top;
+  border-radius: 6px;
+  border: 1px solid hsl(var(--text-primary) / 0.15);
+}
+.shot-tabs {
+  display: flex;
+  gap: 6px;
+  margin-top: 10px;
+}
+.shot-tabs button {
+  all: unset;
+  cursor: pointer;
+  padding: 4px 10px;
+  border: 1px solid hsl(var(--text-primary) / 0.2);
+  border-radius: 999px;
+  font:
+    10px ui-monospace,
+    monospace;
+  letter-spacing: 0.06em;
+  color: hsl(var(--text-secondary));
+}
+.shot-tabs button.is-on {
+  background: hsl(var(--text-primary));
+  color: hsl(var(--background));
+}
+.shot-tabs button:focus-visible {
+  outline: 2px solid hsl(var(--text-primary));
+  outline-offset: 2px;
+}
+.phones-row {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  align-items: flex-start;
+}
+.phones-row img {
+  height: clamp(190px, 33vh, 330px);
+  width: auto;
+  max-width: 32%;
+  object-fit: contain;
+  border-radius: 14px;
+}
+.iv-rows {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 12px;
+}
+.iv-rows li {
+  display: grid;
+  grid-template-columns: 2em 1fr;
+  gap: 8px;
+  padding-top: 12px;
+  border-top: 1px solid hsl(var(--text-primary) / 0.15);
+}
+.iv-rows span {
+  font:
+    10px ui-monospace,
+    monospace;
+  opacity: 0.55;
+  padding-top: 3px;
+}
+.iv-rows b {
+  font-family: "Fraunces", Georgia, serif;
+  font-weight: 400;
+  font-size: 17px;
+}
+.iv-rows p {
+  margin: 4px 0 0;
+  font-size: 12px;
+  line-height: 1.55;
+  color: hsl(var(--text-secondary));
+}
+
+/* Chrome re-rasterises script-scaled layers on every scale change unless told otherwise. These
+   few elements scale by large factors during their scenes, so they get a fixed bitmap. */
+.is-immersive .boot-die,
+.is-immersive .mf-map,
+.is-immersive .rig-track {
+  will-change: transform;
+}

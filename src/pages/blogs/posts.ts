@@ -1,4 +1,5 @@
 import fm from "front-matter";
+import type { Visual } from "@/components/blog/types";
 
 export interface PostMeta {
   slug: string;
@@ -11,6 +12,14 @@ export interface PostMeta {
   coverImage: string;
   body: string;
   readTime: string;
+  /** Optional figures declared in front-matter; every value comes from the article text. */
+  visuals: Visual[];
+  /** "research" for independent analyses; anything else is a software project. */
+  kind: "research" | "project";
+  /** Optional verbatim sentence from the body, shown as a pull-quote. */
+  pull?: { after: string; text: string };
+  /** 1-based position in publication order, used for the SR-0N unit label. */
+  unit: number;
 }
 
 interface RawAttrs {
@@ -22,6 +31,9 @@ interface RawAttrs {
   featured?: boolean | string;
   coverImage?: string;
   image?: string;
+  kind?: string;
+  visuals?: Visual[];
+  pull?: { after: string; text: string };
 }
 
 const modules = import.meta.glob("../../components/content/blogs/*.md", {
@@ -47,10 +59,24 @@ function readTime(body: string): string {
 function formatDate(date: string): string {
   if (!date) return "";
   const d = new Date(date);
-  return isNaN(d.getTime()) ? date : d.toLocaleDateString();
+  return isNaN(d.getTime())
+    ? date
+    : d.toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+        timeZone: "UTC",
+      });
 }
 
-export async function loadAllPosts(): Promise<PostMeta[]> {
+let cache: Promise<PostMeta[]> | null = null;
+
+export function loadAllPosts(): Promise<PostMeta[]> {
+  cache ??= readAllPosts();
+  return cache;
+}
+
+async function readAllPosts(): Promise<PostMeta[]> {
   const posts: PostMeta[] = [];
 
   for (const path of Object.keys(modules)) {
@@ -61,7 +87,10 @@ export async function loadAllPosts(): Promise<PostMeta[]> {
     posts.push({
       slug,
       title: attributes.title?.trim() || "Untitled",
-      date: attributes.date || "",
+      date:
+        (attributes.date as unknown) instanceof Date
+          ? (attributes.date as unknown as Date).toISOString().slice(0, 10)
+          : attributes.date || "",
       author: attributes.author?.trim() || "Saurav Rijal",
       summary: attributes.summary?.trim() || "",
       tags: normalizeTags(attributes.tags),
@@ -69,12 +98,17 @@ export async function loadAllPosts(): Promise<PostMeta[]> {
       coverImage: attributes.coverImage || attributes.image || "",
       body,
       readTime: readTime(body),
+      visuals: Array.isArray(attributes.visuals) ? attributes.visuals : [],
+      kind: attributes.kind === "research" ? "research" : "project",
+      pull: attributes.pull,
+      unit: 0,
     });
   }
 
-  return posts.sort(
-    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
-  );
+  const byDate = (a: PostMeta, b: PostMeta) =>
+    new Date(b.date).getTime() - new Date(a.date).getTime();
+  [...posts].sort((a, b) => byDate(b, a)).forEach((p, i) => (p.unit = i + 1));
+  return posts.sort(byDate);
 }
 
 export async function loadPost(slug: string): Promise<PostMeta | null> {

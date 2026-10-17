@@ -9,6 +9,26 @@ tags:
   - fastapi
   - nextjs
 coverImage: "/blog-covers/cover-soccer-highlights.svg"
+visuals:
+  - type: pipeline
+    after: "How I thought of it"
+    title: "A cascade: audio screens, vision confirms"
+    caption: "Cheap audio detection finds candidate moments first; the expensive computer-vision work only runs on those candidates."
+    stages:
+      - name: "Audio excitement"
+        tag: "Librosa"
+        desc: "RMS energy peaks and smoothed thresholds find the moments the stadium erupts: goals, near-misses, controversial calls."
+      - name: "Scene classification"
+        tag: "OpenCV, scikit-learn"
+        desc: "BRIEF descriptors with a k-Means bag-of-visual-words model score action intensity per segment: attacking play, replays, celebrations."
+      - name: "Context buffers"
+        desc: "Cuts include pre and post buffers around key moments, so you see the buildup and the aftermath, not just the goal."
+      - name: "Cut the reel"
+        tag: "MoviePy"
+        desc: "MoviePy cuts the video programmatically into a roughly 10-minute reel. FastAPI handles upload, processing and retrieval; Next.js monitors progress and plays the result."
+pull:
+  after: "How I thought of it"
+  text: "It's a cascade, like a hiring funnel: audio screens, vision interviews."
 ---
 
 # Teaching a Computer to Edit Soccer Highlights

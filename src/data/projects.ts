@@ -9,9 +9,47 @@ export interface Project {
   demoUrl?: string;
   codeUrl: string;
   blogSlug?: string;
+  /** Where it was built, shown on its rack bay. */
+  event?: string;
+  kind?: "research";
 }
 
 export const projects: Project[] = [
+  {
+    id: 11,
+    title: "BioTwin",
+    description: "A digital twin for Garmin data. It reads Body Battery, sleep and heart rate, forecasts the day ahead, and tells you the best window to train.",
+    fullDescription: "Wearables give you numbers; BioTwin gives you understanding. It reads Garmin data (heart rate, sleep, stress, Body Battery), shows the signals, forecasts Body Battery through the day ahead, picks a best training window around your calendar, and answers questions in plain language through a voice-enabled twin. Forecast models were fitted offline in MATLAB and served inside the API.",
+    tech: ["Garmin data", "MATLAB", "Python", "Voice AI"],
+    color: "bg-gradient-to-br from-accent-custom-primary/20 to-accent-custom-secondary/30",
+    featured: true,
+    codeUrl: "https://github.com/HackRice2026/BioTwin",
+    event: "HackRice · built in a weekend",
+  },
+  {
+    id: 12,
+    title: "PlayScript",
+    description: "Classic books turned into playable chapters by a crew of agents. Make the character's decisions, hear them voiced, and see how far you strayed from the story.",
+    fullDescription: "A literary interactive-fiction game that turns classic books into playable, bite-sized chapters. You play a character and make the decisions; at the end you get an analysis of how far you strayed from the original and what your choices say about you. It is agentic end to end: a director agent and a scene critic, a visual director, an animation agent, voice agents with emotive ElevenLabs speech, and a scripting agent, with two passes on the director and visual stages. Romeo & Juliet is the first story.",
+    tech: ["Swift", "ElevenLabs", "Lottie", "Agents"],
+    color: "bg-gradient-to-br from-accent-custom-primary/20 to-accent-custom-secondary/30",
+    featured: true,
+    codeUrl: "https://github.com/Txst-Shipaton/PlayScript",
+    blogSlug: "playscript-romeo-juliet-ios",
+    event: "TXST Shipathon",
+  },
+  {
+    id: 13,
+    title: "AI Interviewer: FAANG Prep",
+    description: "A mock interview where the AI interviewer reads your code as you type, cross-questions your answers, and ends with a Hire or No Hire verdict.",
+    fullDescription: "A real interview environment with an AI interviewer that gives live feedback, asks contextual questions and cross-questions what you actually said. A live editor syncs your solution to the interviewer every second, so it asks follow-ups about your real implementation. A feedback engine scores communication, code quality and problem solving and ends with a Hire or No Hire verdict. Reducing latency in real-time multimodal conversation was the main technical challenge. Built by a team of three at a Google interview-prep hackathon.",
+    tech: ["Next.js", "Gemini", "Realtime voice", "TypeScript"],
+    color: "bg-gradient-to-br from-accent-custom-primary/20 to-accent-custom-secondary/30",
+    featured: true,
+    codeUrl: "https://github.com/sh1vendra/Interview_Prep",
+    blogSlug: "ai-interviewer-faang-prep",
+    event: "Google interview-prep hackathon",
+  },
   {
     id: 1,
     title: "VideoMaxx: Agentic Video Production Pipeline",
@@ -33,6 +71,7 @@ export const projects: Project[] = [
     featured: true,
     codeUrl: "https://github.com/Rizsaurav/-Open-Weight-Oligopoly",
     blogSlug: "open-weight-oligopoly",
+    kind: "research",
   },
   {
     id: 3,
@@ -80,17 +119,6 @@ export const projects: Project[] = [
     blogSlug: "soccer-highlights-generator",
   },
   {
-    id: 7,
-    title: "Sentimental Movies: NLP Film Discovery",
-    description: "Ranks movies by how audiences actually felt, not by hype or watch-time optimization.",
-    fullDescription: "Most platforms rank by engagement, not enjoyment. Sentimental Movies analyzed thousands of IMDb reviews across the top 2000 films with NLTK sentiment analysis, assigning each movie a 0-1 sentiment score that captures how people felt, filtering out overhyped disappointments and surfacing hidden gems. Includes an AI movie bot serving spoiler-free summaries. FastAPI + PostgreSQL backend, React frontend.",
-    tech: ["FastAPI", "React", "PostgreSQL", "NLTK", "Python"],
-    color: "bg-gradient-to-br from-accent-custom-primary/20 to-accent-custom-secondary/20",
-    featured: false,
-    codeUrl: "https://github.com/Rizsaurav/NLP-Based-Film-Recommendation-Engine",
-    blogSlug: "sentimental-movies-nlp",
-  },
-  {
     id: 8,
     title: "TRAC: ML Cheating Detection",
     description: "Autoencoder anomaly detection plus gaze simulation for flagging suspicious test-taking behavior.",
@@ -100,17 +128,6 @@ export const projects: Project[] = [
     featured: false,
     codeUrl: "https://github.com/Rizsaurav/TRAC",
     blogSlug: "trac-cheating-detection",
-  },
-  {
-    id: 9,
-    title: "PetTalks: Pet Owners' Forum",
-    description: "A community forum where pet owners post, comment, upvote, and share photos of their pets.",
-    fullDescription: "A React forum backed by a cloud-hosted SQL database: create and edit posts with images, comment and upvote, tag discussions, search by title, and sort by recency or upvotes, with pseudo-authentication and a smooth browsing experience.",
-    tech: ["React", "SQL", "JavaScript", "CSS"],
-    color: "bg-gradient-to-br from-accent-custom-soft/20 to-accent-custom-primary/30",
-    featured: false,
-    codeUrl: "https://github.com/Rizsaurav/PetTalks-Pet-Owners-Discussion-Forum",
-    blogSlug: "pettalks-forum",
   },
   {
     id: 10,

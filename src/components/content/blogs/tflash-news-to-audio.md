@@ -9,6 +9,27 @@ tags:
   - tts
   - automation
 coverImage: "/blog-covers/cover-tflash.svg"
+visuals:
+  - type: pipeline
+    after: "What it does"
+    title: "Webhook in, audio out"
+    caption: "Orchestrated with n8n workflows instead of a traditional backend."
+    stages:
+      - name: "Fetch"
+        tag: "NewsAPI"
+        desc: "NewsAPI fetches live headlines for the chosen topic."
+      - name: "Summarize"
+        tag: "Gemini"
+        desc: "Gemini summarizes the headlines into a tight briefing script."
+      - name: "Speak"
+        tag: "ElevenLabs"
+        desc: "ElevenLabs converts the script to natural voice."
+      - name: "Store"
+        tag: "Supabase"
+        desc: "Supabase stores the audio for instant playback in the Next.js web client or the Flutter mobile app."
+pull:
+  after: "How I thought of it"
+  text: "A briefing pipeline is really just a DAG: fetch → summarize → speak → store."
 ---
 
 # T-Flash: The News, But Spoken
