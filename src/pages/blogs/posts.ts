@@ -36,10 +36,16 @@ interface RawAttrs {
   pull?: { after: string; text: string };
 }
 
-const modules = import.meta.glob("../../components/content/blogs/*.md", {
+// Bundled with the blog chunk (eager) so opening an article is one request, not a waterfall of
+// one request per markdown file.
+const raw = import.meta.glob("../../components/content/blogs/*.md", {
   query: "?raw",
   import: "default",
-}) as Record<string, () => Promise<string>>;
+  eager: true,
+}) as Record<string, string>;
+const modules: Record<string, () => Promise<string>> = Object.fromEntries(
+  Object.entries(raw).map(([k, v]) => [k, () => Promise.resolve(v)]),
+);
 
 function normalizeTags(tags: RawAttrs["tags"]): string[] {
   if (Array.isArray(tags)) return tags.map((t) => String(t).trim()).filter(Boolean);
