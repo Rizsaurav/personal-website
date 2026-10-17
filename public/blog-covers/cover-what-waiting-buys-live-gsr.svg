@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <rect width="1200" height="630" fill="#0E1526"/>
+  <g stroke="#FFFFFF" stroke-opacity="0.06" stroke-width="1">
+    <path d="M0 105 H1200 M0 210 H1200 M0 315 H1200 M0 420 H1200 M0 525 H1200"/>
+    <path d="M200 0 V630 M400 0 V630 M600 0 V630 M800 0 V630 M1000 0 V630"/>
+  </g>
+  <!-- pitch top-down right -->
+  <g transform="translate(800,90)">
+    <rect x="0" y="0" width="320" height="220" rx="4" fill="none" stroke="#FFFFFF" stroke-opacity="0.35" stroke-width="2"/>
+    <line x1="160" y1="0" x2="160" y2="220" stroke="#FFFFFF" stroke-opacity="0.35" stroke-width="1.5"/>
+    <circle cx="160" cy="110" r="28" fill="none" stroke="#FFFFFF" stroke-opacity="0.35" stroke-width="1.5"/>
+    <rect x="0" y="60" width="42" height="100" fill="none" stroke="#FFFFFF" stroke-opacity="0.35" stroke-width="1.5"/>
+    <rect x="278" y="60" width="42" height="100" fill="none" stroke="#FFFFFF" stroke-opacity="0.35" stroke-width="1.5"/>
+    <circle cx="52" cy="58" r="7" fill="#FF6B4A"/><circle cx="98" cy="128" r="7" fill="#FF6B4A"/><circle cx="140" cy="68" r="7" fill="#FF6B4A"/>
+    <circle cx="210" cy="150" r="7" fill="#FFFFFF"/><circle cx="262" cy="72" r="7" fill="#FFFFFF"/><circle cx="285" cy="160" r="7" fill="#FFFFFF"/>
+    <circle cx="168" cy="110" r="5" fill="#FFD166"/>
+    <text x="52" y="48" font-family="Verdana" font-size="11" fill="#FFFFFF" text-anchor="middle">9</text>
+    <text x="210" y="140" font-family="Verdana" font-size="11" fill="#FFFFFF" text-anchor="middle">10</text>
+  </g>
+  <!-- delay curve left-bottom -->
+  <polyline points="150,530 300,495 450,460 600,435 750,415" fill="none" stroke="#FF6B4A" stroke-width="5" stroke-linecap="round"/>
+  <circle cx="150" cy="530" r="9" fill="#FFFFFF"/><circle cx="750" cy="415" r="9" fill="#FF6B4A"/>
+  <text x="150" y="555" font-family="Verdana" font-size="14" fill="#FFFFFF" fill-opacity="0.6">LIVE 34.6</text>
+  <text x="640" y="400" font-family="Verdana" font-size="14" fill="#FF6B4A">WHOLE CLIP 43.6</text>
+  <text x="150" y="120" font-family="Georgia, 'Times New Roman', serif" font-size="64" fill="#FFFFFF" letter-spacing="2">What Waiting</text>
+  <text x="150" y="196" font-family="Georgia, 'Times New Roman', serif" font-size="64" fill="#FFFFFF" letter-spacing="2">Buys</text>
+  <text x="152" y="248" font-family="Verdana, system-ui, sans-serif" font-size="22" fill="#FF6B4A" letter-spacing="5">34.6 TO 43.6 GS-HOTA  •  32 FPS ON ONE H100</text>
+  <text x="150" y="580" font-family="Verdana, system-ui, sans-serif" font-size="18" fill="#FFFFFF" fill-opacity="0.45" letter-spacing="3">LIVE SOCCER GAME STATE RECONSTRUCTION</text>
+</svg>
