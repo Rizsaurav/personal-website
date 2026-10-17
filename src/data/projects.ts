@@ -24,6 +24,7 @@ export const projects: Project[] = [
     color: "bg-gradient-to-br from-accent-custom-primary/20 to-accent-custom-secondary/30",
     featured: true,
     codeUrl: "https://github.com/HackRice2026/BioTwin",
+    blogSlug: "biotwin-body-battery-forecast",
     event: "HackRice · built in a weekend",
   },
   {
