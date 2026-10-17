@@ -37,7 +37,7 @@ export const LITE =
 if (LITE && typeof document !== "undefined")
   document.documentElement.classList.add("lite");
 /** Scrub lag is a luxury: lite devices follow the scrollbar directly. */
-export const SCRUB: number | true = LITE ? true : 0.5;
+export const SCRUB: number | true = true;
 
 /** Pinned, scrubbed scenes only run on roomy screens that allow motion. */
 export const IMMERSIVE_QUERY =
@@ -86,46 +86,22 @@ export function startSmoothScroll() {
   watchFrameRate();
   if (LITE || window.matchMedia("(prefers-reduced-motion: reduce)").matches)
     return;
-  lenis = new Lenis({ lerp: 0.1, anchors: { offset: -64 } });
-  let running = false;
-  let idle = 0;
-  const tick = (t: number) => lenis?.raf(t * 1000);
-  wakeLenis = () => {
-    if (!lenis) return;
-    if (!running) {
-      running = true;
-      gsap.ticker.add(tick);
-    }
-    window.clearTimeout(idle);
-    idle = window.setTimeout(() => {
-      if (lenis?.isScrolling) return wakeLenis();
-      gsap.ticker.remove(tick);
-      running = false;
-    }, 700);
-  };
-  lenis.on("scroll", () => {
-    ScrollTrigger.update();
-    wakeLenis();
+  // The standard integration: GSAP's ticker drives Lenis every frame. Starting and stopping the
+  // ticker around scrolls caused a hitch on the first frame of each scroll, so it stays on.
+  lenis = new Lenis({
+    lerp: 0.12,
+    wheelMultiplier: 1,
+    anchors: { offset: -64 },
   });
-  const events = [
-    "wheel",
-    "keydown",
-    "pointerdown",
-    "click",
-    "hashchange",
-  ] as const;
-  events.forEach((e) =>
-    window.addEventListener(e, wakeLenis, { passive: true }),
-  );
+  const tick = (t: number) => lenis?.raf(t * 1000);
+  lenis.on("scroll", ScrollTrigger.update);
+  gsap.ticker.add(tick);
   gsap.ticker.lagSmoothing(0);
-  wakeLenis();
+  wakeLenis = () => {};
   return () => {
-    events.forEach((e) => window.removeEventListener(e, wakeLenis));
-    window.clearTimeout(idle);
     gsap.ticker.remove(tick);
     lenis?.destroy();
     lenis = null;
-    wakeLenis = () => {};
   };
 }
 

@@ -331,197 +331,89 @@ export function ComputeJourney() {
         .to(die, { scale: 24, duration: 2, ease: "power3.in" }, 7.2)
         .to(die, { opacity: 0, duration: 0.4 }, 8.9);
 
-      /* ---- Scene 1.5: the board (a whiteboard that keeps adding, never erases) ---- */
-      const mfStage = one(".mf-stage");
-      let onMfUpdate: ((self: ScrollTrigger) => void) | null = null;
+      /* ---- Scene 1.5: the chip. Nodes light up around it, the die shot annotates, the camera dives in ---- */
       const mf = gsap.timeline({
         defaults: { ease: "none" },
         scrollTrigger: {
           trigger: one(".manifesto"),
           start: "top top",
-          end: () => `+=${Math.round(window.innerHeight * 4.4)}`,
-          pin: mfStage,
+          end: () => `+=${Math.round(window.innerHeight * 2.4)}`,
+          pin: one(".mf-stage"),
           scrub: SCRUB,
-          onUpdate: (self) => onMfUpdate?.(self),
           refreshPriority: 9,
           invalidateOnRefresh: true,
         },
       });
       gsap.set(q(".mf-pcb"), { rotateX: 64, xPercent: -50, yPercent: -50 });
-      const entries = q(".mf-entry");
       const nodes = q(".mf-node");
       const lines = q(".mf-lines line");
-      const gap = 0.9;
-      mf
-        // the board streams toward the camera at two depths, visible from frame one
-        .fromTo(
-          one(".mf-far"),
-          { y: 0, opacity: 1 },
-          { y: () => window.innerHeight * 0.5, opacity: 1, duration: 11 },
-          0,
-        )
+      gsap.set(lines, { strokeDasharray: 1, strokeDashoffset: 1 });
+      mf.fromTo(
+        one(".mf-far"),
+        { y: 0 },
+        { y: () => window.innerHeight * 0.4, duration: 6 },
+        0,
+      )
         .fromTo(
           one(".mf-near"),
-          { y: 0, opacity: 1 },
-          { y: () => window.innerHeight * 1.3, opacity: 1, duration: 11 },
+          { y: 0 },
+          { y: () => window.innerHeight * 0.9, duration: 6 },
           0,
-        )
-        .to(
-          [one(".mf-far"), one(".mf-near")],
-          { opacity: 1, duration: 0.01 },
-          0.6,
-        )
-        .fromTo(
-          q(".mf-pcb path"),
-          { strokeDasharray: 1, strokeDashoffset: 1 },
-          {
-            strokeDasharray: 1,
-            strokeDashoffset: 0,
-            stagger: { amount: 5 },
-            duration: 3,
-          },
-          0,
-        )
-        .from(
-          q(".mf-lead .jx-char"),
-          {
-            yPercent: 120,
-            rotate: 4,
-            stagger: 0.025,
-            duration: 0.7,
-            ease: "power3.out",
-          },
-          0.1,
-        )
-        .from(
-          one(".mf-lead .mf-kick"),
-          { opacity: 0, x: -14, duration: 0.5 },
-          0.1,
         )
         .fromTo(
           one(".mf-chip"),
-          { scale: 0.8, opacity: 1, rotateX: 35, rotateZ: -8 },
+          { scale: 0.8, rotateX: 35, rotateZ: -8 },
+          { scale: 1, rotateX: 0, rotateZ: 0, duration: 1, ease: "power3.out" },
+          0,
+        )
+        .from(
+          nodes,
           {
-            scale: 1,
-            opacity: 1,
-            rotateX: 0,
-            rotateZ: 0,
-            duration: 1.6,
-            ease: "power3.out",
+            opacity: 0,
+            scale: 0.6,
+            stagger: 0.14,
+            duration: 0.3,
+            ease: "back.out(2)",
           },
-          0.3,
+          0.4,
         )
-        .from(q(".mf-pins"), { opacity: 0, scale: 0.92, duration: 0.8 }, 1);
-      // Ratchet: each entry is added once, by time, when the playhead first reaches it.
-      // Scrolling back up never takes it away; the board keeps what you have already read.
-      const ratchet = entries.map((en, i) => {
-        gsap.set(en.querySelector(".mf-n"), { opacity: 0, x: -10 });
-        gsap.set(en.querySelectorAll(".mf-t .jx-char"), {
-          yPercent: 120,
-          rotateX: -70,
-        });
-        gsap.set(en.querySelector(".mf-mark"), {
-          scaleX: 0,
-          transformOrigin: "0 50%",
-        });
-        gsap.set(en.querySelector(".mf-d"), { opacity: 0, x: -12 });
-        gsap.set(nodes[i], { opacity: 0, scale: 0.6 });
-        gsap.set(lines[i], { strokeDasharray: 1, strokeDashoffset: 1 });
-        const tl = gsap
-          .timeline({ paused: true })
-          .to(en.querySelector(".mf-n"), { opacity: 1, x: 0, duration: 0.3 }, 0)
-          .to(
-            en.querySelectorAll(".mf-t .jx-char"),
-            {
-              yPercent: 0,
-              rotateX: 0,
-              stagger: 0.07,
-              duration: 0.55,
-              ease: "back.out(1.5)",
-            },
-            0.05,
-          )
-          .to(
-            en.querySelector(".mf-mark"),
-            { scaleX: 1, duration: 0.45, ease: "power3.out" },
-            0.3,
-          )
-          .to(
-            en.querySelector(".mf-d"),
-            { opacity: 1, x: 0, duration: 0.45, ease: "power2.out" },
-            0.4,
-          )
-          .to(
-            nodes[i],
-            { opacity: 1, scale: 1, duration: 0.4, ease: "back.out(2)" },
-            0.1,
-          )
-          .to(
-            lines[i],
-            { strokeDashoffset: 0, duration: 0.5, ease: "power2.out" },
-            0.15,
-          );
-        if (i > 0) tl.to(entries[i - 1], { opacity: 0.62, duration: 0.5 }, 0.2);
-        return { at: 0.5 + i * gap, tl, played: false };
-      });
-      onMfUpdate = (self) => {
-        const time = self.progress * mf.duration();
-        ratchet.forEach((r) => {
-          if (!r.played && time >= r.at) {
-            r.played = true;
-            r.tl.play();
-          }
-        });
-      };
-      const done = 0.5 + entries.length * gap;
-      const mapW = () =>
-        Math.min(window.innerHeight * 0.74, window.innerWidth * 0.36);
-      mf.to(entries, { opacity: 1, duration: 0.6 }, done)
-        .to({}, { duration: 0.8 }, done)
-        // finale: the chip centres and the annotated die shot draws in around it
-        .to(
-          [one(".mf-left"), q(".mf-node"), one(".mf-lines")],
-          { opacity: 0, duration: 0.5 },
-          done + 0.8,
-        )
+        .to(lines, { strokeDashoffset: 0, stagger: 0.14, duration: 0.3 }, 0.45)
+        .to([nodes, one(".mf-lines")], { opacity: 0, duration: 0.4 }, 1.9)
         .to(
           one(".mf-map"),
-          {
-            x: () =>
-              -(window.innerWidth * 0.95 - mapW() / 2 - window.innerWidth / 2),
-            scale: 1.45,
-            duration: 1,
-            ease: "power3.inOut",
-          },
-          done + 0.8,
+          { scale: 1.45, duration: 0.6, ease: "power3.inOut" },
+          1.9,
         )
         .from(
           q(".mf-callout u"),
-          { scaleX: 0, transformOrigin: "0 50%", stagger: 0.3, duration: 0.5 },
-          done + 1.9,
+          {
+            scaleX: 0,
+            transformOrigin: "0 50%",
+            stagger: 0.15,
+            duration: 0.35,
+          },
+          2.3,
         )
         .from(
           q(".mf-callout span"),
           {
             opacity: 0,
-            y: 14,
-            filter: LITE ? "none" : "blur(6px)",
-            stagger: 0.3,
-            duration: 0.6,
+            y: 12,
+            stagger: 0.15,
+            duration: 0.4,
             ease: "power2.out",
           },
-          done + 2.1,
+          2.4,
         )
-        .to({}, { duration: 1.4 }, done + 3)
-        .to(q(".mf-callout"), { opacity: 0, duration: 0.5 }, done + 3.4)
+        .to(q(".mf-callout"), { opacity: 0, duration: 0.35 }, 3.6)
         // dive into the package: it becomes the next scene
         .to(
           one(".mf-map"),
-          { scale: 30, duration: 1.8, ease: "power3.in" },
-          done + 3.6,
+          { scale: 30, duration: 1.3, ease: "power3.in" },
+          3.7,
         )
-        .to(one(".mf-map"), { opacity: 0, duration: 0.4 }, done + 5.0)
-        .to(q(".mf-pcb"), { opacity: 0, duration: 0.8 }, done + 4.4);
+        .to(one(".mf-map"), { opacity: 0, duration: 0.3 }, 4.7)
+        .to(q(".mf-pcb"), { opacity: 0, duration: 0.6 }, 4.3);
 
       /* ---- Scene 2: horizontal rig (camera tracks along the rack) ---- */
       const stage = one(".rig-stage");
@@ -1148,31 +1040,6 @@ export function ComputeJourney() {
               </g>
             </svg>
           ))}
-          <div className="mf-left">
-            <div className="mf-lead" aria-hidden="true">
-              <span className="mf-kick">01 / ABOUT</span>
-              <p>
-                <Chars text="Engineer. Researcher." />
-                <em>
-                  <Chars text="Builder." />
-                </em>
-              </p>
-            </div>
-            <ol className="mf-list" aria-hidden="true">
-              {board.map((b, i) => (
-                <li className="mf-entry" key={b.t}>
-                  <span className="mf-n">{String(i + 1).padStart(2, "0")}</span>
-                  <div>
-                    <b className="mf-t">
-                      <Chars text={b.t} by="word" />
-                    </b>
-                    <u className="mf-mark" />
-                    <span className="mf-d">{b.d}</span>
-                  </div>
-                </li>
-              ))}
-            </ol>
-          </div>
           <div className="mf-map" aria-hidden="true">
             <svg
               className="mf-lines"

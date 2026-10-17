@@ -1328,3 +1328,10 @@ html.lite .boot-die i {
   font-size: clamp(17px, 4.6vw, 22px);
   gap: 10px;
 }
+
+/* chip-only scene: the map sits in the centre */
+.is-immersive .mf-map {
+  right: auto;
+  left: 50%;
+  margin-left: calc(min(74vh, 36vw) / -2);
+}
