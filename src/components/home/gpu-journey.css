@@ -1429,3 +1429,104 @@ html.lite .boot-die i {
 .journey.is-dive .boot-die-wrap {
   width: min(52vw, 240px);
 }
+
+/* ------------- the chip carries the photo; the cell grid is a light layer over it ------------- */
+.die-photo {
+  position: absolute;
+  inset: 12px;
+  width: calc(100% - 24px);
+  height: calc(100% - 24px);
+  object-fit: cover;
+  filter: grayscale(1) contrast(1.08) brightness(calc(0.35 + 0.65 * var(--w)));
+  border-radius: 3px;
+  pointer-events: none;
+}
+.boot-die i {
+  position: relative;
+  z-index: 1;
+  mix-blend-mode: screen;
+  opacity: calc(
+    0.42 * var(--lit) * (1 + (var(--t1) - 1) * var(--m1) + (var(--t2) - var(--t1)) * var(--m2) + (1 - var(--t2)) * var(--m3))
+  );
+}
+.boot-die::after {
+  z-index: 2;
+}
+/* annotations around the chip */
+.boot-callouts {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+  text-align: center;
+}
+.boot-callout u {
+  display: none;
+}
+.boot-callout span {
+  font:
+    11px ui-monospace,
+    monospace;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.75;
+}
+.is-immersive .boot-callouts {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: block;
+  pointer-events: none;
+}
+.is-immersive .boot-callout {
+  --half: calc(min(42vh, 38vw) * 0.92);
+  position: absolute;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: max-content;
+}
+.is-immersive .boot-callout u {
+  display: block;
+  width: clamp(30px, 4vw, 70px);
+  height: 1px;
+  background: currentColor;
+  opacity: 0.6;
+}
+.is-immersive .boot-callout span {
+  max-width: 22ch;
+  line-height: 1.6;
+}
+.is-immersive .bc-1 {
+  right: calc(50% + var(--half));
+  top: 30%;
+  flex-direction: row-reverse;
+  text-align: right;
+}
+.is-immersive .bc-2 {
+  left: calc(50% + var(--half));
+  top: 34%;
+}
+.is-immersive .bc-3 {
+  right: calc(50% + var(--half));
+  top: 58%;
+  flex-direction: row-reverse;
+  text-align: right;
+}
+.is-immersive .bc-4 {
+  left: calc(50% + var(--half));
+  top: 62%;
+}
+.journey.is-dive .boot-callouts {
+  margin-top: 4px;
+}
+
+.journey.is-dive .boot-callouts {
+  display: none;
+}
+
+.is-immersive .boot-line-b {
+  bottom: 7vh;
+  font-size: clamp(30px, 3.4vw, 56px);
+}

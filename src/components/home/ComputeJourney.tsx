@@ -109,7 +109,7 @@ const board = [
 const callouts = [
   "B.S. Computer Science · Texas State · Applied Math minor",
   "SWE intern at LaunchBox · agentic internal tools",
-  "Open-source projects · each with a build story",
+  "Hackathon builds, shipped · BioTwin, PlayScript, AI Interviewer",
   "Seeking forward-deployed AI roles · grad school, Fall 2027",
 ];
 
@@ -219,7 +219,7 @@ export function ComputeJourney() {
         scrollTrigger: {
           trigger: one(".boot"),
           start: "top top",
-          end: () => `+=${Math.round(window.innerHeight * 2.2)}`,
+          end: () => `+=${Math.round(window.innerHeight * 2.9)}`,
           pin: bootStage,
           scrub: SCRUB,
           refreshPriority: 10,
@@ -308,12 +308,6 @@ export function ComputeJourney() {
           { "--k": 3, duration: 1.7, ease: "none" },
           5.3,
         )
-        .fromTo(
-          die,
-          { "--out": 0 },
-          { "--out": 1, duration: 1.4, ease: "none" },
-          7.3,
-        )
         .to(
           [
             q(".boot-line-b"),
@@ -326,7 +320,7 @@ export function ComputeJourney() {
             opacity: 0,
             duration: 0.7,
           },
-          7.6,
+          8.6,
         )
         .to(
           q(".boot-rails i"),
@@ -337,7 +331,7 @@ export function ComputeJourney() {
             duration: 1.4,
             ease: "power3.in",
           },
-          7.9,
+          8.9,
         )
         .to(
           q(".boot-rails i"),
@@ -347,10 +341,10 @@ export function ComputeJourney() {
             duration: 0.25,
             ease: "sine.out",
           },
-          7.15,
+          8.15,
         )
-        .to(q(".boot-rails i"), { opacity: 0, duration: 0.4 }, 8.9)
-        .to(one(".boot-field-wrap"), { opacity: 0, duration: 0.8 }, 7.4)
+        .to(q(".boot-rails i"), { opacity: 0, duration: 0.4 }, 9.9)
+        .to(one(".boot-field-wrap"), { opacity: 0, duration: 0.8 }, 8.4)
         .fromTo(
           one(".boot-scan"),
           { yPercent: -100 },
@@ -361,74 +355,20 @@ export function ComputeJourney() {
           },
           4.6,
         )
-        .to(die, { scale: 24, duration: 2, ease: "power3.in" }, 7.2)
-        .to(die, { opacity: 0, duration: 0.4 }, 8.9);
-
-      /* ---- Scene 1.5: the chip. Nodes light up around it, the die shot annotates, the camera dives in ---- */
-      const mf = gsap.timeline({
-        defaults: { ease: "none" },
-        scrollTrigger: {
-          trigger: one(".manifesto"),
-          start: "top top",
-          end: () => `+=${Math.round(window.innerHeight * 2.4)}`,
-          pin: one(".mf-stage"),
-          scrub: SCRUB,
-          refreshPriority: 9,
-          invalidateOnRefresh: true,
-        },
-      });
-      gsap.set(q(".mf-pcb"), { rotateX: 64, xPercent: -50, yPercent: -50 });
-      const nodes = q(".mf-node");
-      const lines = q(".mf-lines line");
-      gsap.set(lines, { strokeDasharray: 1, strokeDashoffset: 1 });
-      mf.fromTo(
-        one(".mf-far"),
-        { y: 0 },
-        { y: () => window.innerHeight * 0.4, duration: 6 },
-        0,
-      )
-        .fromTo(
-          one(".mf-near"),
-          { y: 0 },
-          { y: () => window.innerHeight * 0.9, duration: 6 },
-          0,
-        )
-        .fromTo(
-          one(".mf-chip"),
-          { scale: 0.8, rotateX: 35, rotateZ: -8 },
-          { scale: 1, rotateX: 0, rotateZ: 0, duration: 1, ease: "power3.out" },
-          0,
-        )
+        // the annotated die shot: who is on this chip
+        .to(q(".boot-story"), { opacity: 0, duration: 0.3 }, 6.9)
         .from(
-          nodes,
-          {
-            opacity: 0,
-            scale: 0.6,
-            stagger: 0.14,
-            duration: 0.3,
-            ease: "back.out(2)",
-          },
-          0.4,
-        )
-        .to(lines, { strokeDashoffset: 0, stagger: 0.14, duration: 0.3 }, 0.45)
-        .to([nodes, one(".mf-lines")], { opacity: 0, duration: 0.4 }, 1.9)
-        .to(
-          one(".mf-map"),
-          { scale: 1.45, duration: 0.6, ease: "power3.inOut" },
-          1.9,
-        )
-        .from(
-          q(".mf-callout u"),
+          q(".boot-callout u"),
           {
             scaleX: 0,
             transformOrigin: "0 50%",
             stagger: 0.15,
             duration: 0.35,
           },
-          2.3,
+          7.1,
         )
         .from(
-          q(".mf-callout span"),
+          q(".boot-callout span"),
           {
             opacity: 0,
             y: 12,
@@ -436,17 +376,12 @@ export function ComputeJourney() {
             duration: 0.4,
             ease: "power2.out",
           },
-          2.4,
+          7.2,
         )
-        .to(q(".mf-callout"), { opacity: 0, duration: 0.35 }, 3.6)
-        // dive into the package: it becomes the next scene
-        .to(
-          one(".mf-map"),
-          { scale: 30, duration: 1.3, ease: "power3.in" },
-          3.7,
-        )
-        .to(one(".mf-map"), { opacity: 0, duration: 0.45 }, 4.05)
-        .to(q(".mf-pcb"), { opacity: 0, duration: 0.6 }, 4.3);
+        .to(q(".boot-callout"), { opacity: 0, duration: 0.4 }, 8.3)
+        // then the camera dives into the chip
+        .to(die, { scale: 24, duration: 2, ease: "power3.in" }, 8.4)
+        .to(die, { opacity: 0, duration: 0.4 }, 10.1);
 
       /* ---- Scene 2: horizontal rig (camera tracks along the rack) ---- */
       const stage = one(".rig-stage");
@@ -825,7 +760,6 @@ export function ComputeJourney() {
         .to({}, { duration: 0.2 }, total - 0.2);
 
       gate(one(".boot"));
-      gate(one(".manifesto"));
       gate(one(".rig"));
 
       // header follows the stage: dark while the machine is on screen
@@ -908,7 +842,7 @@ export function ComputeJourney() {
           2.9,
         )
         .to(one(".boot-chip"), { opacity: 0, duration: 0.3 }, 3.7);
-      q(".mf-entry, .mf-callout").forEach((li) => {
+      q(".boot-callout").forEach((li) => {
         gsap.fromTo(
           li,
           { opacity: 0, x: -20 },
@@ -925,21 +859,6 @@ export function ComputeJourney() {
           },
         );
       });
-      gsap.fromTo(
-        one(".mf-chip"),
-        { scale: 0.7, opacity: 0.2 },
-        {
-          scale: 1,
-          opacity: 1,
-          ease: "none",
-          scrollTrigger: {
-            trigger: one(".mf-chip"),
-            start: "top 92%",
-            end: "top 55%",
-            scrub: true,
-          },
-        },
-      );
       q(".rig-bay").forEach((card) => {
         gsap.fromTo(
           card,
@@ -1066,7 +985,7 @@ export function ComputeJourney() {
       </a>
 
       {/* ---------------------------- BOOT ------------------------------ */}
-      <div className="boot">
+      <div className="boot" id="about">
         <div className="boot-stage">
           <DotField />
           <div className="boot-rails" aria-hidden="true">
@@ -1075,19 +994,21 @@ export function ComputeJourney() {
             ))}
           </div>
           <div className="jx-corner jx-tl" aria-hidden="true">
-            <span>SR—01 / BOOT SEQUENCE</span>
+            <span>SR—01 / SAURAV RIJAL</span>
           </div>
           <div className="jx-corner jx-br" aria-hidden="true">
             <span>SCROLL ↓</span>
           </div>
           <h2 className="boot-title">
-            <span className="sr-only">Compute in. Useful things out.</span>
+            <span className="sr-only">
+              Built to ship. AI systems, end to end.
+            </span>
             <span className="boot-line boot-line-a">
-              <Chars text="Compute in." />
+              <Chars text="Built to ship." />
             </span>
             <span className="boot-line boot-line-b">
               <em>
-                <Chars text="Useful things out." />
+                <Chars text="AI systems, end to end." />
               </em>
             </span>
           </h2>
@@ -1114,7 +1035,7 @@ export function ComputeJourney() {
                 <i />
                 <i />
               </b>
-              <span className="chip-mark">SR—01 · COMPUTE</span>
+              <span className="chip-mark">SAURAV RIJAL · SR—01</span>
               <div
                 className="boot-die"
                 onAnimationEnd={(e) => {
@@ -1122,6 +1043,7 @@ export function ComputeJourney() {
                     e.currentTarget.classList.remove("is-rip");
                 }}
               >
+                <img className="die-photo" src={chipPhoto} alt="" />
                 <u className="boot-scan" />
                 {Array.from({ length: CELLS }, (_, i) => {
                   const r = Math.floor(i / 12),
@@ -1148,95 +1070,26 @@ export function ComputeJourney() {
           </div>
           <ol className="boot-story">
             <li>
-              <span>01</span>A question worth asking.
+              <span>01</span>Three hackathon builds, shipped.
             </li>
             <li>
-              <span>02</span>A pipeline that runs itself.
+              <span>02</span>Agents that run whole pipelines.
             </li>
             <li>
-              <span>03</span>Something people can use.
+              <span>03</span>Research you can reproduce.
             </li>
           </ol>
-          <p className="boot-hint" aria-hidden="true">
-            Touch the die
-          </p>
-        </div>
-      </div>
-
-      {/* ---------------------------- THE BOARD ---------------------------- */}
-      <div className="manifesto" id="about">
-        <div className="mf-stage">
-          <p className="sr-only">
-            What I do: {board.map((b) => `${b.t}, ${b.d}`).join(" ")}
-          </p>
-          {[
-            { b: farBoard, cls: "mf-far" },
-            { b: nearBoard, cls: "mf-near" },
-          ].map(({ b, cls }) => (
-            <svg
-              key={cls}
-              className={`mf-pcb ${cls}`}
-              viewBox="0 0 1600 1200"
-              preserveAspectRatio="xMidYMid slice"
-              aria-hidden="true"
-            >
-              <g fill="none" stroke="currentColor" strokeWidth="2">
-                {b.paths.map((d, i) => (
-                  <path key={i} d={d} pathLength={1} />
-                ))}
-                {b.vias.map(([x, y], i) => (
-                  <circle key={`v${i}`} cx={x} cy={y} r="7" />
-                ))}
-              </g>
-            </svg>
-          ))}
-          <div className="mf-map" aria-hidden="true">
-            <svg
-              className="mf-lines"
-              viewBox="0 0 100 100"
-              preserveAspectRatio="none"
-            >
-              {nodePos.map((p, i) => (
-                <line
-                  key={i}
-                  x1={p.x}
-                  y1={p.y}
-                  x2="50"
-                  y2="50"
-                  pathLength={1}
-                  vectorEffect="non-scaling-stroke"
-                />
-              ))}
-            </svg>
-            <div className="mf-chip">
-              <i className="mf-pins mf-pins-x" />
-              <i className="mf-pins mf-pins-y" />
-              <div className="mf-package">
-                {/* swap src/assets/chip.jpg in later for a different photo here */}
-                <img src={chipPhoto} alt="" />
-                <span className="mf-marking">SR—01 / SAURAV RIJAL</span>
-                <b className="mf-notch" />
-              </div>
-            </div>
-            {board.map((b, i) => (
-              <span
-                className="mf-node"
-                key={b.tag}
-                style={{ left: `${nodePos[i].x}%`, top: `${nodePos[i].y}%` }}
-              >
-                <i />
-                {b.tag}
-              </span>
-            ))}
-          </div>
-          <ul className="mf-callouts" aria-hidden="true">
+          <ul className="boot-callouts" aria-label="About Saurav">
             {callouts.map((c, i) => (
-              <li className={`mf-callout mf-c${i + 1}`} key={c}>
-                <u />
+              <li className={`boot-callout bc-${i + 1}`} key={c}>
+                <u aria-hidden="true" />
                 <span>{c}</span>
               </li>
             ))}
           </ul>
+          <p className="boot-hint" aria-hidden="true">
+            Touch the chip
+          </p>
         </div>
       </div>
 
