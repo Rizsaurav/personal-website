@@ -25,30 +25,37 @@ import "./experience-polish.css";
 
 const bays = [
   {
+    id: 14,
+    name: "CineLogic",
+    category: "01 / Cinematography systems",
+    note: "Creative intent. Inspectable tools. A reproducible shot.",
+    type: "cinelogic",
+  },
+  {
     id: 11,
     name: "BioTwin",
-    category: "01 / HackRice",
+    category: "02 / HackRice",
     note: "Wearables give you numbers. This gives you understanding.",
     type: "biotwin",
   },
   {
     id: 12,
     name: "PlayScript",
-    category: "02 / TXST Shipathon",
+    category: "03 / TXST Shipathon",
     note: "Play the story. Reimagine the ending.",
     type: "playscript",
   },
   {
     id: 13,
     name: "AI Interviewer",
-    category: "03 / Google hackathon",
+    category: "04 / Google hackathon",
     note: "An interviewer that reads your code as you type.",
     type: "interview",
   },
   {
     id: 1,
     name: "VideoMaxx",
-    category: "04 / Agentic production",
+    category: "05 / Agentic production",
     note: "From a single topic to the final cut.",
     type: "film",
   },
@@ -536,7 +543,8 @@ export function ComputeJourney() {
         scrollTrigger: {
           trigger: one(".rig"),
           start: "top top",
-          end: () => `+=${Math.round(window.innerHeight * 4.6)}`,
+          end: () =>
+            `+=${Math.round(window.innerHeight * ((4.6 * bays.length) / 4))}`,
           pin: stage,
           scrub: SCRUB,
           refreshPriority: 8,
@@ -1044,7 +1052,7 @@ export function ComputeJourney() {
     if (!st) return;
     const intro = 1,
       step = 2,
-      total = 1 + 3 * step + 0.8 + 1.4;
+      total = 1 + (bays.length - 1) * step + 0.8 + 1.4;
     const t = intro + i * step + 0.4;
     const y = st.start + (t / total) * (st.end - st.start);
     if (Math.abs(window.scrollY - y) > window.innerHeight * 0.4) scrollToY(y);
@@ -1247,7 +1255,7 @@ export function ComputeJourney() {
                 </div>
                 <div>
                   <dt>Bay</dt>
-                  <dd className="m-idx">01 / 04</dd>
+                  <dd className="m-idx">01 / 0{bays.length}</dd>
                 </div>
                 <div>
                   <dt>Stack</dt>

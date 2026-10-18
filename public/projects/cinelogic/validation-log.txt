@@ -1,0 +1,63 @@
+=====================================================================
+       CINELOGIC STUDIO: INTENSIVE VALIDATION HARNESS                
+=====================================================================
+
+--- Generating Real Image & Video Fixtures ---
+  Created sharp_clean.png
+  Created dark_underexposed.png
+  Created blurred_mush.png
+  Created letterboxed.png
+  Created stark_white_jump.png
+  Rendered ken_burns_zoom.mp4 (Synthetic Ken Burns zoom)
+  Rendered genuine_action.mp4 (Synthetic genuine character motion)
+
+--- Testing Component: Deterministic QC Checker (`qc_checker.py`) ---
+  [PASS] Clean Sharp Image Acceptance
+         Luma: 135.4, Sharpness: 2571.87
+  [PASS] Underexposure Detection (Luma < 42.0)
+         Reported Luma: 17.0
+  [PASS] Blurry Mush Detection (Sharpness < 25.0)
+         Reported Sharpness: 0.65
+  [PASS] Letterbox Border Detection (> 3.0%)
+         Reported Letterbox: 11.1%
+  [PASS] Cut Seam Jump Rejection (Diff > 45.0)
+         Boundary Diff: 114.67
+  [PASS] Identical Frame Boundary Seam (Diff == 0.0)
+         Boundary Diff: 0.0
+
+--- Testing Component: 2D FFT Pacing & Local Motion Inspector (`inspect_pacing.py`) ---
+  [PASS] Ken Burns Zoom Detection (Local Motion < 4.0)
+         Raw Motion: 23.78, Local Motion: 2.41, Verdict: DEAD_STILL (Ken Burns zoom)
+  [PASS] Genuine Non-Rigid Motion Acceptance (Local Motion >= 4.0)
+         Raw Motion: 47.72, Local Motion: 46.51, Verdict: ACTIVE_CINEMATIC
+
+--- Testing Component: Guidance=1.0 Prompt Compiler (`format_prompt.py`) ---
+  [PASS] 4-Part Clause Prompt Synthesis
+         Compiled: 'Vivid 2D historical anime, rich cel shading, dark ink outlines. Napoleon Bonaparte looking through brass telescope. lowering telescope with stern expression. gunpowder smoke drifting across battlefield.'
+  [PASS] Prompt Truncation Guard (Length <= 42 words)
+         Word count: 42 (trimmed cleanly)
+
+--- Testing Component: Virtual Camera Dolly Engine (Lanczos + FFmpeg) ---
+  [PASS] Virtual Dolly Rendering Process
+         Output: <checkout>/tests/fixtures/rendered_virtual_dolly.mp4
+  [PASS] Video Output Conformance (1080p, H.264, 24fps)
+         1920x1080, h264/yuv420p, duration=3.00s, frames=72
+
+--- Testing Component: Dual MCP Server Robustness & Error Boundaries ---
+  [PASS] CineLogic Studio MCP - JSON Parse Error Handling
+         Error: {'code': -32700, 'message': 'Expecting value: line 1 column 1 (char 0)'}
+  [PASS] CineLogic Studio MCP - Unknown Tool Rejection
+         Error: {'code': -32601, 'message': 'Unknown tool: non_existent_tool'}
+  [PASS] CineLogic Motion MCP - JSON Parse Error Handling
+         Error: {'code': -32700, 'message': 'Expecting value: line 1 column 1 (char 0)'}
+  [PASS] CineLogic Motion MCP - Unknown Tool Rejection
+         Error: {'code': -32601, 'message': 'Unknown tool: non_existent_tool'}
+
+=====================================================================
+  TOTAL TESTS RUN: 16
+  PASSED:          16
+  FAILED:          0
+  ELAPSED TIME:    5.53s
+=====================================================================
+[NOTE] All 16 synthetic harness checks passed. This does not establish production readiness.
+

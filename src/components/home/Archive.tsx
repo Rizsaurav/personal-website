@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { projects } from "@/data/projects";
 import "./archive.css";
 
-const FEATURED = new Set([11, 12, 13, 1]);
+const FEATURED = new Set([14, 11, 12, 13, 1]);
 const pad = (n: number) => String(n).padStart(2, "0");
 
 /**

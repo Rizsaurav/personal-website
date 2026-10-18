@@ -1,3 +1,4 @@
+import { CineLogicOutput } from "./CineLogicOutput";
 import { useState } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
 import { Expand, X } from "lucide-react";
@@ -163,6 +164,7 @@ function PlayScriptPhones() {
 }
 
 export function Output({ type }: { type: string }) {
+  if (type === "cinelogic") return <CineLogicOutput />;
   if (type === "biotwin") return <BioTwinShots />;
   if (type === "playscript") return <PlayScriptPhones />;
   if (type === "interview")

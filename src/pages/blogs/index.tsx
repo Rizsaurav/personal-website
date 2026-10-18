@@ -25,7 +25,15 @@ function Item({ post }: { post: PostMeta }) {
   );
 }
 
-function Group({ title, note, posts }: { title: string; note: string; posts: PostMeta[] }) {
+function Group({
+  title,
+  note,
+  posts,
+}: {
+  title: string;
+  note: string;
+  posts: PostMeta[];
+}) {
   if (posts.length === 0) return null;
   return (
     <section className="bli-group" aria-labelledby={`g-${title}`}>
@@ -44,6 +52,7 @@ function Group({ title, note, posts }: { title: string; note: string; posts: Pos
 
 /* Projects are listed in the owner's priority order, then newest first. */
 const PROJECT_PRIORITY = [
+  "cinelogic-cinematography-engine",
   "biotwin",
   "playscript-romeo-juliet-ios",
   "ai-interviewer-faang-prep",
@@ -54,7 +63,8 @@ function rank(slug: string): number {
   return i < 0 ? PROJECT_PRIORITY.length : i;
 }
 const byPriority = (a: PostMeta, b: PostMeta) =>
-  rank(a.slug) - rank(b.slug) || new Date(b.date).getTime() - new Date(a.date).getTime();
+  rank(a.slug) - rank(b.slug) ||
+  new Date(b.date).getTime() - new Date(a.date).getTime();
 
 export default function BlogIndex() {
   const [posts, setPosts] = useState<PostMeta[] | null>(null);
@@ -76,7 +86,13 @@ export default function BlogIndex() {
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       const t = e.target as HTMLElement | null;
-      if (e.key !== "/" || e.metaKey || e.ctrlKey || t?.closest("input, textarea")) return;
+      if (
+        e.key !== "/" ||
+        e.metaKey ||
+        e.ctrlKey ||
+        t?.closest("input, textarea")
+      )
+        return;
       e.preventDefault();
       setOpen(true);
       window.setTimeout(() => input.current?.focus(), 0);
@@ -87,7 +103,9 @@ export default function BlogIndex() {
 
   const tags = useMemo(() => {
     const count = new Map<string, number>();
-    posts?.forEach((p) => p.tags.forEach((t) => count.set(t, (count.get(t) ?? 0) + 1)));
+    posts?.forEach((p) =>
+      p.tags.forEach((t) => count.set(t, (count.get(t) ?? 0) + 1)),
+    );
     return [...count.entries()]
       .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
       .slice(0, 10);
@@ -99,7 +117,9 @@ export default function BlogIndex() {
     return (posts ?? []).filter(
       (p) =>
         (!tag || p.tags.includes(tag)) &&
-        (!q || p.title.toLowerCase().includes(q) || p.summary.toLowerCase().includes(q)),
+        (!q ||
+          p.title.toLowerCase().includes(q) ||
+          p.summary.toLowerCase().includes(q)),
     );
   }, [posts, query, tag]);
 
@@ -107,7 +127,9 @@ export default function BlogIndex() {
   const latest = (posts ?? []).find((p) => p.kind === "research");
   const alsoNew = (posts ?? []).find((p) => p.kind !== "research");
   const research = filtered.filter((p) => p.kind === "research");
-  const projects = filtered.filter((p) => p.kind !== "research").sort(byPriority);
+  const projects = filtered
+    .filter((p) => p.kind !== "research")
+    .sort(byPriority);
 
   return (
     <div className="bl bli">
@@ -164,7 +186,12 @@ export default function BlogIndex() {
             />
             <div className="bli-tags" role="group" aria-label="Filter by tag">
               {tags.map(([t]) => (
-                <button key={t} type="button" aria-pressed={tag === t} onClick={() => setTag(tag === t ? null : t)}>
+                <button
+                  key={t}
+                  type="button"
+                  aria-pressed={tag === t}
+                  onClick={() => setTag(tag === t ? null : t)}
+                >
                   {t}
                 </button>
               ))}
@@ -198,7 +225,10 @@ export default function BlogIndex() {
                 </span>
               </Link>
               {alsoNew && (
-                <Link to={`/blogs/${alsoNew.slug}`} className="bli-also bl-lift">
+                <Link
+                  to={`/blogs/${alsoNew.slug}`}
+                  className="bli-also bl-lift"
+                >
                   <Thumb post={alsoNew} size="md" />
                   <span className="bli-also-text">
                     <span className="bl-small">Newest project</span>
@@ -212,9 +242,19 @@ export default function BlogIndex() {
             </section>
           )}
 
-          <Group title="Projects" note="Software projects and how each one was built." posts={projects} />
-          <Group title="Research" note="Independent analyses of public data." posts={research} />
-          {posts && filtered.length === 0 && <p className="bli-empty">No stories match.</p>}
+          <Group
+            title="Projects"
+            note="Software projects and how each one was built."
+            posts={projects}
+          />
+          <Group
+            title="Research"
+            note="Independent analyses of public data."
+            posts={research}
+          />
+          {posts && filtered.length === 0 && (
+            <p className="bli-empty">No stories match.</p>
+          )}
         </div>
       </main>
     </div>

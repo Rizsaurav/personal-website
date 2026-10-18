@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="810" viewBox="0 0 1440 810">
+<defs><pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0H0V40" fill="none" stroke="#fff" stroke-opacity=".035"/></pattern><linearGradient id="metal" x2="0" y2="1"><stop stop-color="#303431"/><stop offset="1" stop-color="#1c1e1c"/></linearGradient></defs>
+<rect width="1440" height="810" fill="#101310"/><rect width="1440" height="810" fill="url(#grid)"/>
+<g fill="#d9ded7" font-family="monospace" font-size="14" letter-spacing="3"><text x="76" y="75">SR / CINEMATOGRAPHY SYSTEMS</text><text x="1110" y="75">CINELOGIC / 01</text></g>
+<text x="72" y="217" fill="#f1f2e9" font-family="Georgia,serif" font-size="104" letter-spacing="-5">CineLogic</text><text x="77" y="264" fill="#b5bcb1" font-family="sans-serif" font-size="22">Creative intent → explicit tools → an inspectable result.</text>
+<g stroke="#697465" fill="none"><path d="M380 439H720V573M1060 439H720"/><path d="M720 663V704"/></g>
+<g fill="url(#metal)" stroke="#636c60"><rect x="76" y="340" width="550" height="184" rx="8"/><rect x="814" y="340" width="550" height="184" rx="8"/><rect x="430" y="573" width="580" height="90" rx="8"/></g>
+<g fill="#f1f2e9" font-family="monospace"><text x="106" y="382" font-size="13" letter-spacing="2">01 / STUDIO MCP</text><text x="844" y="382" font-size="13" letter-spacing="2">02 / MOTION MCP</text><text x="106" y="431" font-size="24">Plan · Compile · Measure</text><text x="844" y="431" font-size="24">Render · Style · Screen</text><text x="106" y="480" fill="#a6b19f" font-size="14">6 tools / shot grammar + signal-based QC</text><text x="844" y="480" fill="#a6b19f" font-size="14">3 tools / Pillow + FFmpeg</text><text x="470" y="612" font-size="12" letter-spacing="2">AGENT WORKFLOW</text><text x="470" y="640" font-size="18">4 studio skills + cinematics playbook</text></g>
+<circle cx="720" cy="573" r="4" fill="#d0dbc7"/><circle cx="720" cy="704" r="4" fill="#d0dbc7"/>
+<text x="76" y="754" fill="#a8b1a2" font-family="monospace" font-size="13" letter-spacing="2">PYTHON / MCP / NUMPY / PILLOW / FFMPEG</text><text x="1165" y="754" fill="#a8b1a2" font-family="monospace" font-size="13">SYSTEM DIAGRAM</text>
+</svg>

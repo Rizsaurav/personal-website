@@ -1,0 +1,48 @@
+{
+  "project": "CineLogic",
+  "repository": "https://github.com/Rizsaurav/CineLogic",
+  "revision": "9f29a242f9b58f681d9b43f67bac01a0363d7098",
+  "verified_on": "2026-10-18",
+  "python": "3.14.7",
+  "scope": "Local CPU tests using synthetic fixtures. No diffusion models, external generation APIs, or real-film quality benchmarks were run.",
+  "commands": [
+    {
+      "command": "python mcp/test_server.py",
+      "result": "passed"
+    },
+    {
+      "command": "python mcp/test_image_motion_server.py",
+      "result": "passed"
+    },
+    {
+      "command": "python tests/run_intensive_tests.py",
+      "checks": 16,
+      "passed": 16,
+      "failed": 0,
+      "harness_elapsed_seconds": 5.53
+    }
+  ],
+  "pacing_fixtures": [
+    {
+      "fixture": "camera-only synthetic zoom",
+      "raw_motion": 23.78,
+      "camera_compensated_residual": 2.41,
+      "verdict": "DEAD_STILL (Ken Burns zoom)"
+    },
+    {
+      "fixture": "synthetic moving subject",
+      "raw_motion": 47.72,
+      "camera_compensated_residual": 46.51,
+      "verdict": "ACTIVE_CINEMATIC"
+    }
+  ],
+  "render_conformance": {
+    "width": 1920,
+    "height": 1080,
+    "fps": 24,
+    "frames": 72,
+    "duration_seconds": 3,
+    "codec": "h264",
+    "pixel_format": "yuv420p"
+  }
+}

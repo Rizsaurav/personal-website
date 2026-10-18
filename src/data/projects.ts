@@ -18,6 +18,26 @@ export interface Project {
 
 export const projects: Project[] = [
   {
+    id: 14,
+    title: "CineLogic: Cinematography as an Engineering System",
+    description:
+      "Two MCP servers turn shot planning, prompt compilation, camera motion and quality checks into tools an agent can call. Four studio skills carry the filmmaking workflow.",
+    fullDescription:
+      "A Python cinematography toolkit with nine tools across two stdio MCP servers. The studio server handles shot grammar, prompt formatting, script audits, QC, diagnosis and pacing analysis; the motion server renders a local image dolly, exports a style bible and screens footage. NumPy FFT phase correlation estimates camera translation before measuring residual motion, while Pillow and FFmpeg provide deterministic image checks and 1080p camera rendering. Four plugin skills and a cinematics playbook define the creative workflow; diffusion generation and the complete fallback ladder remain documented orchestration rather than model backends shipped here.",
+    buildFocus:
+      "Independent build · MCP contracts, deterministic motion and signal-based quality checks.",
+    result:
+      "An agent-callable toolkit with local rendering, inspectable metrics and modular filmmaking skills.",
+    tech: ["Python", "MCP", "NumPy", "Pillow", "FFmpeg", "FFT"],
+    color:
+      "bg-gradient-to-br from-accent-custom-primary/20 to-accent-custom-secondary/30",
+    featured: true,
+    codeUrl: "https://github.com/Rizsaurav/CineLogic",
+    blogSlug: "cinelogic-cinematography-engine",
+    event: "Independent project · cinematography tooling",
+  },
+
+  {
     id: 11,
     buildFocus: "HackRice team project · Garmin data and forecast serving.",
     result: "Recovery signals, a day-ahead forecast and a voice-enabled twin.",
