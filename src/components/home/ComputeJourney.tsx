@@ -14,7 +14,6 @@ import {
   startSmoothScroll,
   gate,
 } from "@/lib/motion";
-import chipPhoto from "@/assets/h.jpg";
 import { Output } from "./rack-outputs";
 import { Chars } from "./reveal";
 import { DotField } from "./DotField";
@@ -62,6 +61,30 @@ const bays = [
 ];
 
 const CELLS = 144;
+
+/** The four lead projects, etched into the die's four compute quadrants. Click one to open it. */
+const dieProjects = [
+  {
+    name: "CineLogic",
+    slug: "cinelogic-cinematography-engine",
+    thumb: "/projects/thumbs/cinelogic.jpg",
+  },
+  {
+    name: "BioTwin",
+    slug: "biotwin-body-battery-forecast",
+    thumb: "/projects/thumbs/biotwin.jpg",
+  },
+  {
+    name: "PlayScript",
+    slug: "playscript-romeo-juliet-ios",
+    thumb: "/projects/thumbs/playscript.jpg",
+  },
+  {
+    name: "AI Interviewer",
+    slug: "ai-interviewer-faang-prep",
+    thumb: "/projects/thumbs/interview.jpg",
+  },
+];
 
 /** Etched interconnect revealed when the camera dives into the die (vector, stays sharp). */
 const ETCH = [
@@ -447,7 +470,7 @@ export function ComputeJourney() {
         // then the camera dives into the chip
         .to(die, { scale: 24, duration: 2, ease: "power3.in" }, 8.4)
         // as we fall in, the photo gives way to the etched interconnect underneath
-        .to(one(".die-photo"), { opacity: 0, duration: 0.6 }, 8.7)
+        .to(one(".die-projects"), { opacity: 0, duration: 0.6 }, 8.7)
         .fromTo(
           one(".die-etch"),
           { opacity: 0 },
@@ -1054,7 +1077,7 @@ export function ComputeJourney() {
         ? "HBM: memory stacked beside the die, terabytes a second of bandwidth"
         : Math.abs(ny) < 0.035
           ? "L2 cache: shared by every SM. A hit here skips a trip to HBM"
-          : "SM cluster: threads run in warps of 32, in lockstep";
+          : `${dieProjects[(nx < 0 ? 0 : 1) + (ny < 0 ? 0 : 2)].name} · click to open. Each quadrant is an SM cluster.`;
     if (tip.textContent !== label) tip.textContent = label;
     tip.classList.add("is-on");
   };
@@ -1130,7 +1153,6 @@ export function ComputeJourney() {
           </h2>
           <div
             className="boot-die-wrap"
-            aria-hidden="true"
             onPointerMove={dieMove}
             onPointerDown={dieDown}
             onPointerUp={dieRest}
@@ -1159,7 +1181,24 @@ export function ComputeJourney() {
                     e.currentTarget.classList.remove("is-rip");
                 }}
               >
-                <img className="die-photo" src={chipPhoto} alt="" />
+                <nav className="die-projects" aria-label="Lead projects">
+                  {dieProjects.map((d, i) => (
+                    <a
+                      key={d.slug}
+                      href={`/blogs/${d.slug}`}
+                      className={`die-q die-q${i + 1}`}
+                    >
+                      <img
+                        src={d.thumb}
+                        alt=""
+                        width={360}
+                        height={360}
+                        decoding="async"
+                      />
+                      <span>{d.name}</span>
+                    </a>
+                  ))}
+                </nav>
                 <svg
                   className="die-etch"
                   viewBox="0 0 100 100"

@@ -1733,3 +1733,62 @@ html.lite .boot-chip::after {
     transition: none;
   }
 }
+
+/* -------- the four lead projects etched into the die quadrants -------- */
+.die-projects {
+  position: absolute;
+  inset: 12px;
+  z-index: 0;
+}
+.boot-die i {
+  pointer-events: none;
+}
+.die-q {
+  position: absolute;
+  width: calc(50% - 2.5px);
+  height: calc(50% - 2.5px);
+  overflow: hidden;
+  border-radius: 3px;
+  cursor: pointer;
+  outline-offset: 2px;
+}
+.die-q1 { left: 0; top: 0; }
+.die-q2 { right: 0; top: 0; }
+.die-q3 { left: 0; bottom: 0; }
+.die-q4 { right: 0; bottom: 0; }
+.die-q img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: grayscale(1) contrast(1.15) brightness(calc(0.3 + 0.55 * var(--w)));
+  transition: filter 0.35s ease, scale 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.die-q span {
+  position: absolute;
+  left: 6px;
+  bottom: 5px;
+  z-index: 3;
+  padding: 2px 6px;
+  border-radius: 3px;
+  background: rgb(10 10 10 / 0.72);
+  color: #ececec;
+  font:
+    8px ui-monospace,
+    monospace;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  opacity: calc(0.3 + 0.7 * var(--w));
+}
+.die-q:hover img,
+.die-q:focus-visible img {
+  filter: grayscale(0.2) contrast(1.05) brightness(1.05);
+  scale: 1.06;
+}
+.die-q:focus-visible {
+  outline: 2px solid #ececec;
+}
+.journey.is-dive .die-q span {
+  font-size: 7px;
+  left: 4px;
+  bottom: 3px;
+}
