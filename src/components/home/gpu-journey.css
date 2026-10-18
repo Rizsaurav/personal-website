@@ -1304,7 +1304,7 @@ html.lite .boot-die i {
 
 /* phones: the die section is a tall runway holding a sticky stage (lighter than a pin spacer) */
 .journey.is-dive .boot {
-  height: 400svh;
+  height: 330svh;
 }
 .journey.is-dive .boot-stage {
   position: sticky;
@@ -1334,65 +1334,4 @@ html.lite .boot-die i {
   right: auto;
   left: 50%;
   margin-left: calc(min(74vh, 36vw) / -2);
-}
-
-/* --------------- aperture: the die opens onto real film --------------- */
-.boot-film {
-  display: none;
-}
-.is-immersive .boot-film,
-.journey.is-dive .boot-film {
-  --ap: 0;
-  display: block;
-  position: absolute;
-  inset: 0;
-  z-index: 4;
-  visibility: hidden;
-  pointer-events: none;
-  overflow: hidden;
-}
-.boot-film video {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  clip-path: circle(calc(var(--ap) * 75%) at 50% 50%);
-}
-.boot-iris {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: min(90vh, 90vw);
-  height: min(90vh, 90vw);
-  translate: -50% -50%;
-  fill: var(--machine, #131313);
-  stroke: color-mix(in srgb, var(--paper, #ececec) 30%, transparent);
-  stroke-width: 0.4;
-  overflow: visible;
-}
-.boot-film-cap {
-  position: absolute;
-  left: 40px;
-  bottom: 36px;
-  max-width: 34em;
-  margin: 0;
-  padding: 14px 16px;
-  border-radius: 10px;
-  background: rgb(10 10 10 / 0.62);
-  color: #ececec;
-  font-size: 12px;
-  line-height: 1.6;
-}
-.boot-film-cap span {
-  display: block;
-  font-family: "Fraunces", Georgia, serif;
-  font-size: 22px;
-  letter-spacing: -0.02em;
-  margin-bottom: 2px;
-}
-.journey.is-dive .boot-film-cap {
-  left: 16px;
-  right: 16px;
-  bottom: 22px;
 }
