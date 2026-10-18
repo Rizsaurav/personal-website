@@ -217,14 +217,16 @@
   z-index: 1;
   left: 50%;
   top: 50%;
-  width: min(54vh, 50vw);
-  margin: calc(min(54vh, 50vw) / -2) 0 0 calc(min(54vh, 50vw) / -2);
+  width: min(42vh, 38vw);
+  margin: calc(min(42vh, 38vw) / -2) 0 0 calc(min(42vh, 38vw) / -2);
   perspective: 1100px;
 }
 .is-immersive .boot-die {
   overflow: hidden;
-  transform-style: preserve-3d;
   box-shadow: 0 0 0 10px color-mix(in srgb, currentColor 6%, transparent);
+}
+.is-immersive .boot-chip {
+  transform-style: preserve-3d;
 }
 .is-immersive .rig-stage {
   height: 100vh;
@@ -1006,7 +1008,7 @@ html[data-stage="dark"] .portfolio-header {
 .boot-die-wrap {
   perspective: 1100px;
 }
-.boot-die {
+.boot-chip {
   --w: 1;
   --k: 0;
   --out: 0;
@@ -1222,7 +1224,7 @@ html.lite .boot-die i {
 
 /* Chrome re-rasterises script-scaled layers on every scale change unless told otherwise. These
    few elements scale by large factors during their scenes, so they get a fixed bitmap. */
-.is-immersive .boot-die,
+.is-immersive .boot-chip,
 .is-immersive .mf-map,
 .is-immersive .rig-track {
   will-change: transform;
@@ -1314,7 +1316,7 @@ html.lite .boot-die i {
   align-content: center;
   gap: 22px;
 }
-.journey.is-dive .boot-die {
+.journey.is-dive .boot-chip {
   transform-style: preserve-3d;
   will-change: transform;
 }
@@ -1334,4 +1336,96 @@ html.lite .boot-die i {
   right: auto;
   left: 50%;
   margin-left: calc(min(74vh, 36vw) / -2);
+}
+
+/* ------------- the die as a real package: substrate, HBM stacks, quadrants ------------- */
+.boot-chip {
+  position: relative;
+}
+.chip-sub {
+  position: absolute;
+  inset: -15% -36%;
+  border: 1px solid color-mix(in srgb, currentColor 30%, transparent);
+  border-radius: 14px;
+  background:
+    radial-gradient(circle, color-mix(in srgb, currentColor 22%, transparent) 1.2px, transparent 1.6px) 0 0 / 12px 12px,
+    color-mix(in srgb, currentColor 4%, transparent);
+  pointer-events: none;
+}
+.chip-sub::after {
+  /* a clear keep-out ring around the die and stacks */
+  content: "";
+  position: absolute;
+  inset: 9% 6%;
+  border-radius: 10px;
+  background: var(--machine, #131313);
+  box-shadow: 0 0 0 1px color-mix(in srgb, currentColor 12%, transparent);
+}
+.chip-hbm {
+  position: absolute;
+  top: 12%;
+  bottom: 12%;
+  width: 18%;
+  display: grid;
+  gap: 6%;
+  z-index: 1;
+  pointer-events: none;
+}
+.chip-hbm-l {
+  right: calc(100% + 6%);
+}
+.chip-hbm-r {
+  left: calc(100% + 6%);
+}
+.chip-hbm i {
+  border: 1px solid color-mix(in srgb, currentColor 45%, transparent);
+  border-radius: 3px;
+  background: repeating-linear-gradient(
+    0deg,
+    color-mix(in srgb, currentColor 16%, transparent) 0 1px,
+    transparent 1px 4px
+  );
+  opacity: calc(0.35 + 0.65 * clamp(0, (var(--w) - 0.5) * 2, 1));
+}
+.chip-mark {
+  position: absolute;
+  left: 50%;
+  top: calc(100% + 5%);
+  translate: -50% 0;
+  white-space: nowrap;
+  font:
+    9px ui-monospace,
+    monospace;
+  letter-spacing: 0.2em;
+  opacity: 0.5;
+  z-index: 1;
+}
+.boot-die {
+  z-index: 1;
+  background: var(--machine, #131313);
+}
+/* four compute quadrants split by a cache spine */
+.boot-die i:nth-of-type(12n + 7) {
+  margin-left: 5px;
+}
+.boot-die i:nth-of-type(n + 73):nth-of-type(-n + 84) {
+  margin-top: 5px;
+}
+.boot-die::after {
+  content: "";
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  top: calc(50% - 1px);
+  height: 2px;
+  background: color-mix(in srgb, currentColor 35%, transparent);
+  opacity: calc(var(--w) * 0.8);
+  pointer-events: none;
+}
+.journey.is-dive .boot-die-wrap,
+.boot-die-wrap {
+  margin-inline: auto;
+}
+.journey.is-dive .boot-die-wrap {
+  width: min(52vw, 240px);
 }

@@ -181,7 +181,8 @@ export function ComputeJourney() {
       /* ---- Scene 1: boot sequence (page → machine → through the die) ---- */
       const bootStage = one(".boot-stage");
       const titleA = one(".boot-line-a");
-      const die = one(".boot-die");
+      // the whole package moves; the die grid inside inherits its CSS variables
+      const die = one(".boot-chip");
 
       // The stage never opens empty: its first beat is time-based and plays as it scrolls into view.
       const introChars = q(".boot-line-a .jx-char");
@@ -444,7 +445,7 @@ export function ComputeJourney() {
           { scale: 30, duration: 1.3, ease: "power3.in" },
           3.7,
         )
-        .to(one(".mf-map"), { opacity: 0, duration: 0.3 }, 4.7)
+        .to(one(".mf-map"), { opacity: 0, duration: 0.45 }, 4.05)
         .to(q(".mf-pcb"), { opacity: 0, duration: 0.6 }, 4.3);
 
       /* ---- Scene 2: horizontal rig (camera tracks along the rack) ---- */
@@ -873,7 +874,7 @@ export function ComputeJourney() {
       gsap.set(q(".boot-story li"), { opacity: 0, x: -20 });
       dive
         .fromTo(
-          one(".boot-die"),
+          one(".boot-chip"),
           { rotateX: 64, rotateZ: -18, scale: 0.8, "--w": 0 },
           { rotateX: 14, rotateZ: 0, scale: 1, "--w": 1, duration: 1 },
           0,
@@ -883,8 +884,8 @@ export function ComputeJourney() {
           { opacity: 1, x: 0, stagger: 0.28, duration: 0.3 },
           0.6,
         )
-        .fromTo(one(".boot-die"), { "--k": 0 }, { "--k": 3, duration: 1 }, 0.6)
-        .to(one(".boot-die"), { rotateX: 0, duration: 0.8 }, 1.6)
+        .fromTo(one(".boot-chip"), { "--k": 0 }, { "--k": 3, duration: 1 }, 0.6)
+        .to(one(".boot-chip"), { rotateX: 0, duration: 0.8 }, 1.6)
         .to(
           [
             q(".boot-story"),
@@ -896,17 +897,17 @@ export function ComputeJourney() {
           2.6,
         )
         .fromTo(
-          one(".boot-die"),
+          one(".boot-chip"),
           { "--out": 0 },
           { "--out": 1, duration: 0.7 },
           2.6,
         )
         .to(
-          one(".boot-die"),
+          one(".boot-chip"),
           { scale: 16, duration: 1.1, ease: "power3.in" },
           2.9,
         )
-        .to(one(".boot-die"), { opacity: 0, duration: 0.3 }, 3.7);
+        .to(one(".boot-chip"), { opacity: 0, duration: 0.3 }, 3.7);
       q(".mf-entry, .mf-callout").forEach((li) => {
         gsap.fromTo(
           li,
@@ -975,8 +976,8 @@ export function ComputeJourney() {
     clientY: number;
   }) => {
     const wrap = e.currentTarget;
-    const die = wrap.firstElementChild as HTMLElement;
-    const r = wrap.getBoundingClientRect();
+    const die = wrap.querySelector<HTMLElement>(".boot-die")!;
+    const r = die.getBoundingClientRect();
     const nx = (e.clientX - r.left) / r.width - 0.5;
     const ny = (e.clientY - r.top) / r.height - 0.5;
     return {
@@ -1099,32 +1100,50 @@ export function ComputeJourney() {
             onPointerLeave={dieRest}
             onPointerCancel={dieRest}
           >
-            <div
-              className="boot-die"
-              onAnimationEnd={(e) => {
-                if (e.animationName === "die-rip-light")
-                  e.currentTarget.classList.remove("is-rip");
-              }}
-            >
-              <u className="boot-scan" />
-              {Array.from({ length: CELLS }, (_, i) => {
-                const r = Math.floor(i / 12),
-                  c = i % 12;
-                return (
-                  <i
-                    key={i}
-                    style={
-                      {
-                        "--d": (Math.hypot(c - 5.5, r - 5.5) / 7.78).toFixed(3),
-                        "--r": r,
-                        "--c": c,
-                        "--t1": r < 6 && c < 6 ? 1 : 0.2,
-                        "--t2": r % 2 === 0 ? 1 : 0.2,
-                      } as React.CSSProperties
-                    }
-                  />
-                );
-              })}
+            <div className="boot-chip">
+              <b className="chip-sub" />
+              <b className="chip-hbm chip-hbm-l">
+                <i />
+                <i />
+                <i />
+                <i />
+              </b>
+              <b className="chip-hbm chip-hbm-r">
+                <i />
+                <i />
+                <i />
+                <i />
+              </b>
+              <span className="chip-mark">SR—01 · COMPUTE</span>
+              <div
+                className="boot-die"
+                onAnimationEnd={(e) => {
+                  if (e.animationName === "die-rip-light")
+                    e.currentTarget.classList.remove("is-rip");
+                }}
+              >
+                <u className="boot-scan" />
+                {Array.from({ length: CELLS }, (_, i) => {
+                  const r = Math.floor(i / 12),
+                    c = i % 12;
+                  return (
+                    <i
+                      key={i}
+                      style={
+                        {
+                          "--d": (Math.hypot(c - 5.5, r - 5.5) / 7.78).toFixed(
+                            3,
+                          ),
+                          "--r": r,
+                          "--c": c,
+                          "--t1": r < 6 && c < 6 ? 1 : 0.2,
+                          "--t2": r % 2 === 0 ? 1 : 0.2,
+                        } as React.CSSProperties
+                      }
+                    />
+                  );
+                })}
+              </div>
             </div>
           </div>
           <ol className="boot-story">
