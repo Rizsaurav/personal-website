@@ -237,7 +237,7 @@ export default function PageTransitions({
     run(
       innerEl,
       [
-        { transform: "translate3d(0, 56px, 0) scale(1.05)" },
+        { transform: "translate3d(0, 24px, 0) scale(1.02)" },
         { transform: "translate3d(0, 0, 0) scale(1)" },
       ],
       ms,
@@ -267,11 +267,17 @@ export default function PageTransitions({
         { opacity: 0, transform: "translate3d(0, 14px, 0)" },
         { opacity: 1, transform: "translate3d(0, 0, 0)" },
       ],
-      450,
+      ms * 0.4,
       "cubic-bezier(0.25, 0.46, 0.45, 0.94)",
-      50,
+      ms * 0.04,
     );
-    run(stripEl, [{ opacity: 1 }, { opacity: 0 }], 500, "ease-in-out", 300);
+    run(
+      stripEl,
+      [{ opacity: 1 }, { opacity: 0 }],
+      ms * 0.55,
+      "ease-in-out",
+      ms * 0.25,
+    );
     // Unmount the heavy outgoing tree only after the last animated frame has been presented.
     main.finished
       .then(() => requestAnimationFrame(() => requestAnimationFrame(finish)))
@@ -333,8 +339,16 @@ export default function PageTransitions({
               <b>{label.name}</b>
             </div>
           </div>
-          <div ref={edgeLRef} className="pt-edge pt-edge--l" aria-hidden="true" />
-          <div ref={edgeRRef} className="pt-edge pt-edge--r" aria-hidden="true" />
+          <div
+            ref={edgeLRef}
+            className="pt-edge pt-edge--l"
+            aria-hidden="true"
+          />
+          <div
+            ref={edgeRRef}
+            className="pt-edge pt-edge--r"
+            aria-hidden="true"
+          />
         </>
       )}
     </div>

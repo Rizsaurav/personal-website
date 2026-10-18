@@ -1,4 +1,5 @@
 /// <reference lib="webworker" />
+import { signalField } from "../../lib/signal-field";
 /** Draws the signal field off the main thread. The page only sends tiny state messages. */
 type Msg =
   | { type: "init"; canvas: OffscreenCanvas }
@@ -29,6 +30,7 @@ const pointer = { x: -9999, y: -9999, tx: -9999, ty: -9999 };
 let timer = 0,
   last = 0;
 
+const sample = signalField();
 function draw(t: number) {
   if (!ctx) return;
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -37,23 +39,7 @@ function draw(t: number) {
   pointer.x += (pointer.tx - pointer.x) * 0.12;
   pointer.y += (pointer.ty - pointer.y) * 0.12;
   const flow = t * 0.0011 + scroll * 0.004;
-  const buckets: number[][] = [[], [], []];
-  for (let j = 0; j < rows; j++) {
-    for (let i = 0; i < cols; i++) {
-      const x = i * step,
-        y = j * step;
-      const a =
-        Math.sin(i * 0.33 + flow) +
-        Math.sin(j * 0.41 - flow * 0.8) +
-        Math.sin((i + j) * 0.18 + flow * 1.3);
-      let v = (a + 3) / 6;
-      const dx = x - pointer.x,
-        dy = y - pointer.y;
-      const d2 = dx * dx + dy * dy;
-      if (d2 < 36000) v = Math.min(1, v + (1 - d2 / 36000) * 0.9);
-      buckets[v > 0.72 ? 2 : v > 0.5 ? 1 : 0].push(x, y, v);
-    }
-  }
+  const buckets = sample(cols, rows, flow, pointer.x, pointer.y);
   const alpha = [0.1, 0.22, 0.55];
   for (let b = 0; b < 3; b++) {
     ctx.globalAlpha = alpha[b];

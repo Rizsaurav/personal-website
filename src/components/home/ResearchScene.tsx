@@ -129,7 +129,8 @@ function Chart({ chart }: { chart: ArticleChart }) {
 export const ResearchScene = () => {
   const root = useRef<HTMLElement>(null);
   const st = useRef<ScrollTrigger | null>(null);
-  const slot = 3.8;
+  // The chart finishes drawing before a full reading interval, then exits with the next study.
+  const slot = 4.8;
   const n = studies.length;
 
   useScene(
@@ -138,22 +139,24 @@ export const ResearchScene = () => {
       gate(el);
       const items = q(".rs-item");
       if (!items.length) return;
+      const ticks = q(".rs-tick");
+      let lastStudy = -1;
       gsap.set(items, { autoAlpha: 0 });
       const tl = gsap.timeline({
         defaults: { ease: "none" },
         scrollTrigger: {
           trigger: one(".rs-stage"),
           start: "top top",
-          end: () => `+=${Math.round(window.innerHeight * 1.25 * n)}`,
+          end: () => `+=${Math.round(window.innerHeight * 1.45 * n)}`,
           pin: true,
           scrub: SCRUB,
           refreshPriority: 7,
           invalidateOnRefresh: true,
           onUpdate: (self) => {
             const i = Math.min(n - 1, Math.floor(self.progress * n));
-            q(".rs-tick").forEach((b, j) =>
-              b.classList.toggle("is-on", j === i),
-            );
+            if (i === lastStudy) return;
+            lastStudy = i;
+            ticks.forEach((b, j) => b.classList.toggle("is-on", j === i));
           },
         },
       });
@@ -339,7 +342,7 @@ export const ResearchScene = () => {
                 const t = st.current;
                 if (!t) return;
                 scrollToY(
-                  t.start + ((i * slot + 1.6) / (n * slot)) * (t.end - t.start),
+                  t.start + ((i * slot + 2.8) / (n * slot)) * (t.end - t.start),
                 );
               }}
             >

@@ -20,6 +20,8 @@ import { Chars } from "./reveal";
 import { DotField } from "./DotField";
 import "./compute-rack.css";
 import "./gpu-journey.css";
+import "./render-polish.css";
+import "./experience-polish.css";
 
 const bays = [
   {
@@ -142,11 +144,14 @@ export function ComputeJourney() {
   const rigST = useRef<ScrollTrigger | null>(null);
   const heatTimers = useRef(new Map<HTMLElement, number>());
   const lastHeatCell = useRef(-1);
+  const pointerFrame = useRef(0);
+  const cellCache = useRef(new WeakMap<HTMLElement, HTMLElement[]>());
   useEffect(() => {
     const timers = heatTimers.current;
     return () => {
       timers.forEach((id) => window.clearTimeout(id));
       timers.clear();
+      cancelAnimationFrame(pointerFrame.current);
     };
   }, []);
   useEffect(() => startSmoothScroll(), []);
@@ -321,10 +326,20 @@ export function ComputeJourney() {
             y: (i: number) => (i - 6.5) * window.innerHeight * 0.3,
             scaleY: 3,
             opacity: 0.5,
-            duration: 2.2,
+            duration: 1.4,
             ease: "power3.in",
           },
           7.9,
+        )
+        .to(
+          q(".boot-rails i"),
+          {
+            opacity: 0.55,
+            stagger: { amount: 0.45, from: "center" },
+            duration: 0.25,
+            ease: "sine.out",
+          },
+          7.15,
         )
         .to(q(".boot-rails i"), { opacity: 0, duration: 0.4 }, 8.9)
         .to(one(".boot-field-wrap"), { opacity: 0, duration: 0.8 }, 7.4)
@@ -438,9 +453,15 @@ export function ComputeJourney() {
         fill: one(".rig-ruler-fill"),
       };
       const skewers = [".rig-back", ".rig-ghost", ".rig-fore"].flatMap((c) =>
-        q(c).map((n) =>
-          gsap.quickTo(n, "skewX", { duration: 0.5, ease: "power3.out" }),
-        ),
+        q(c).map((node) => ({
+          panel: panels.findIndex((panel) => panel.contains(node)),
+          set: gsap.quickTo(node, "skewX", {
+            duration: 0.22,
+            ease: "power3.out",
+          }),
+          reset: gsap.quickSetter(node, "skewX", "deg"),
+          leaning: false,
+        })),
       );
       const intro = 1;
       const hold = 0.8;
@@ -455,7 +476,7 @@ export function ComputeJourney() {
       let lastPercent = -1;
       const hudUnits = q(".hud-unit");
       const settleLean = gsap
-        .delayedCall(0.12, () => skewers.forEach((sk) => sk(0)))
+        .delayedCall(0.12, () => skewers.forEach((sk) => sk.set(0)))
         .pause();
       function onRigUpdate(self: ScrollTrigger) {
         const t = self.progress * (self.animation?.duration() ?? total);
@@ -466,7 +487,11 @@ export function ComputeJourney() {
         if (idx !== lastBay) {
           lastBay = idx;
           panels.forEach((p, j) => p.classList.toggle("is-active", j === idx));
-          hudUnits.forEach((u, j) => u.classList.toggle("is-on", j === idx));
+          hudUnits.forEach((u, j) => {
+            u.classList.toggle("is-on", j === idx);
+            if (j === idx) u.setAttribute("aria-current", "true");
+            else u.removeAttribute("aria-current");
+          });
           meters.bayLabel.textContent = bays[idx].name;
           meters.bay.textContent = `0${idx + 1} / 0${bays.length}`;
           meters.stack.textContent = projects
@@ -479,10 +504,31 @@ export function ComputeJourney() {
           meters.pos.textContent = `${percent}%`;
           lastPercent = percent;
         }
-        // layers lean into the motion: velocity becomes skew
-        const lean = gsap.utils.clamp(-9, 9, self.getVelocity() / -260);
-        skewers.forEach((sk) => sk(lean));
-        settleLean.restart(true);
+        // Lean belongs to the dolly, with a smooth envelope and a still reading beat.
+        const phase = (t - intro - hold) / step;
+        const dolly = Math.floor(phase);
+        const elapsed = (phase - dolly) * step;
+        const moving = dolly >= 0 && dolly < bays.length - 1 && elapsed < move;
+        const weight = moving ? Math.sin((elapsed / move) * Math.PI) : 0;
+        const lean =
+          gsap.utils.clamp(-3, 3, self.getVelocity() / -600) * weight;
+        skewers.forEach((sk) => {
+          const nearby =
+            sk.panel < 0 ||
+            (moving && (sk.panel === dolly || sk.panel === dolly + 1));
+          if (!moving || !nearby) {
+            if (sk.leaning) {
+              sk.set.tween.pause();
+              sk.reset(0);
+              sk.leaning = false;
+            }
+          } else {
+            sk.leaning = true;
+            sk.set(lean);
+          }
+        });
+        if (moving) settleLean.restart(true);
+        else settleLean.pause();
       }
 
       const rig = gsap.timeline({
@@ -577,29 +623,25 @@ export function ComputeJourney() {
             s + hold + 0.1,
           );
         }
-        // depth: ghost numeral and the live output slide against the card
-        const span =
-          (i === 0 ? intro : move) + hold + (i < bays.length - 1 ? move : 0);
-        rig.fromTo(
-          ghost,
-          { x: i === 0 ? 0 : 340 },
-          {
-            x: i < bays.length - 1 ? -340 : 0,
-            duration: span,
-            ease: "none",
-          },
-          arrive,
-        );
-        rig.fromTo(
-          out,
-          { x: i === 0 ? 0 : 70 },
-          {
-            x: i < bays.length - 1 ? -70 : 0,
-            duration: span,
-            ease: "none",
-          },
-          arrive,
-        );
+        // Depth travels with arrival/departure, then settles while the card is read.
+        [
+          { node: ghost, distance: 340 },
+          { node: out, distance: 70 },
+        ].forEach(({ node, distance }) => {
+          rig.fromTo(
+            node,
+            { x: i === 0 ? 0 : distance },
+            { x: 0, duration: i === 0 ? intro : move, ease: "power3.inOut" },
+            arrive,
+          );
+          if (i < bays.length - 1) {
+            rig.to(
+              node,
+              { x: -distance, duration: move, ease: "power3.inOut" },
+              s + hold,
+            );
+          }
+        });
       });
 
       // the camera itself: three dollies, each followed by a held beat
@@ -615,28 +657,38 @@ export function ComputeJourney() {
           intro + i * step + hold,
         );
       }
-      // transition props: each moves at its own depth, one per bay-to-bay move
+      // Hardware crosses only during its own dolly, clearing completely for reading.
       const propDefs = [
-        { sel: ".prop-fins", f: 1.9, k: 0 },
-        { sel: ".prop-fan", f: 0.75, k: 1 },
-        { sel: ".prop-mem", f: 1.35, k: 2 },
+        { sel: ".prop-fins", f: 1.9, k: 0, opacity: 0.5 },
+        { sel: ".prop-fan", f: 0.75, k: 1, opacity: 1 },
+        { sel: ".prop-mem", f: 1.35, k: 2, opacity: 1 },
       ];
-      propDefs.forEach(({ sel, f, k }) => {
+      propDefs.forEach(({ sel, f, k, opacity }) => {
         const node = one(sel);
-        const base = () =>
-          W() * 0.5 + (k + 0.5) * f * W() - node.offsetWidth / 2;
-        for (let i = 0; i < bays.length - 1; i++) {
-          rig.fromTo(
+        const at = intro + k * step + hold;
+        const centre = () => W() * 0.5 - node.offsetWidth / 2;
+        gsap.set(node, { autoAlpha: 0 });
+        rig
+          .fromTo(
             node,
-            { x: () => base() - i * f * W() },
+            { x: () => centre() + f * W() * 0.5 },
             {
-              x: () => base() - (i + 1) * f * W(),
+              x: () => centre() - f * W() * 0.5,
               duration: move,
               ease: "power3.inOut",
             },
-            intro + i * step + hold,
+            at,
+          )
+          .to(
+            node,
+            { autoAlpha: opacity, duration: 0.18, ease: "sine.out" },
+            at,
+          )
+          .to(
+            node,
+            { autoAlpha: 0, duration: 0.18, ease: "sine.in" },
+            at + move - 0.18,
           );
-        }
       });
       rig.fromTo(
         q(".prop-fins i"),
@@ -653,12 +705,12 @@ export function ComputeJourney() {
         one(".prop-fan svg"),
         { rotation: 0 },
         {
-          rotation: 720,
+          rotation: 360,
           transformOrigin: "50% 50%",
-          duration: travel,
+          duration: move,
           ease: "none",
         },
-        intro + hold,
+        intro + step + hold,
       );
       rig.fromTo(
         q(".prop-mem > div"),
@@ -670,31 +722,42 @@ export function ComputeJourney() {
           duration: 0.5,
           ease: "power2.out",
         },
-        intro + step + hold + 0.1,
+        intro + 2 * step + hold + 0.1,
       );
 
-      // layers at different depths travel different distances
-      const dolly = intro + hold;
-      rig.fromTo(
-        one(".rig-back"),
-        { x: 0 },
-        {
-          x: () => -(bays.length - 1) * W() * 0.28,
-          duration: travel,
-          ease: "none",
-        },
-        dolly,
-      );
-      rig.fromTo(
-        one(".rig-fore"),
-        { x: 0 },
-        {
-          x: () => -(bays.length - 1) * W() * 1.55,
-          duration: travel,
-          ease: "none",
-        },
-        dolly,
-      );
+      // Each depth layer shares the camera's dolly and its settled reading beats.
+      [
+        { node: one(".rig-back"), depth: 0.28 },
+        { node: one(".rig-fore"), depth: 1.55 },
+      ].forEach(({ node, depth }) => {
+        for (let i = 0; i < bays.length - 1; i++) {
+          rig.fromTo(
+            node,
+            { x: () => -i * W() * depth },
+            {
+              x: () => -(i + 1) * W() * depth,
+              duration: move,
+              ease: "power3.inOut",
+            },
+            intro + i * step + hold,
+          );
+        }
+      });
+      // Existing ruler carries the signal on a move; no idle loop or new layer.
+      for (let i = 0; i < bays.length - 1; i++) {
+        rig.fromTo(
+          meters.fill,
+          { opacity: 0.45 },
+          {
+            opacity: 1,
+            duration: move / 2,
+            repeat: 1,
+            yoyo: true,
+            ease: "sine.inOut",
+          },
+          intro + i * step + hold,
+        );
+      }
       rig.fromTo(
         meters.fill,
         { scaleX: 0 },
@@ -771,6 +834,10 @@ export function ComputeJourney() {
 
       return () => {
         el.classList.remove("is-immersive");
+        // Desktop gates must not leave the compact dive or cards hidden after a resize.
+        q(".boot, .manifesto, .rig").forEach((scene) =>
+          scene.classList.remove("is-off"),
+        );
         setDarkStage("journey", false);
         rigST.current = null;
       };
@@ -894,7 +961,11 @@ export function ComputeJourney() {
    * trail; a tap or click sends a ripple outward from the exact cell (with a small haptic on phones)
    * and presses the die toward the finger, then it springs back.
    */
-  const dieAt = (e: React.PointerEvent<HTMLDivElement>) => {
+  const dieAt = (e: {
+    currentTarget: HTMLDivElement;
+    clientX: number;
+    clientY: number;
+  }) => {
     const wrap = e.currentTarget;
     const die = wrap.firstElementChild as HTMLElement;
     const r = wrap.getBoundingClientRect();
@@ -915,25 +986,38 @@ export function ComputeJourney() {
       window.matchMedia("(prefers-reduced-motion: reduce)").matches
     )
       return;
-    const { wrap, die, nx, ny, col, row } = dieAt(e);
-    wrap.style.transform = `perspective(900px) rotateX(${(-ny * 16).toFixed(1)}deg) rotateY(${(nx * 16).toFixed(1)}deg)`;
-    const cell = row * 12 + col;
-    if (lastHeatCell.current === cell) return;
-    lastHeatCell.current = cell;
-    const cells = die.children;
-    [0, -1, 1, -12, 12].forEach((d, k) => {
-      const i = row * 12 + col + d;
-      const c = cells[i] as HTMLElement | undefined;
-      if (!c || (Math.abs(d) === 1 && Math.floor(i / 12) !== row)) return;
-      c.style.setProperty("--h", k === 0 ? "1" : "0.55");
-      window.clearTimeout(heatTimers.current.get(c));
-      heatTimers.current.set(
-        c,
-        window.setTimeout(() => {
-          c.style.setProperty("--h", "0");
-          heatTimers.current.delete(c);
-        }, 320),
-      );
+    cancelAnimationFrame(pointerFrame.current);
+    const position = {
+      currentTarget: e.currentTarget,
+      clientX: e.clientX,
+      clientY: e.clientY,
+    };
+    pointerFrame.current = requestAnimationFrame(() => {
+      pointerFrame.current = 0;
+      const { wrap, die, nx, ny, col, row } = dieAt(position);
+      wrap.style.transform = `perspective(900px) rotateX(${(-ny * 16).toFixed(1)}deg) rotateY(${(nx * 16).toFixed(1)}deg)`;
+      const cell = row * 12 + col;
+      if (lastHeatCell.current === cell) return;
+      lastHeatCell.current = cell;
+      let cells = cellCache.current.get(die);
+      if (!cells) {
+        cells = Array.from(die.querySelectorAll<HTMLElement>(":scope > i"));
+        cellCache.current.set(die, cells);
+      }
+      [0, -1, 1, -12, 12].forEach((d, k) => {
+        const i = row * 12 + col + d;
+        const c = cells[i] as HTMLElement | undefined;
+        if (!c || (Math.abs(d) === 1 && Math.floor(i / 12) !== row)) return;
+        c.style.setProperty("--h", k === 0 ? "1" : "0.55");
+        window.clearTimeout(heatTimers.current.get(c));
+        heatTimers.current.set(
+          c,
+          window.setTimeout(() => {
+            c.style.setProperty("--h", "0");
+            heatTimers.current.delete(c);
+          }, 320),
+        );
+      });
     });
   };
   const dieDown = (e: React.PointerEvent<HTMLDivElement>) => {
@@ -948,6 +1032,8 @@ export function ComputeJourney() {
     navigator.vibrate?.(8);
   };
   const dieRest = (e: React.PointerEvent<HTMLDivElement>) => {
+    cancelAnimationFrame(pointerFrame.current);
+    pointerFrame.current = 0;
     lastHeatCell.current = -1;
     e.currentTarget.style.transform = "";
   };
@@ -1007,7 +1093,10 @@ export function ComputeJourney() {
           >
             <div
               className="boot-die"
-              onAnimationEnd={(e) => e.currentTarget.classList.remove("is-rip")}
+              onAnimationEnd={(e) => {
+                if (e.animationName === "die-rip-light")
+                  e.currentTarget.classList.remove("is-rip");
+              }}
             >
               <u className="boot-scan" />
               {Array.from({ length: CELLS }, (_, i) => {
@@ -1130,19 +1219,27 @@ export function ComputeJourney() {
           <div className="rig-back" aria-hidden="true">
             <span>COMPUTE RACK · COMPUTE RACK · COMPUTE RACK</span>
           </div>
-          <div className="rig-hud" aria-hidden="true">
+          <div className="rig-hud">
             <div className="hud-top">
               <span>02 / SELECTED SYSTEMS</span>
-              <ol>
+              <ol aria-label="Jump to project">
                 {bays.map((b, i) => (
-                  <li className="hud-unit" key={b.id}>
-                    <i />
-                    U0{i + 1}
+                  <li key={b.id}>
+                    <button
+                      type="button"
+                      className={`hud-unit${i === 0 ? " is-on" : ""}`}
+                      aria-label={`Show ${b.name}`}
+                      aria-current={i === 0 ? "true" : undefined}
+                      onClick={() => reveal(i)}
+                    >
+                      <i aria-hidden="true" />
+                      U0{i + 1}
+                    </button>
                   </li>
                 ))}
               </ol>
             </div>
-            <div className="hud-bottom">
+            <div className="hud-bottom" aria-hidden="true">
               <dl className="hud-meters">
                 <div>
                   <dt>Scroll</dt>
@@ -1242,6 +1339,16 @@ export function ComputeJourney() {
                           <p className="bay-description">
                             {project.description}
                           </p>
+                          <dl className="bay-evidence">
+                            <div>
+                              <dt>Build</dt>
+                              <dd>{project.buildFocus}</dd>
+                            </div>
+                            <div>
+                              <dt>Output</dt>
+                              <dd>{project.result}</dd>
+                            </div>
+                          </dl>
                           <p className="bay-tech">
                             {project.tech.slice(0, 4).join(" / ")}
                           </p>

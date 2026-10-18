@@ -8,16 +8,7 @@ ScrollTrigger.config({ ignoreMobileResize: true, limitCallbacks: true });
 
 export { gsap, ScrollTrigger };
 
-/**
- * Slower devices, slow connections and data-savers get the same story with fewer effects
- * (no smooth-scroll lerp, blurs, masks or oversized decorative layers).
- */
-type Nav = Navigator & {
-  deviceMemory?: number;
-  connection?: { saveData?: boolean; effectiveType?: string };
-};
-const nav: Nav | undefined =
-  typeof navigator !== "undefined" ? (navigator as Nav) : undefined;
+/** Lite is an explicit visitor preference; full motion remains the default. */
 let stored: string | null = null;
 try {
   stored = localStorage.getItem("sr-lite"); // "1" forces lite, "0" forces the full experience
@@ -26,7 +17,6 @@ try {
 }
 // Full motion for everyone by default. Lite is only what the visitor picks with the header switch.
 export const LITE = stored === "1";
-void nav;
 if (LITE && typeof document !== "undefined")
   document.documentElement.classList.add("lite");
 /** Scrub lag is a luxury: lite devices follow the scrollbar directly. */
@@ -39,49 +29,12 @@ export const COMPACT_MOTION_QUERY =
   "(max-width: 1023px) and (prefers-reduced-motion: no-preference), (max-height: 619px) and (prefers-reduced-motion: no-preference)";
 
 let lenis: Lenis | null = null;
-/** Sample only visible, actively scrolling frames; always cancel on route teardown. */
-function watchFrameRate(onSlow: () => void) {
-  let frame = 0;
-  let last = 0;
-  let lastScroll = 0;
-  let done = false;
-  const deltas: number[] = [];
-  const sample = (now: number) => {
-    frame = 0;
-    if (document.hidden || now - lastScroll > 180) {
-      last = 0;
-      return;
-    }
-    if (last) deltas.push(now - last);
-    last = now;
-    if (deltas.length >= 120) {
-      done = true;
-      const sorted = deltas.slice(10).sort((a, b) => a - b);
-      if (sorted[Math.floor(sorted.length / 2)] > 30) onSlow();
-      return;
-    }
-    frame = requestAnimationFrame(sample);
-  };
-  const scroll = () => {
-    lastScroll = performance.now();
-    if (!done && !frame) frame = requestAnimationFrame(sample);
-  };
-  window.addEventListener("scroll", scroll, { passive: true });
-  return () => {
-    cancelAnimationFrame(frame);
-    window.removeEventListener("scroll", scroll);
-  };
-}
-
 /** Keep one shared Lenis/GSAP clock; release it on route changes or reduced motion. */
 export function startSmoothScroll() {
   const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
   let instance: Lenis | null = null;
-  let stopWatching = () => {};
   const tick = (t: number) => instance?.raf(t * 1000);
   const stop = () => {
-    stopWatching();
-    stopWatching = () => {};
     gsap.ticker.remove(tick);
     if (lenis === instance) lenis = null;
     instance?.destroy();
@@ -100,8 +53,6 @@ export function startSmoothScroll() {
     instance.on("scroll", ScrollTrigger.update);
     gsap.ticker.add(tick);
     gsap.ticker.lagSmoothing(0);
-    // no automatic downgrade: a slow frame never takes motion away
-    stopWatching = () => {};
   };
   configure();
   reduced.addEventListener("change", configure);
@@ -111,15 +62,19 @@ export function startSmoothScroll() {
   };
 }
 
-/** Heavy decorative layers of a scene are hidden (and their GPU memory freed) while it is far off-screen. */
+/** Hide distant decorations and release their explicit promotion hints; reclamation is browser-managed. */
 export function gate(el: Element) {
-  const apply = (on: boolean) => el.classList.toggle("is-off", !on);
+  const apply = (on: boolean) => {
+    el.classList.toggle("is-off", !on);
+    el.classList.toggle("is-near", on);
+  };
   const st = ScrollTrigger.create({
     trigger: el,
     start: "top bottom+=60%",
     end: "bottom top-=60%",
     onToggle: (s) => apply(s.isActive),
     onRefresh: (s) => apply(s.isActive),
+    onKill: () => el.classList.remove("is-off", "is-near"),
   });
   apply(st.isActive);
   return st;

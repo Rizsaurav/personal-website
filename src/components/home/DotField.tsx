@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import { signalField } from "../../lib/signal-field";
 
 /**
  * Ambient "signal field": a grid of dots carrying interfering waves that lean toward the pointer and
@@ -18,10 +19,12 @@ export function DotField() {
     canvas.className = "boot-field";
     canvas.setAttribute("aria-hidden", "true");
     wrap.appendChild(canvas);
-    const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const reduced = matchMedia("(prefers-reduced-motion: reduce)");
     const coarse = matchMedia("(pointer: coarse)").matches;
     const still = () =>
-      reduced || coarse || document.documentElement.classList.contains("lite");
+      reduced.matches ||
+      coarse ||
+      document.documentElement.classList.contains("lite");
 
     const useWorker =
       "transferControlToOffscreen" in canvas && typeof Worker !== "undefined";
@@ -39,8 +42,7 @@ export function DotField() {
       raf = 0,
       last = 0,
       visible = false,
-      ink = "",
-      frame = 0;
+      ink = "";
 
     const readInk = () => getComputedStyle(canvas).color;
     const dprNow = () => 1;
@@ -58,31 +60,17 @@ export function DotField() {
     }
     if (!worker) ctx = canvas.getContext("2d");
 
+    const sample = signalField();
     const draw = (t: number) => {
       if (!ctx) return;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       ctx.clearRect(0, 0, w, h);
-      ink = frame++ % 8 === 0 || !ink ? readInk() : ink;
+      if (!ink) ink = readInk();
       ctx.fillStyle = ink;
       pointer.x += (pointer.tx - pointer.x) * 0.12;
       pointer.y += (pointer.ty - pointer.y) * 0.12;
       const flow = t * 0.0011 + window.scrollY * 0.004;
-      const buckets: number[][] = [[], [], []];
-      for (let j = 0; j < rows; j++)
-        for (let i = 0; i < cols; i++) {
-          const x = i * step,
-            y = j * step;
-          const a =
-            Math.sin(i * 0.33 + flow) +
-            Math.sin(j * 0.41 - flow * 0.8) +
-            Math.sin((i + j) * 0.18 + flow * 1.3);
-          let v = (a + 3) / 6;
-          const dx = x - pointer.x,
-            dy = y - pointer.y;
-          const d2 = dx * dx + dy * dy;
-          if (d2 < 36000) v = Math.min(1, v + (1 - d2 / 36000) * 0.9);
-          buckets[v > 0.72 ? 2 : v > 0.5 ? 1 : 0].push(x, y, v);
-        }
+      const buckets = sample(cols, rows, flow, pointer.x, pointer.y);
       const alpha = [0.1, 0.22, 0.55];
       for (let b = 0; b < 3; b++) {
         ctx.globalAlpha = alpha[b];
@@ -127,14 +115,13 @@ export function DotField() {
     const flush = () => {
       sendRaf = 0;
       if (!pending) return;
-      const r = canvas.getBoundingClientRect();
       const msg = {
         type: "state" as const,
         ...pending,
         scroll: window.scrollY,
-        ink: readInk(),
       };
       if (pending.px !== undefined) {
+        const r = canvas.getBoundingClientRect();
         msg.px = pending.px - r.left;
         msg.py = (pending.py ?? 0) - r.top;
       }
@@ -190,10 +177,16 @@ export function DotField() {
         raf = requestAnimationFrame(loop);
     };
     document.addEventListener("visibilitychange", vis);
-    // lite can switch on at runtime (slow-frame detector): stop animating
-    const mo = new MutationObserver(() =>
-      worker?.postMessage({ type: "state", still: still() }),
-    );
+    const appearance = () => {
+      ink = readInk();
+      if (worker) worker.postMessage({ type: "state", still: still(), ink });
+      else if (visible) {
+        if (still()) draw(performance.now());
+        else if (!raf) raf = requestAnimationFrame(loop);
+      }
+    };
+    const mo = new MutationObserver(appearance);
+    reduced.addEventListener("change", appearance);
     mo.observe(document.documentElement, {
       attributes: true,
       attributeFilter: ["class"],
@@ -205,6 +198,7 @@ export function DotField() {
       io.disconnect();
       ro.disconnect();
       mo.disconnect();
+      reduced.removeEventListener("change", appearance);
       window.removeEventListener("pointermove", move);
       window.removeEventListener("scroll", onScroll);
       document.removeEventListener("visibilitychange", vis);
