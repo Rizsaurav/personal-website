@@ -532,6 +532,7 @@ export function ComputeJourney() {
             else u.removeAttribute("aria-current");
           });
           meters.bayLabel.textContent = bays[idx].name;
+          document.documentElement.dataset.bay = String(idx);
           one(".hud-note b").textContent = rigNotes[idx % rigNotes.length];
           meters.bay.textContent = `0${idx + 1} / 0${bays.length}`;
           meters.stack.textContent = projects
@@ -583,6 +584,9 @@ export function ComputeJourney() {
           refreshPriority: 8,
           invalidateOnRefresh: true,
           onUpdate: (self) => onRigUpdate(self),
+          onToggle: (self) => {
+            if (!self.isActive) delete document.documentElement.dataset.bay;
+          },
         },
       });
       rigST.current = rig.scrollTrigger!;
@@ -1174,6 +1178,7 @@ export function ComputeJourney() {
                 <i />
               </b>
               <span className="chip-mark">SAURAV RIJAL · SR—01</span>
+              <span className="chip-hint">Pick a project</span>
               <div
                 className="boot-die"
                 onAnimationEnd={(e) => {
@@ -1262,7 +1267,7 @@ export function ComputeJourney() {
             <b />
           </p>
           <p className="boot-hint" aria-hidden="true">
-            Touch the chip
+            Pick a project on the chip
           </p>
         </div>
       </div>

@@ -1792,3 +1792,78 @@ html.lite .boot-chip::after {
   left: 4px;
   bottom: 3px;
 }
+
+/* thumbnails are composed, never cropped: shown whole on the die's dark silicon */
+.die-q {
+  background: #131313;
+}
+.die-q img {
+  object-fit: contain;
+}
+.chip-hint {
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 4.5%);
+  translate: -50% 0;
+  z-index: 2;
+  white-space: nowrap;
+  font:
+    8px ui-monospace,
+    monospace;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  opacity: calc(0.45 * var(--w));
+  pointer-events: none;
+}
+.boot-die-wrap:hover .chip-hint {
+  opacity: 0.8;
+}
+
+/* ---------------- phones: a bigger, cleaner chip ---------------- */
+.journey.is-dive .boot-stage {
+  padding: 72px 16px 60px;
+  gap: 12px;
+}
+.journey.is-dive .boot-title {
+  font-size: clamp(30px, 9vw, 44px);
+}
+.journey.is-dive .boot-die-wrap {
+  width: min(60vw, 260px);
+}
+.journey.is-dive .chip-sub {
+  inset: -10% -26%;
+}
+.journey.is-dive .chip-sub::after {
+  inset: 8% 7%;
+}
+.journey.is-dive .chip-hbm {
+  width: 13%;
+}
+.journey.is-dive .chip-hbm-l {
+  right: calc(100% + 4%);
+}
+.journey.is-dive .chip-hbm-r {
+  left: calc(100% + 4%);
+}
+.journey.is-dive .boot-die {
+  padding: 8px;
+  gap: 2px;
+}
+.journey.is-dive .die-projects {
+  inset: 8px;
+}
+.journey.is-dive .die-q span {
+  font-size: 7px;
+  letter-spacing: 0.08em;
+  padding: 1px 4px;
+}
+.journey.is-dive .boot-story {
+  font-size: clamp(15px, 4.2vw, 18px);
+}
+.journey.is-dive .chip-mark {
+  font-size: 7px;
+}
+
+.journey.is-dive .boot-die-wrap {
+  margin-block: 9% 11%;
+}

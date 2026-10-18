@@ -125,6 +125,16 @@ export function ChapterRail() {
 
   return (
     <nav ref={root} className="cr" aria-label="Chapters">
+      <i
+        className="cr-chip"
+        aria-hidden="true"
+        title="Lead projects on the chip"
+      >
+        <b />
+        <b />
+        <b />
+        <b />
+      </i>
       <i className="cr-line" aria-hidden="true">
         <b className="cr-fill" />
         <u className="cr-now" />

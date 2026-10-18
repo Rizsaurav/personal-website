@@ -143,3 +143,40 @@ html.lite .cr {
     animation: none;
   }
 }
+
+/* mini chip on the rail: the quadrant of the project on screen lights up */
+@media (min-width: 1024px) and (min-height: 620px) {
+  .cr-chip {
+    position: absolute;
+    right: 3px;
+    top: -34px;
+    width: 15px;
+    height: 15px;
+    display: grid;
+    grid-template: 1fr 1fr / 1fr 1fr;
+    gap: 2px;
+    padding: 2px;
+    border: 1px solid rgb(255 255 255 / 0.5);
+    border-radius: 3px;
+  }
+  .cr-chip b {
+    background: rgb(255 255 255 / 0.18);
+    border-radius: 1px;
+    transition: background 0.3s, box-shadow 0.3s;
+  }
+  html[data-bay="0"] .cr-chip b:nth-child(1),
+  html[data-bay="1"] .cr-chip b:nth-child(2),
+  html[data-bay="2"] .cr-chip b:nth-child(3),
+  html[data-bay="3"] .cr-chip b:nth-child(4) {
+    background: #fff;
+    box-shadow: 0 0 6px rgb(255 255 255 / 0.8);
+  }
+}
+.cr-chip {
+  display: none;
+}
+@media (min-width: 1024px) and (min-height: 620px) {
+  .cr-chip {
+    display: grid;
+  }
+}
