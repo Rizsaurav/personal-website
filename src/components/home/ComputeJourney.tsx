@@ -63,6 +63,24 @@ const bays = [
 
 const CELLS = 144;
 
+/** Etched interconnect revealed when the camera dives into the die (vector, stays sharp). */
+const ETCH = [
+  "M83 36 H98 V12 H68",
+  "M10 24 H2 V41 H29",
+  "M17 77 H7 V54 H22",
+  "M53 24 H39 V38 H29",
+  "M4 30 H2 V11 H18",
+  "M73 90 H58 V68 H68",
+  "M50 57 H36 V69 H55",
+  "M81 79 H52 V91 H73",
+  "M43 65 H58 V90 H47",
+  "M36 6 H58 V2 H79",
+  "M52 78 H28 V63 H15",
+  "M35 63 H61 V89 H85",
+  "M17 79 H36 V56 H20",
+  "M47 69 H61 V87 H42",
+];
+
 /** Bite-sized GPU notes. Each line is either a general fact or something Saurav measured himself. */
 const gpuNotes = [
   { at: 0, text: "" },
@@ -428,6 +446,14 @@ export function ComputeJourney() {
         .to(q(".boot-callout"), { opacity: 0, duration: 0.4 }, 8.3)
         // then the camera dives into the chip
         .to(die, { scale: 24, duration: 2, ease: "power3.in" }, 8.4)
+        // as we fall in, the photo gives way to the etched interconnect underneath
+        .to(one(".die-photo"), { opacity: 0, duration: 0.6 }, 8.7)
+        .fromTo(
+          one(".die-etch"),
+          { opacity: 0 },
+          { opacity: 1, duration: 0.6 },
+          8.7,
+        )
         .to(die, { opacity: 0, duration: 0.4 }, 10.1);
 
       /* ---- Scene 2: horizontal rig (camera tracks along the rack) ---- */
@@ -992,6 +1018,8 @@ export function ComputeJourney() {
       pointerFrame.current = 0;
       const { wrap, die, nx, ny, col, row } = dieAt(position);
       tipAt(wrap, nx, ny);
+      wrap.style.setProperty("--mx", `${((nx + 0.5) * 100).toFixed(1)}%`);
+      wrap.style.setProperty("--my", `${((ny + 0.5) * 100).toFixed(1)}%`);
       wrap.style.transform = `perspective(900px) rotateX(${(-ny * 16).toFixed(1)}deg) rotateY(${(nx * 16).toFixed(1)}deg)`;
       const cell = row * 12 + col;
       if (lastHeatCell.current === cell) return;
@@ -1132,6 +1160,20 @@ export function ComputeJourney() {
                 }}
               >
                 <img className="die-photo" src={chipPhoto} alt="" />
+                <svg
+                  className="die-etch"
+                  viewBox="0 0 100 100"
+                  preserveAspectRatio="none"
+                  aria-hidden="true"
+                >
+                  {ETCH.map((d, i) => (
+                    <path key={i} d={d} />
+                  ))}
+                  {ETCH.map((d, i) => {
+                    const m = d.match(/M(\d+) (\d+)/)!;
+                    return <circle key={`c${i}`} cx={m[1]} cy={m[2]} r="1.1" />;
+                  })}
+                </svg>
                 <u className="boot-scan" />
                 {Array.from({ length: CELLS }, (_, i) => {
                   const r = Math.floor(i / 12),
