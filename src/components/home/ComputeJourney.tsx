@@ -1158,7 +1158,7 @@ export function ComputeJourney() {
           </div>
           <ol className="boot-story">
             <li>
-              <span>01</span>Three hackathon builds, shipped.
+              <span>01</span>Full-stack applications, built and shipped.
             </li>
             <li>
               <span>02</span>Agents that run whole pipelines.
