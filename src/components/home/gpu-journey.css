@@ -1867,3 +1867,23 @@ html.lite .boot-chip::after {
 .journey.is-dive .boot-die-wrap {
   margin-block: 9% 11%;
 }
+
+/* legibility: annotations and notes sit on their own dark plates so the dot field and rails don't cut through them */
+.is-immersive .boot-callout span {
+  padding: 8px 11px;
+  border-radius: 6px;
+  background: rgb(17 17 17 / 0.88);
+  box-shadow: 0 0 0 1px rgb(255 255 255 / 0.08);
+  color: #ececec;
+  opacity: 1;
+  font-size: 11.5px;
+}
+.is-immersive .gpu-note {
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: rgb(17 17 17 / 0.82);
+}
+/* the hover label lives under the chip, clear of the title and the corner label */
+.is-immersive .gpu-tip {
+  top: calc(50% + min(42vh, 38vw) * 0.74);
+}
