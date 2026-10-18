@@ -213,16 +213,23 @@ export function ComputeJourney() {
         onLeaveBack: () => bootIntro.reverse(),
       });
 
+      // the clip only decodes while the aperture is open
+      const video = one<HTMLVideoElement>(".boot-film video");
+      const film = (on: boolean) => {
+        if (on && video.paused) void video.play().catch(() => {});
+        else if (!on && !video.paused) video.pause();
+      };
       const boot = gsap.timeline({
         defaults: { ease: "none" },
         scrollTrigger: {
           trigger: one(".boot"),
           start: "top top",
-          end: () => `+=${Math.round(window.innerHeight * 2.2)}`,
+          end: () => `+=${Math.round(window.innerHeight * 3)}`,
           pin: bootStage,
           scrub: SCRUB,
           refreshPriority: 10,
           invalidateOnRefresh: true,
+          onUpdate: (self) => film(self.progress * (self.animation?.duration() ?? 12) > 8.3),
         },
       });
       boot
@@ -361,7 +368,36 @@ export function ComputeJourney() {
           4.6,
         )
         .to(die, { scale: 24, duration: 2, ease: "power3.in" }, 7.2)
-        .to(die, { opacity: 0, duration: 0.4 }, 8.9);
+        .to(die, { opacity: 0, duration: 0.4 }, 8.9)
+        // the die's centre becomes a camera aperture and opens onto real film
+        .set(one(".boot-film"), { autoAlpha: 1 }, 8.3)
+        .fromTo(
+          one(".boot-film"),
+          { "--ap": 0 },
+          { "--ap": 1, duration: 1.8, ease: "power2.inOut" },
+          8.4,
+        )
+        .fromTo(
+          q(".boot-iris path"),
+          { rotate: 0, transformOrigin: "0 0" },
+          { rotate: 62, duration: 1.8, ease: "power2.inOut" },
+          8.4,
+        )
+        .fromTo(
+          one(".boot-iris"),
+          { scale: 0.55, opacity: 1 },
+          { scale: 2.4, opacity: 0, duration: 1.8, ease: "power2.in" },
+          8.4,
+        )
+        .fromTo(
+          one(".boot-film video"),
+          { scale: 1.25 },
+          { scale: 1, duration: 3, ease: "power2.out" },
+          8.4,
+        )
+        .from(one(".boot-film-cap"), { opacity: 0, y: 14, duration: 0.6 }, 10)
+        .to({}, { duration: 0.6 }, 11)
+        .to(one(".boot-film"), { opacity: 0, duration: 0.7 }, 11.4);
 
       /* ---- Scene 1.5: the chip. Nodes light up around it, the die shot annotates, the camera dives in ---- */
       const mf = gsap.timeline({
@@ -906,7 +942,39 @@ export function ComputeJourney() {
           { scale: 16, duration: 1.1, ease: "power3.in" },
           2.9,
         )
-        .to(one(".boot-die"), { opacity: 0, duration: 0.3 }, 3.7);
+        .to(one(".boot-die"), { opacity: 0, duration: 0.3 }, 3.7)
+        .set(one(".boot-film"), { autoAlpha: 1 }, 3.4)
+        .fromTo(
+          one(".boot-film"),
+          { "--ap": 0 },
+          { "--ap": 1, duration: 1, ease: "power2.inOut" },
+          3.45,
+        )
+        .fromTo(
+          q(".boot-iris path"),
+          { rotate: 0, transformOrigin: "0 0" },
+          { rotate: 62, duration: 1 },
+          3.45,
+        )
+        .fromTo(
+          one(".boot-iris"),
+          { scale: 0.55, opacity: 1 },
+          { scale: 2.4, opacity: 0, duration: 1 },
+          3.45,
+        )
+        .from(one(".boot-film-cap"), { opacity: 0, y: 12, duration: 0.4 }, 4.3)
+        .to({}, { duration: 0.6 }, 4.7);
+      const pv = one<HTMLVideoElement>(".boot-film video");
+      ScrollTrigger.create({
+        trigger: one(".boot"),
+        start: "top top",
+        end: "bottom bottom",
+        onUpdate: (self) => {
+          const on = self.progress > 0.6;
+          if (on && pv.paused) void pv.play().catch(() => {});
+          else if (!on && !pv.paused) pv.pause();
+        },
+      });
       q(".mf-entry, .mf-callout").forEach((li) => {
         gsap.fromTo(
           li,
@@ -1141,6 +1209,36 @@ export function ComputeJourney() {
           <p className="boot-hint" aria-hidden="true">
             Touch the die
           </p>
+          <div className="boot-film">
+            <video
+              muted
+              loop
+              playsInline
+              preload="none"
+              poster="/projects/videomaxx/harbor-poster.jpg"
+              aria-label="A clip of real output: VideoMaxx film, The Zanzibar War, 1896"
+            >
+              <source src="/projects/videomaxx/harbor.mp4" type="video/mp4" />
+            </video>
+            <svg
+              className="boot-iris"
+              viewBox="-50 -50 100 100"
+              aria-hidden="true"
+            >
+              {[0, 1, 2, 3, 4, 5].map((i) => (
+                <path
+                  key={i}
+                  transform={`rotate(${i * 60})`}
+                  d="M0 0 L46 -8 A47 47 0 0 1 30 36 Z"
+                />
+              ))}
+            </svg>
+            <p className="boot-film-cap">
+              <span>Compute in. Film out.</span>
+              Real output · VideoMaxx, “The Zanzibar War, 1896”. CineLogic is
+              its camera department.
+            </p>
+          </div>
         </div>
       </div>
 
