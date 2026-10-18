@@ -1,25 +1,90 @@
 import { useState } from "react";
+import * as Dialog from "@radix-ui/react-dialog";
+import { Expand, X } from "lucide-react";
+import "./output-polish.css";
+
+type Still = { src: string; w: number; h: number; cap: string };
+
+/** The enlarged image mounts only while requested; Radix handles focus and Escape. */
+function InspectImage({
+  shot,
+  className = "",
+}: {
+  shot: Still;
+  className?: string;
+}) {
+  return (
+    <Dialog.Root>
+      <Dialog.Trigger asChild>
+        <button
+          type="button"
+          className={`output-inspect ${className}`}
+          aria-label={`Enlarge image: ${shot.cap}`}
+        >
+          <img
+            src={shot.src}
+            width={shot.w}
+            height={shot.h}
+            alt={shot.cap}
+            decoding="async"
+            srcSet={
+              shot.w === 1500
+                ? `${shot.src.replace(/\.jpg$/, "-750.jpg")} 750w, ${shot.src} 1500w`
+                : undefined
+            }
+            sizes={
+              shot.w === 1500 ? "(min-width: 1024px) 40vw, 90vw" : undefined
+            }
+          />
+          <span className="output-expand" aria-hidden="true">
+            <Expand size={13} />
+          </span>
+        </button>
+      </Dialog.Trigger>
+      <Dialog.Portal>
+        <Dialog.Overlay className="output-lightbox-shade" />
+        <Dialog.Content className="output-lightbox" data-lenis-prevent>
+          <Dialog.Title className="output-lightbox-title">
+            Project image
+          </Dialog.Title>
+          <Dialog.Description className="output-lightbox-caption">
+            {shot.cap}
+          </Dialog.Description>
+          <Dialog.Close
+            className="output-lightbox-close"
+            aria-label="Close enlarged image"
+          >
+            <X size={20} />
+          </Dialog.Close>
+          <div className="output-lightbox-scroll">
+            <img src={shot.src} width={shot.w} height={shot.h} alt={shot.cap} />
+          </div>
+        </Dialog.Content>
+      </Dialog.Portal>
+    </Dialog.Root>
+  );
+}
 
 const shots = [
   {
     src: "/projects/biotwin/overview.jpg",
     label: "Overview",
-    w: 1280,
-    h: 708,
+    w: 1500,
+    h: 829,
     cap: "The twin answers questions about your day in plain language.",
   },
   {
     src: "/projects/biotwin/signals.jpg",
     label: "Signals",
-    w: 1280,
-    h: 700,
+    w: 1500,
+    h: 820,
     cap: "Heart rate, sleep, calories and steps from the watch.",
   },
   {
     src: "/projects/biotwin/day-ahead.jpg",
     label: "Day ahead",
-    w: 2048,
-    h: 891,
+    w: 1500,
+    h: 652,
     cap: "Forecast Body Battery with the best training window marked.",
   },
 ];
@@ -34,22 +99,13 @@ function BioTwinShots() {
         <span>BIOTWIN / THE APP</span>
         <span>HACKRICE</span>
       </div>
-      <img
-        src={s.src}
-        width={s.w}
-        height={s.h}
-        alt={s.cap}
-       
-        decoding="async"
-        className="shot-main"
-      />
-      <div className="shot-tabs" role="tablist" aria-label="BioTwin screens">
+      <InspectImage shot={s} className="output-screen" />
+      <div className="shot-tabs" role="group" aria-label="BioTwin screens">
         {shots.map((t, k) => (
           <button
             key={t.label}
             type="button"
-            role="tab"
-            aria-selected={k === i}
+            aria-pressed={k === i}
             className={k === i ? "is-on" : ""}
             onClick={() => setI(k)}
           >
@@ -65,20 +121,20 @@ function BioTwinShots() {
 const phones = [
   {
     src: "/projects/playscript/library.jpg",
-    w: 484,
-    h: 1042,
+    w: 696,
+    h: 1500,
     alt: "The book library home screen with Romeo and Juliet ready to play",
   },
   {
     src: "/projects/playscript/story.jpg",
-    w: 524,
-    h: 1064,
+    w: 738,
+    h: 1500,
     alt: "A story scene with narrator text over an animated Verona backdrop",
   },
   {
     src: "/projects/playscript/choices.jpg",
-    w: 562,
-    h: 1150,
+    w: 733,
+    h: 1500,
     alt: "A decision screen: let your heart answer",
   },
 ];
@@ -92,14 +148,10 @@ function PlayScriptPhones() {
       </div>
       <div className="phones-row">
         {phones.map((p) => (
-          <img
+          <InspectImage
             key={p.src}
-            src={p.src}
-            width={p.w}
-            height={p.h}
-            alt={p.alt}
-           
-            decoding="async"
+            shot={{ ...p, cap: p.alt }}
+            className="output-phone"
           />
         ))}
       </div>
@@ -117,42 +169,21 @@ export function Output({ type }: { type: string }) {
     return (
       <figure className="rack-output interview-output">
         <div className="output-topline">
-          <span>AI INTERVIEWER / SESSION LOOP</span>
-          <span>LIVE</span>
+          <span>AI INTERVIEWER / THE APP</span>
+          <span>SESSION SETUP</span>
         </div>
-        <ol className="iv-rows">
-          <li>
-            <span>01</span>
-            <div>
-              <b>You talk it through</b>
-              <p>
-                Contextual questions by voice, and cross-questions based on what
-                you actually said.
-              </p>
-            </div>
-          </li>
-          <li>
-            <span>02</span>
-            <div>
-              <b>Your code syncs every second</b>
-              <p>
-                It reads your implementation in real time and asks targeted
-                follow-ups about it.
-              </p>
-            </div>
-          </li>
-          <li>
-            <span>03</span>
-            <div>
-              <b>Hire or No Hire</b>
-              <p>
-                Communication, code quality and problem solving, judged like a
-                senior engineer.
-              </p>
-            </div>
-          </li>
-        </ol>
-        <figcaption>Session flow · Next.js, FastAPI and Gemini</figcaption>
+        <InspectImage
+          shot={{
+            src: "/projects/interview/setup.jpg",
+            w: 1500,
+            h: 923,
+            cap: "The app's interview setup: coding or behavioral, language, duration and difficulty.",
+          }}
+          className="output-screen"
+        />
+        <figcaption>
+          Real app screen · choose a session, then talk through your code.
+        </figcaption>
       </figure>
     );
   if (type === "research")
@@ -195,14 +226,35 @@ export function Output({ type }: { type: string }) {
           <span>VIDEOMAXX / PRODUCTION SYSTEM</span>
           <span>15 stages</span>
         </div>
-        <div className="film-stages">
-          {["Research", "Verify", "Narrate", "Render"].map((s, i) => (
-            <div key={s}>
-              <span>0{i + 1}</span>
-              <div className={`film-glyph film-glyph-${i}`} aria-hidden="true">
-                {i === 0 ? "≋" : i === 1 ? "✓" : i === 2 ? "▂▅▃▇▅▂" : "▷"}
-              </div>
-              <b>{s}</b>
+        <div className="output-filmstrip">
+          {[
+            {
+              time: "015",
+              label: "00:15",
+              cap: "Generated Zanzibar film: an officer aboard a ship.",
+            },
+            {
+              time: "055",
+              label: "00:55",
+              cap: "Rendered Zanzibar film: a map of the palace and harbor.",
+            },
+            {
+              time: "095",
+              label: "01:35",
+              cap: "Generated Zanzibar film: soldiers assembled at the harbor.",
+            },
+          ].map((frame) => (
+            <div key={frame.time}>
+              <InspectImage
+                shot={{
+                  src: `/projects/videomaxx/zanzibar-${frame.time}.jpg`,
+                  w: 640,
+                  h: 360,
+                  cap: frame.cap,
+                }}
+                className="output-film-frame"
+              />
+              <span>{frame.label}</span>
             </div>
           ))}
         </div>
@@ -212,7 +264,7 @@ export function Output({ type }: { type: string }) {
           ))}
         </div>
         <figcaption>
-          Pipeline schematic · research → verified script → narrated video
+          Actual rendered frames · Zanzibar film · click a frame to inspect
         </figcaption>
       </figure>
     );

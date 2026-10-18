@@ -1,0 +1,60 @@
+/* Keep large raster hints only while their scene is close enough to enter. */
+.is-immersive .boot:not(.is-near) .boot-die,
+.is-immersive .manifesto:not(.is-near) .mf-map,
+.is-immersive .rig:not(.is-near) .rig-track {
+  will-change: auto;
+}
+
+/* The cell wave keeps its scale choreography; one soft surface supplies the light. */
+.boot-die.is-rip i {
+  animation-name: die-rip-scale;
+}
+
+@keyframes die-rip-scale {
+  0%,
+  100% {
+    scale: 1;
+  }
+  28% {
+    scale: 2;
+  }
+}
+
+.boot-die::after {
+  content: "";
+  position: absolute;
+  width: 90%;
+  aspect-ratio: 1;
+  left: calc((var(--cx, 5.5) + 0.5) / 12 * 100%);
+  top: calc((var(--cy, 5.5) + 0.5) / 12 * 100%);
+  translate: -50% -50%;
+  border-radius: 50%;
+  pointer-events: none;
+  background: radial-gradient(circle, currentColor 0%, transparent 65%);
+  opacity: 0;
+}
+
+.boot-die.is-rip::after {
+  animation: die-rip-light 1.9s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+@keyframes die-rip-light {
+  0% {
+    transform: scale(0.08);
+    opacity: 0;
+  }
+  18% {
+    opacity: 0.35;
+  }
+  100% {
+    transform: scale(1.6);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .boot-die.is-rip::after,
+  .boot-die.is-rip i {
+    animation: none;
+  }
+}

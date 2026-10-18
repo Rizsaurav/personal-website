@@ -1,0 +1,49 @@
+.bay-evidence {
+  margin: 14px 0 0;
+  display: grid;
+  gap: 8px;
+  font-size: 11px;
+  line-height: 1.5;
+  color: hsl(var(--text-secondary));
+}
+.bay-evidence > div {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr);
+  gap: 8px;
+}
+.bay-evidence dt {
+  font:
+    9px ui-monospace,
+    monospace;
+  text-transform: uppercase;
+  padding-top: 3px;
+}
+.bay-evidence dd {
+  margin: 0;
+}
+.hud-top .hud-unit {
+  appearance: none;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 8px;
+  cursor: pointer;
+  pointer-events: auto;
+}
+.hud-top .hud-unit:focus-visible {
+  outline: 1px solid currentColor;
+  outline-offset: 3px;
+  border-radius: 3px;
+}
+.hud-top ol {
+  pointer-events: auto;
+}
+@media (max-width: 767px) {
+  .bay-evidence {
+    font-size: 11px;
+  }
+}

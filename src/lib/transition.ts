@@ -1,6 +1,6 @@
 /** Helpers for the parallel (split-screen) route transition. */
 
-export const TRANSITION_MS = 1150;
+export const TRANSITION_MS = 850;
 export const TRANSITION_FALLBACK_MS = TRANSITION_MS + 700;
 
 export const prefersReducedMotion = () =>
