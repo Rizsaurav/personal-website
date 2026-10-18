@@ -1530,3 +1530,144 @@ html.lite .boot-die i {
   bottom: 7vh;
   font-size: clamp(30px, 3.4vw, 56px);
 }
+
+/* ---------------- bite-sized GPU notes ---------------- */
+.chip-hbm {
+  pointer-events: auto;
+}
+.gpu-note {
+  display: none;
+}
+.is-immersive .gpu-note,
+.journey.is-dive .gpu-note {
+  display: block;
+  position: absolute;
+  z-index: 3;
+  right: 40px;
+  bottom: 60px;
+  max-width: 30ch;
+  margin: 0;
+  text-align: right;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+.gpu-note.is-on {
+  opacity: 1;
+}
+.gpu-note.is-swap b {
+  animation: note-in 0.45s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+@keyframes note-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+.gpu-note span {
+  display: block;
+  margin-bottom: 6px;
+  font:
+    9px ui-monospace,
+    monospace;
+  letter-spacing: 0.16em;
+  opacity: 0.5;
+}
+.gpu-note b {
+  display: block;
+  font-family: "Fraunces", Georgia, serif;
+  font-weight: 400;
+  font-size: clamp(14px, 1.15vw, 18px);
+  line-height: 1.4;
+}
+.journey.is-dive .gpu-note {
+  left: 20px;
+  right: 20px;
+  bottom: 56px;
+  max-width: none;
+  text-align: left;
+}
+.gpu-tip {
+  display: none;
+}
+.is-immersive .gpu-tip,
+.journey.is-dive .gpu-tip {
+  display: block;
+  position: absolute;
+  z-index: 5;
+  left: 50%;
+  top: 14vh;
+  translate: -50% 0;
+  padding: 7px 12px;
+  border: 1px solid color-mix(in srgb, currentColor 30%, transparent);
+  border-radius: 999px;
+  background: rgb(14 14 14 / 0.82);
+  font:
+    10px ui-monospace,
+    monospace;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+.gpu-tip.is-on {
+  opacity: 1;
+}
+.journey.is-dive .gpu-tip {
+  top: auto;
+  bottom: 100px;
+  white-space: normal;
+  width: max-content;
+  max-width: 86vw;
+  text-align: center;
+}
+.hud-note {
+  margin: 0;
+  max-width: 34ch;
+  text-align: center;
+}
+.hud-note span {
+  display: block;
+  margin-bottom: 6px;
+  opacity: 0.55;
+}
+.hud-note b {
+  display: block;
+  font-family: "Fraunces", Georgia, serif;
+  font-weight: 400;
+  font-size: 15px;
+  letter-spacing: 0;
+  text-transform: none;
+  line-height: 1.4;
+}
+@media (max-width: 1199px) {
+  .hud-note {
+    display: none;
+  }
+}
+.is-immersive .gpu-note.is-on,
+.journey.is-dive .gpu-note.is-on {
+  opacity: 1;
+}
+.journey.is-dive .gpu-note {
+  bottom: 16px;
+}
+.journey.is-dive .gpu-note b {
+  font-size: 13px;
+}
+.journey.is-dive .boot-hint {
+  display: none;
+}
+.journey.is-dive .gpu-note span {
+  display: none;
+}
+.journey.is-dive .boot-stage {
+  gap: 14px;
+  padding-bottom: 64px;
+}
+.journey.is-dive .boot-die-wrap {
+  width: min(46vw, 220px);
+}
+.journey.is-dive .boot-story {
+  gap: 6px;
+}

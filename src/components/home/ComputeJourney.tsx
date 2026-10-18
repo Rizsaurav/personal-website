@@ -63,6 +63,34 @@ const bays = [
 
 const CELLS = 144;
 
+/** Bite-sized GPU notes. Each line is either a general fact or something Saurav measured himself. */
+const gpuNotes = [
+  { at: 0, text: "" },
+  {
+    at: 2.9,
+    text: "Streaming multiprocessors wake up. Each runs threads in warps of 32.",
+  },
+  {
+    at: 4.6,
+    text: "HBM sits beside the die. LLM decoding is limited by memory bandwidth, not compute.",
+  },
+  {
+    at: 5.3,
+    text: "Occupancy: how many warps an SM keeps in flight to hide memory latency.",
+  },
+  {
+    at: 6.9,
+    text: "I took a 27B model in FP8 from under 25 to about 200 tokens a second on an H100.",
+  },
+  { at: 8.4, text: "Every token starts here." },
+];
+const rigNotes = [
+  "Prefill reads the whole prompt at once. Decode writes one token at a time.",
+  "The KV cache trades GPU memory for not recomputing the past.",
+  "Batching puts more requests through each pass, so throughput climbs.",
+  "Speculative decoding: a draft guesses ahead, the big model verifies.",
+];
+
 const board = [
   {
     t: "Independent projects",
@@ -214,6 +242,23 @@ export function ComputeJourney() {
         onLeaveBack: () => bootIntro.reverse(),
       });
 
+      // one quiet line of GPU context that changes with the scene; text only swaps on a phase change
+      const noteEl = one(".gpu-note");
+      const noteText = one(".gpu-note b");
+      let noteIdx = -1;
+      const showNote = (t: number) => {
+        let i = 0;
+        gpuNotes.forEach((n, k) => {
+          if (t >= n.at) i = k;
+        });
+        if (i === noteIdx) return;
+        noteIdx = i;
+        noteText.textContent = gpuNotes[i].text;
+        noteEl.classList.toggle("is-on", !!gpuNotes[i].text);
+        noteEl.classList.remove("is-swap");
+        void noteEl.offsetWidth;
+        noteEl.classList.add("is-swap");
+      };
       const boot = gsap.timeline({
         defaults: { ease: "none" },
         scrollTrigger: {
@@ -224,6 +269,8 @@ export function ComputeJourney() {
           scrub: SCRUB,
           refreshPriority: 10,
           invalidateOnRefresh: true,
+          onUpdate: (self) =>
+            showNote(self.progress * (self.animation?.duration() ?? 10.5)),
         },
       });
       boot
@@ -436,6 +483,7 @@ export function ComputeJourney() {
             else u.removeAttribute("aria-current");
           });
           meters.bayLabel.textContent = bays[idx].name;
+          one(".hud-note b").textContent = rigNotes[idx % rigNotes.length];
           meters.bay.textContent = `0${idx + 1} / 0${bays.length}`;
           meters.stack.textContent = projects
             .find((pr) => pr.id === bays[idx].id)!
@@ -803,6 +851,26 @@ export function ComputeJourney() {
           end: "bottom bottom",
           scrub: true,
           invalidateOnRefresh: true,
+          onUpdate: (self) => {
+            const t = self.progress * (self.animation?.duration() ?? 4);
+            const phase =
+              t < 0.3
+                ? 0
+                : t < 0.9
+                  ? 1
+                  : t < 1.6
+                    ? 2
+                    : t < 2.2
+                      ? 3
+                      : t < 2.9
+                        ? 4
+                        : 5;
+            const el = one(".gpu-note");
+            if (el.dataset.i === String(phase)) return;
+            el.dataset.i = String(phase);
+            one(".gpu-note b").textContent = gpuNotes[phase].text;
+            el.classList.toggle("is-on", !!gpuNotes[phase].text);
+          },
         },
       });
       gsap.set(q(".boot-story li"), { opacity: 0, x: -20 });
@@ -923,6 +991,7 @@ export function ComputeJourney() {
     pointerFrame.current = requestAnimationFrame(() => {
       pointerFrame.current = 0;
       const { wrap, die, nx, ny, col, row } = dieAt(position);
+      tipAt(wrap, nx, ny);
       wrap.style.transform = `perspective(900px) rotateX(${(-ny * 16).toFixed(1)}deg) rotateY(${(nx * 16).toFixed(1)}deg)`;
       const cell = row * 12 + col;
       if (lastHeatCell.current === cell) return;
@@ -948,9 +1017,23 @@ export function ComputeJourney() {
       });
     });
   };
+  /** What the pointer is over on the package, in one line. */
+  const tipAt = (wrap: HTMLElement, nx: number, ny: number) => {
+    const tip = wrap.parentElement?.querySelector<HTMLElement>(".gpu-tip");
+    if (!tip) return;
+    const label =
+      Math.abs(nx) > 0.55
+        ? "HBM: memory stacked beside the die, terabytes a second of bandwidth"
+        : Math.abs(ny) < 0.035
+          ? "L2 cache: shared by every SM. A hit here skips a trip to HBM"
+          : "SM cluster: threads run in warps of 32, in lockstep";
+    if (tip.textContent !== label) tip.textContent = label;
+    tip.classList.add("is-on");
+  };
   const dieDown = (e: React.PointerEvent<HTMLDivElement>) => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const { wrap, die, nx, ny, col, row } = dieAt(e);
+    tipAt(wrap, nx, ny);
     die.style.setProperty("--cx", String(col));
     die.style.setProperty("--cy", String(row));
     die.classList.remove("is-rip");
@@ -960,6 +1043,11 @@ export function ComputeJourney() {
     navigator.vibrate?.(8);
   };
   const dieRest = (e: React.PointerEvent<HTMLDivElement>) => {
+    const tip = e.currentTarget.parentElement?.querySelector(".gpu-tip");
+    window.setTimeout(
+      () => tip?.classList.remove("is-on"),
+      e.pointerType === "touch" ? 1600 : 0,
+    );
     cancelAnimationFrame(pointerFrame.current);
     pointerFrame.current = 0;
     lastHeatCell.current = -1;
@@ -1087,6 +1175,11 @@ export function ComputeJourney() {
               </li>
             ))}
           </ul>
+          <span className="gpu-tip" aria-hidden="true" />
+          <p className="gpu-note" aria-hidden="true">
+            <span>GPU 101</span>
+            <b />
+          </p>
           <p className="boot-hint" aria-hidden="true">
             Touch the chip
           </p>
@@ -1139,6 +1232,10 @@ export function ComputeJourney() {
                   </dd>
                 </div>
               </dl>
+              <p className="hud-note">
+                <span>Inference note</span>
+                <b>{rigNotes[0]}</b>
+              </p>
               <div className="hud-now">
                 <span>Now showing</span>
                 <b className="m-bay">{bays[0].name}</b>
